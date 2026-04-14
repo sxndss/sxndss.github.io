@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>时光印记 | 精确时刻记录簿</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f4f8fc 0%, #eef2f7 100%);
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', system-ui, sans-serif;
+            padding: 2rem 1.5rem;
+            min-height: 100vh;
+            color: #1e2f3e;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        /* 深色主题 */
+        body.dark {
+            background: linear-gradient(145deg, #1a2a32 0%, #0f1a1f 100%);
+            color: #e0e8ef;
+        }
+
+        body.dark .collapsible-card,
+        body.dark .stats-bar,
+        body.dark .filter-bar,
+        body.dark .event-card,
+        body.dark .modal-content,
+        body.dark .view-modal-content {
+            background: #2d3e48;
+            border-color: #4a5e6b;
+            color: #e0e8ef;
+        }
+
+        body.dark .event-card {
+            background: #2a3a44;
+        }
+
+        body.dark .stats-badge,
+        body.dark .recycle-btn,
+        body.dark .btn-outline,
+        body.dark .icon-btn:hover,
+        body.dark .small-btn,
+        body.dark .clear-filter {
+            background: #3e5664;
+            color: #f0f4f8;
+        }
+
+        body.dark input,
+        body.dark textarea {
+            background: #1f2f38;
+            border-color: #4a6a7a;
+            color: white;
+        }
+
+        body.dark .modal {
+            background-color: rgba(0,0,0,0.7);
+        }
+
+        /* 主容器 */
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 头部 + 主题切换 */
+        .hero {
+            text-align: center;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .hero h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1f4e6e, #3282a0);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-toggle {
+            background: #eef2f8;
+            border: none;
+            border-radius: 60px;
+            padding: 8px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        /* 可折叠卡片 - 默认折叠 */
+        .collapsible-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(4px);
+            border-radius: 2rem;
+            margin-bottom: 1.8rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: all 0.2s;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        .card-header {
+            padding: 1rem 1.8rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            background: rgba(255,255,255,0.3);
+            user-select: none;
+        }
+
+        .card-header:hover {
+            background: rgba(0,0,0,0.02);
+        }
+
+        .card-body {
+            padding: 1.2rem 1.8rem 1.8rem;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .collapse-icon {
+            transition: transform 0.2s;
+        }
+
+        /* 默认折叠状态 */
+        .collapsible-card.collapsed .collapse-icon {
+            transform: rotate(-90deg);
+        }
+
+        .collapsible-card.collapsed .card-body {
+            display: none;
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1f4a64;
+            font-size: 0.85rem;
+        }
+
+        body.dark label {
+            color: #c0d8e8;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 24px;
+            border: 1px solid #cbdbe6;
+            background: white;
+            font-size: 0.9rem;
+            font-family: inherit;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 85px;
+        }
+
+        input[type="datetime-local"] {
+            font-family: inherit;
+        }
+
+        .btn {
+            border: none;
+            padding: 10px 18px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(100deg, #266d91, #2c7da0);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid #cbdbe6;
+        }
+
+        .flex-btns {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .flex-btns .btn {
+            flex: 1;
+            margin-top: 0;
+        }
+
+        /* 统计栏 */
+        .stats-bar {
+            background: white;
+            border-radius: 60px;
+            padding: 0.6rem 1.4rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            border: 1px solid #e0ecf2;
+        }
+
+        .stats-left {
+            display: flex;
+            gap: 20px;
+            align-items: baseline;
+            flex-wrap: wrap;
+        }
+
+        .stats-badge {
+            background: #e9f0f5;
+            padding: 5px 16px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .recycle-btn {
+            background: #f4e9e6;
+            border: none;
+            padding: 6px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 筛选栏 - 只保留搜索框 */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+            background: white;
+            padding: 1rem 1.2rem;
+            border-radius: 2rem;
+            align-items: center;
+        }
+
+        .filter-input {
+            flex: 3;
+            min-width: 200px;
+        }
+
+        .clear-filter {
+            background: #eef2f8;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+
+        .small-btn {
+            background: #eef2f8;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        /* 事件列表 */
+        .events-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            max-height: 58vh;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .event-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1rem 1.2rem;
+            transition: 0.15s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            border-left: 6px solid #5fa7c2;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .event-info {
+            flex: 3;
+            min-width: 200px;
+        }
+
+        .event-title {
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .event-datetime-badge {
+            font-size: 0.7rem;
+            background: #eef3fc;
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-weight: normal;
+            color: #2c6282;
+            font-family: monospace;
+        }
+
+        .event-desc-preview {
+            font-size: 0.8rem;
+            color: #4b5e6c;
+            word-break: break-word;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 30px;
+        }
+
+        .empty-msg {
+            text-align: center;
+            padding: 2.5rem;
+            color: #8aa0ae;
+        }
+
+        /* 查看详情模态框 - 自适应扩大 */
+        .view-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+        }
+        .view-modal-content {
+            background: white;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            border-radius: 2rem;
+            padding: 2rem;
+            overflow-y: auto;
+            box-shadow: 0 30px 40px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+        }
+        .view-modal-content .view-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            word-break: break-word;
+            padding-right: 2rem;
+        }
+        .view-modal-content .view-datetime {
+            display: inline-block;
+            background: #eef3fc;
+            padding: 4px 16px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            margin-bottom: 1.2rem;
+            font-family: monospace;
+        }
+        .view-modal-content .view-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+            background: #f8fafc;
+            padding: 1.2rem;
+            border-radius: 1.2rem;
+            margin: 1rem 0;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+        body.dark .view-modal-content .view-description {
+            background: #1f2f38;
+        }
+        .view-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+        .close-view-btn {
+            background: #eef2f8;
+        }
+
+        /* 回收站模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(3px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 750px;
+            max-height: 80vh;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+        .recycle-items {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 1rem 0;
+        }
+        .recycle-card {
+            background: #fef7f0;
+            border-radius: 1.2rem;
+            padding: 0.9rem;
+            border-left: 4px solid #cb6e6e;
+        }
+        .recycle-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        body.dark .recycle-card {
+            background: #3a2e2a;
+        }
+
+        @media (max-width: 720px) {
+            body { padding: 1rem; }
+            .stats-bar { flex-direction: column; align-items: stretch; }
+            .card-header { padding: 0.8rem 1.2rem; }
+            .card-body { padding: 1rem; }
+            .view-modal-content { padding: 1.2rem; }
+            .view-modal-content .view-title { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="hero">
+        <h1>⏱️ 时光印记 · 精确时刻</h1>
+        <button id="themeToggleBtn" class="theme-toggle">🌙 深色模式</button>
+    </div>
+
+    <!-- 统计栏 + 回收站入口 -->
+    <div class="stats-bar">
+        <div class="stats-left">
+            <span class="stats-badge" id="totalCountSpan">📋 总计: 0 件事</span>
+            <span class="stats-badge" id="filterCountSpan">📌 当前显示: 0</span>
+        </div>
+        <button class="recycle-btn" id="openRecycleBtn">🗑️ 回收站 <span id="recycleCountBadge">0</span></button>
+    </div>
+
+    <!-- 筛选栏：仅保留实时搜索 -->
+    <div class="filter-bar">
+        <input type="text" id="searchInput" class="filter-input" placeholder="🔍 实时搜索标题或描述...">
+        <button id="clearFilterBtn" class="clear-filter">✖️ 清除搜索</button>
+        <button id="exportDataBtn" class="small-btn">📤 导出全部</button>
+        <label id="importLabel" class="small-btn" style="cursor:pointer;">📥 导入合并 <input type="file" id="importFileInput" accept=".json" style="display:none;"></label>
+    </div>
+
+    <!-- 可折叠添加/编辑卡片 (默认折叠) -->
+    <div class="collapsible-card collapsed" id="addEditCard">
+        <div class="card-header" id="cardHeader">
+            <span>✏️ 添加新事件 (精确到分钟)</span>
+            <span class="collapse-icon">▼</span>
+        </div>
+        <div class="card-body">
+            <form id="eventForm">
+                <div class="form-group">
+                    <label>📖 标题 <span style="color:#c2410c;">*</span></label>
+                    <input type="text" id="titleInput" placeholder="例：项目答辩、纪念日..." required>
+                </div>
+                <div class="form-group">
+                    <label>⏰ 日期时间 (年/月/日 时:分)</label>
+                    <input type="datetime-local" id="datetimeInput" required>
+                </div>
+                <div class="form-group">
+                    <label>✏️ 详细描述</label>
+                    <textarea id="descInput" placeholder="写下重要细节..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" id="submitBtn">➕ 添加事件</button>
+                <div class="flex-btns" id="editCancelGroup" style="display:none;">
+                    <button type="button" class="btn btn-outline" id="cancelEditBtn">取消编辑</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 事件列表区域 -->
+    <div class="events-list" id="eventsListContainer">
+        <div class="empty-msg">✨ 暂无重要事件，点击上方卡片添加一条吧</div>
+    </div>
+</div>
+
+<!-- 查看详情模态框 (自适应扩大) -->
+<div id="viewEventModal" class="view-modal">
+    <div class="view-modal-content">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div class="view-title" id="viewTitle"></div>
+            <button id="closeViewModalBtn" style="background:none; border:none; font-size: 1.8rem; cursor:pointer;">&times;</button>
+        </div>
+        <div>
+            <span class="view-datetime" id="viewDatetime"></span>
+        </div>
+        <div class="view-description" id="viewDescription"></div>
+        <div class="view-actions">
+            <button id="viewEditBtn" class="btn btn-primary">✏️ 编辑此事件</button>
+            <button id="viewCloseBtn" class="btn close-view-btn">关闭</button>
+        </div>
+    </div>
+</div>
+
+<!-- 回收站模态框 -->
+<div id="recycleModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header" style="display:flex; justify-content:space-between;">
+            <span>🗑️ 回收站</span>
+            <button id="closeModalBtn" style="background:none; border:none; font-size:1.6rem; cursor:pointer;">&times;</button>
+        </div>
+        <div id="recycleListContainer" class="recycle-items">加载中...</div>
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 1rem;">
+            <button id="emptyRecycleBtn" class="btn" style="background:#e7cfcf;">🗑️ 一键清空回收站</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---------- 存储 KEY ----------
+    const STORAGE_MAIN = "vital_events_main_v2";
+    const STORAGE_RECYCLE = "vital_events_recycle_v2";
+
+    let mainEvents = [];
+    let recycleBin = [];
+    let editingId = null;
+    let currentSearch = "";
+    let darkMode = false;
+    let currentViewEventId = null;
+
+    function saveToLocal() {
+        localStorage.setItem(STORAGE_MAIN, JSON.stringify(mainEvents));
+        localStorage.setItem(STORAGE_RECYCLE, JSON.stringify(recycleBin));
+    }
+
+    function loadFromLocal() {
+        const storedMain = localStorage.getItem(STORAGE_MAIN);
+        const storedRecycle = localStorage.getItem(STORAGE_RECYCLE);
+        mainEvents = storedMain ? JSON.parse(storedMain) : [];
+        recycleBin = storedRecycle ? JSON.parse(storedRecycle) : [];
+        mainEvents.forEach(ev => { if (!ev.createdAt) ev.createdAt = Date.now(); });
+        recycleBin.forEach(ev => { if (!ev.createdAt) ev.createdAt = Date.now(); if (!ev.deletedAt) ev.deletedAt = Date.now(); });
+    }
+
+    function generateId() {
+        return Date.now() + '-' + Math.random().toString(36).substr(2, 8);
+    }
+
+    function formatDateTime(dateTimeStr) {
+        if (!dateTimeStr) return "无效时间";
+        return dateTimeStr.replace('T', ' ');
+    }
+
+    function sortMainEvents(events) {
+        return [...events].sort((a, b) => {
+            if (a.datetime !== b.datetime) return b.datetime.localeCompare(a.datetime);
+            else return (b.createdAt || 0) - (a.createdAt || 0);
+        });
+    }
+
+    // 搜索过滤函数 - 核心修复
+    function getFilteredEvents() {
+        let filtered = [...mainEvents];
+        const keyword = currentSearch.trim();
+        if (keyword !== "") {
+            const lowerKeyword = keyword.toLowerCase();
+            filtered = filtered.filter(ev => {
+                const titleMatch = ev.title && ev.title.toLowerCase().includes(lowerKeyword);
+                const descMatch = ev.description && ev.description.toLowerCase().includes(lowerKeyword);
+                return titleMatch || descMatch;
+            });
+        }
+        console.log(`搜索关键词: "${keyword}", 原始事件数: ${mainEvents.length}, 过滤后: ${filtered.length}`); // 调试日志
+        return filtered;
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // 渲染主列表
+    function renderMainList() {
+        const container = document.getElementById('eventsListContainer');
+        const filtered = getFilteredEvents();
+        const sorted = sortMainEvents(filtered);
+        
+        if (sorted.length === 0) {
+            container.innerHTML = `<div class="empty-msg">📭 没有找到事件，添加一条吧</div>`;
+        } else {
+            container.innerHTML = sorted.map(ev => `
+                <div class="event-card" data-id="${ev.id}">
+                    <div class="event-info">
+                        <div class="event-title">
+                            <strong>${escapeHtml(ev.title)}</strong>
+                            <span class="event-datetime-badge">⏱️ ${formatDateTime(ev.datetime)}</span>
+                        </div>
+                        <div class="event-desc-preview">${escapeHtml(ev.description) || '无详细描述'}</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="icon-btn delete-event" data-id="${ev.id}" title="删除">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        document.getElementById('totalCountSpan').innerHTML = `📋 总计: ${mainEvents.length} 件事`;
+        document.getElementById('filterCountSpan').innerHTML = `📌 当前显示: ${sorted.length}`;
+        document.getElementById('recycleCountBadge').innerText = recycleBin.length;
+
+        // 重新绑定删除事件
+        document.querySelectorAll('.delete-event').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const id = btn.getAttribute('data-id');
+                if (confirm("⚠️ 确定要将该事件移至回收站吗？\n您可以在回收站中恢复或彻底删除。")) {
+                    deleteEventToRecycle(id);
+                }
+            });
+        });
+        // 重新绑定卡片点击查看详情
+        document.querySelectorAll('.event-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (e.target.classList.contains('icon-btn')) return;
+                const id = card.getAttribute('data-id');
+                if(id) showEventDetail(id);
+            });
+        });
+    }
+
+    function showEventDetail(id) {
+        const event = mainEvents.find(ev => ev.id === id);
+        if (!event) return;
+        currentViewEventId = id;
+        document.getElementById('viewTitle').innerText = event.title;
+        document.getElementById('viewDatetime').innerText = formatDateTime(event.datetime);
+        const descHtml = event.description ? escapeHtml(event.description).replace(/\n/g, '<br>') : '暂无详细描述';
+        document.getElementById('viewDescription').innerHTML = descHtml;
+        document.getElementById('viewEventModal').style.display = 'flex';
+    }
+
+    function closeViewModal() {
+        document.getElementById('viewEventModal').style.display = 'none';
+    }
+
+    function editFromView() {
+        if (currentViewEventId) {
+            closeViewModal();
+            startEditEvent(currentViewEventId);
+        } else {
+            alert("无法获取事件信息，请重试");
+        }
+    }
+
+    function startEditEvent(id) {
+        const event = mainEvents.find(ev => ev.id === id);
+        if (!event) {
+            alert("事件不存在，可能已被删除");
+            return;
+        }
+        editingId = id;
+        document.getElementById('titleInput').value = event.title;
+        document.getElementById('datetimeInput').value = event.datetime;
+        document.getElementById('descInput').value = event.description || '';
+        document.getElementById('submitBtn').innerHTML = '✏️ 更新事件';
+        document.getElementById('editCancelGroup').style.display = 'flex';
+        const card = document.getElementById('addEditCard');
+        if (card.classList.contains('collapsed')) {
+            card.classList.remove('collapsed');
+        }
+        card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function cancelEdit() {
+        editingId = null;
+        document.getElementById('eventForm').reset();
+        document.getElementById('submitBtn').innerHTML = '➕ 添加事件';
+        document.getElementById('editCancelGroup').style.display = 'none';
+        setDefaultDateTime();
+    }
+
+    function addOrUpdateEvent(title, datetime, description) {
+        if (!title.trim()) { alert("请填写标题"); return false; }
+        if (!datetime) { alert("请选择日期时间"); return false; }
+        if (editingId) {
+            const index = mainEvents.findIndex(ev => ev.id === editingId);
+            if (index !== -1) {
+                mainEvents[index].title = title.trim();
+                mainEvents[index].datetime = datetime;
+                mainEvents[index].description = description.trim();
+                mainEvents[index].createdAt = mainEvents[index].createdAt || Date.now();
+                saveToLocal();
+                cancelEdit();
+                renderMainList();
+            } else {
+                alert("编辑失败，事件不存在");
+                cancelEdit();
+            }
+        } else {
+            const newEvent = {
+                id: generateId(),
+                title: title.trim(),
+                datetime: datetime,
+                description: description.trim(),
+                createdAt: Date.now()
+            };
+            mainEvents.push(newEvent);
+            saveToLocal();
+            cancelEdit();
+            renderMainList();
+        }
+        return true;
+    }
+
+    function deleteEventToRecycle(id) {
+        const eventIndex = mainEvents.findIndex(ev => ev.id === id);
+        if (eventIndex === -1) return;
+        const deletedEvent = { ...mainEvents[eventIndex], deletedAt: Date.now() };
+        recycleBin.push(deletedEvent);
+        mainEvents.splice(eventIndex, 1);
+        saveToLocal();
+        renderMainList();
+        updateRecycleUI();
+        if (currentViewEventId === id) {
+            closeViewModal();
+        }
+    }
+
+    function restoreFromRecycle(id) {
+        const idx = recycleBin.findIndex(ev => ev.id === id);
+        if (idx === -1) return;
+        const restored = { ...recycleBin[idx] };
+        delete restored.deletedAt;
+        mainEvents.push(restored);
+        recycleBin.splice(idx, 1);
+        saveToLocal();
+        renderMainList();
+        updateRecycleUI();
+    }
+
+    function permanentDeleteRecycle(id) {
+        if (confirm("⚠️ 彻底删除后无法恢复，确定永久删除该事件吗？")) {
+            recycleBin = recycleBin.filter(ev => ev.id !== id);
+            saveToLocal();
+            updateRecycleUI();
+            renderMainList();
+        }
+    }
+
+    function emptyRecycleBin() {
+        if (recycleBin.length === 0) return;
+        if (confirm(`回收站共有 ${recycleBin.length} 条事件，确定全部永久清空吗？`)) {
+            recycleBin = [];
+            saveToLocal();
+            updateRecycleUI();
+            renderMainList();
+        }
+    }
+
+    function updateRecycleUI() {
+        const container = document.getElementById('recycleListContainer');
+        if (!container) return;
+        if (recycleBin.length === 0) {
+            container.innerHTML = '<div class="empty-msg">🗑️ 回收站为空</div>';
+        } else {
+            const sorted = [...recycleBin].sort((a,b) => (b.deletedAt || 0) - (a.deletedAt || 0));
+            container.innerHTML = sorted.map(ev => `
+                <div class="recycle-card">
+                    <div><strong>${escapeHtml(ev.title)}</strong>  <span style="font-size:0.75rem;">⏱️ ${formatDateTime(ev.datetime)}</span></div>
+                    <div style="font-size:0.8rem; margin-top:5px;">${escapeHtml(ev.description) || '无描述'}</div>
+                    <div style="font-size:0.7rem; margin-top:4px;">🗑️ 删除时间: ${new Date(ev.deletedAt).toLocaleString()}</div>
+                    <div class="recycle-actions">
+                        <button class="btn restore-recycle" data-id="${ev.id}" style="background:#d9e8f0;">↩️ 恢复</button>
+                        <button class="btn permanent-del" data-id="${ev.id}" style="background:#f3d7d4;">🔥 彻底删除</button>
+                    </div>
+                </div>
+            `).join('');
+            document.querySelectorAll('.restore-recycle').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    restoreFromRecycle(btn.getAttribute('data-id'));
+                });
+            });
+            document.querySelectorAll('.permanent-del').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    permanentDeleteRecycle(btn.getAttribute('data-id'));
+                });
+            });
+        }
+        document.getElementById('recycleCountBadge').innerText = recycleBin.length;
+    }
+
+    function exportAllData() {
+        const exportData = {
+            version: "2.0",
+            exportDate: new Date().toISOString(),
+            mainEvents: mainEvents,
+            recycleBin: recycleBin
+        };
+        const dataStr = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([dataStr], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `vital_events_precise_${new Date().toISOString().slice(0,19)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function importData(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const imported = JSON.parse(e.target.result);
+                let newMain = imported.mainEvents || [];
+                let newRecycle = imported.recycleBin || [];
+                if (newMain.length === 0 && newRecycle.length === 0) throw new Error("无有效数据");
+                mainEvents.push(...newMain);
+                recycleBin.push(...newRecycle);
+                saveToLocal();
+                renderMainList();
+                updateRecycleUI();
+                alert(`导入成功！新增主事件 ${newMain.length} 条，回收站 ${newRecycle.length} 条。`);
+            } catch(err) {
+                alert("解析失败，请选择正确的JSON备份文件");
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    // 搜索功能 - 关键修复：确保每次输入都更新搜索词并刷新
+    function bindRealTimeSearch() {
+        const searchInput = document.getElementById('searchInput');
+        const clearBtn = document.getElementById('clearFilterBtn');
+        
+        const performSearch = () => {
+            currentSearch = searchInput.value;
+            console.log("搜索触发，当前搜索词:", currentSearch);
+            renderMainList();
+        };
+        
+        searchInput.addEventListener('input', performSearch);
+        searchInput.addEventListener('keyup', performSearch);
+        
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            currentSearch = '';
+            renderMainList();
+            searchInput.focus();
+        });
+    }
+
+    function initCollapsible() {
+        const card = document.getElementById('addEditCard');
+        const header = document.getElementById('cardHeader');
+        header.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+            card.classList.toggle('collapsed');
+        });
+    }
+
+    function initModal() {
+        const modal = document.getElementById('recycleModal');
+        const openBtn = document.getElementById('openRecycleBtn');
+        const closeBtn = document.getElementById('closeModalBtn');
+        openBtn.onclick = () => {
+            updateRecycleUI();
+            modal.style.display = 'flex';
+        };
+        closeBtn.onclick = () => { modal.style.display = 'none'; };
+        window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
+        document.getElementById('emptyRecycleBtn').addEventListener('click', () => emptyRecycleBin());
+    }
+
+    function initViewModal() {
+        const modal = document.getElementById('viewEventModal');
+        const closeBtn = document.getElementById('closeViewModalBtn');
+        const closeViewBtn = document.getElementById('viewCloseBtn');
+        const editBtn = document.getElementById('viewEditBtn');
+        
+        closeBtn.onclick = () => closeViewModal();
+        closeViewBtn.onclick = () => closeViewModal();
+        editBtn.onclick = () => {
+            if (currentViewEventId) {
+                editFromView();
+            } else {
+                alert("请先选择事件");
+                closeViewModal();
+            }
+        };
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) closeViewModal();
+        });
+    }
+
+    function initTheme() {
+        const saved = localStorage.getItem('darkMode');
+        if (saved === 'true') {
+            darkMode = true;
+            document.body.classList.add('dark');
+            document.getElementById('themeToggleBtn').innerHTML = '☀️ 浅色模式';
+        }
+        document.getElementById('themeToggleBtn').addEventListener('click', () => {
+            darkMode = !darkMode;
+            if (darkMode) {
+                document.body.classList.add('dark');
+                localStorage.setItem('darkMode', 'true');
+                document.getElementById('themeToggleBtn').innerHTML = '☀️ 浅色模式';
+            } else {
+                document.body.classList.remove('dark');
+                localStorage.setItem('darkMode', 'false');
+                document.getElementById('themeToggleBtn').innerHTML = '🌙 深色模式';
+            }
+        });
+    }
+
+    function setDefaultDateTime() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const defaultDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+        const datetimeInput = document.getElementById('datetimeInput');
+        if (datetimeInput && !datetimeInput.value) {
+            datetimeInput.value = defaultDateTime;
+        }
+    }
+
+    function init() {
+        loadFromLocal();
+        renderMainList();
+        bindRealTimeSearch();
+        initCollapsible();
+        initModal();
+        initViewModal();
+        initTheme();
+        setDefaultDateTime();
+        
+        const form = document.getElementById('eventForm');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = document.getElementById('titleInput').value;
+            const datetime = document.getElementById('datetimeInput').value;
+            const desc = document.getElementById('descInput').value;
+            addOrUpdateEvent(title, datetime, desc);
+        });
+        document.getElementById('cancelEditBtn').addEventListener('click', () => cancelEdit());
+        document.getElementById('exportDataBtn').addEventListener('click', exportAllData);
+        const fileInput = document.getElementById('importFileInput');
+        fileInput.addEventListener('change', (e) => {
+            if (fileInput.files.length) importData(fileInput.files[0]);
+            fileInput.value = '';
+        });
+    }
+    
+    init();
+</script>
+</body>
+</html>
