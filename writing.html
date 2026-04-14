@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="写作工具">
+    <title>专注写作 · 小说创作工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --bg-panel: #f1f3f5;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --border: #e2e8f0;
+            --accent: #8b5cf6;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-panel: #0f172a;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border: #334155;
+            --accent: #a78bfa;
+            --danger: #f87171;
+            --warning: #fbbf24;
+        }
+
+        body {
+            background: var(--bg-primary);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            color: var(--text-primary);
+        }
+
+        .app {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-bar {
+            padding: 12px 16px;
+            padding-top: 60px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            z-index: 20;
+            position: sticky;
+            top: 0;
+        }
+
+        .left-icons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .right-icons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .icon-btn:active {
+            background: var(--bg-panel);
+            transform: scale(0.96);
+        }
+
+        .stats {
+            font-size: 13px;
+            color: var(--text-secondary);
+            background: var(--bg-panel);
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .save-indicator {
+            font-size: 12px;
+            color: #10b981;
+            background: var(--bg-panel);
+            padding: 4px 8px;
+            border-radius: 16px;
+            transition: opacity 0.3s;
+            display: inline-block;
+        }
+
+        .save-indicator.saving {
+            color: var(--accent);
+        }
+
+        .novel-selector {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .writing-area {
+            flex: 1;
+            padding: 20px 24px;
+            overflow-y: auto;
+            background: var(--bg-primary);
+            position: relative;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        #editor {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 18px;
+            line-height: 1.8;
+            font-family: -apple-system, "SF Pro Text", "Times New Roman", serif;
+            resize: none;
+            outline: none;
+            padding: 4px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .save-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 28px;
+            background: var(--accent);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .save-btn:active {
+            transform: scale(0.92);
+        }
+
+        .left-panel, .right-panel, .trash-panel {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 350px;
+            background: var(--bg-secondary);
+            z-index: 100;
+            transition: transform 0.3s ease;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .left-panel {
+            left: 0;
+            transform: translateX(-100%);
+            border-right: 1px solid var(--border);
+        }
+
+        .right-panel {
+            right: 0;
+            transform: translateX(100%);
+            border-left: 1px solid var(--border);
+        }
+
+        .trash-panel {
+            left: 0;
+            transform: translateX(-100%);
+            border-right: 1px solid var(--border);
+            z-index: 101;
+        }
+
+        .left-panel.open, .right-panel.open, .trash-panel.open {
+            transform: translateX(0);
+        }
+
+        .panel-header {
+            padding: 20px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 18px;
+            background: var(--bg-secondary);
+            flex-shrink: 0;
+        }
+
+        .close-btn {
+            background: var(--bg-panel);
+            border: none;
+            color: var(--text-primary);
+            font-size: 16px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .chapter-list, .trash-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .chapter-item, .trash-item {
+            padding: 12px 14px;
+            background: var(--bg-panel);
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid var(--accent);
+        }
+
+        .trash-item {
+            border-left-color: var(--warning);
+        }
+
+        .chapter-name, .trash-name {
+            font-size: 15px;
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .edit-chapter, .delete-chapter, .restore-trash {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 6px 8px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .edit-chapter:hover, .delete-chapter:hover, .restore-trash:hover {
+            opacity: 1;
+        }
+
+        .delete-chapter, .delete-novel-btn {
+            color: var(--danger);
+        }
+
+        .search-panel {
+            position: fixed;
+            top: 120px;
+            left: 20px;
+            right: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 12px;
+            z-index: 150;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .search-panel.open {
+            display: block;
+        }
+
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            background: var(--bg-panel);
+            font-size: 14px;
+        }
+
+        .search-stats {
+            font-size: 12px;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .search-results-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 8px;
+        }
+
+        .search-result-item {
+            padding: 10px;
+            margin: 4px 0;
+            background: var(--bg-panel);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .collapsible-section {
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 14px 16px;
+            background: var(--bg-panel);
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .section-content.open {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .person-item, .inspire-item {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .person-header {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .person-name-input {
+            flex: 1;
+            padding: 6px 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-panel);
+            font-size: 14px;
+        }
+
+        .person-desc, .inspire-text {
+            width: 100%;
+            padding: 8px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            resize: vertical;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+        }
+
+        .add-btn {
+            margin: 12px;
+            padding: 8px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            width: calc(100% - 24px);
+        }
+
+        .export-bottom {
+            margin-top: 20px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .export-bottom-btn, .import-bottom-btn {
+            padding: 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .import-bottom-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+        }
+
+        .chapter-mode-indicator {
+            position: fixed;
+            bottom: 100px;
+            left: 24px;
+            background: var(--accent);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .chapter-mode-indicator.show {
+            opacity: 0.8;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        #outline {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-panel);
+            border: none;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        .toggle-icon {
+            font-size: 12px;
+        }
+        
+        .close-search {
+            background: var(--bg-panel);
+            border: none;
+            border-radius: 20px;
+            padding: 4px 12px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <div class="top-bar">
+        <div class="left-icons">
+            <button class="icon-btn" id="leftPanelBtn">📖 目录</button>
+            <button class="icon-btn" id="quickInspireBtn">⚡ 灵感</button>
+            <button class="icon-btn" id="addChapterTopBtn">➕ 新加章节</button>
+            <button class="icon-btn" id="searchBtn">🔍 搜索</button>
+            <button class="icon-btn" id="trashBtn">🗑️ 回收站</button>
+        </div>
+        <div class="right-icons">
+            <button class="icon-btn" id="rightPanelBtn">📝 思路</button>
+            <span class="stats" id="wordCount">0 字</span>
+            <span id="saveIndicator" class="save-indicator">✓ 已保存</span>
+            <button class="icon-btn" id="themeToggle">🌙</button>
+            <select id="novelSelector" class="novel-selector"></select>
+            <button class="icon-btn" id="deleteNovelBtn" style="color: var(--danger);">🗑️ 删小说</button>
+        </div>
+    </div>
+
+    <div class="writing-area">
+        <textarea id="editor" placeholder="开始写作...&#10;&#10;在这里写下你的故事..."></textarea>
+    </div>
+    <button class="save-btn" id="saveBtn">💾</button>
+    <div id="chapterModeIndicator" class="chapter-mode-indicator">📖 当前显示: 编辑区</div>
+</div>
+
+<div id="searchPanel" class="search-panel">
+    <div class="search-header">
+        <strong>🔍 全局搜索 (所有小说)</strong>
+        <button class="close-search" id="closeSearchBtn">关闭</button>
+    </div>
+    <input type="text" id="searchInput" class="search-input" placeholder="搜索所有小说的内容...">
+    <div class="search-stats" id="searchStats">输入关键词，将搜索全部小说</div>
+    <div id="searchResultsList" class="search-results-list"></div>
+</div>
+
+<div id="leftPanel" class="left-panel">
+    <div class="panel-header">
+        <span>📚 章节目录</span>
+        <button class="close-btn" id="closeLeft">关闭</button>
+    </div>
+    <div class="panel-content">
+        <div id="chapterList" class="chapter-list"></div>
+    </div>
+</div>
+
+<div id="rightPanel" class="right-panel">
+    <div class="panel-header">
+        <span>💡 创作思路库</span>
+        <button class="close-btn" id="closeRight">关闭</button>
+    </div>
+    <div class="panel-content">
+        <div class="collapsible-section">
+            <div class="section-header">
+                <span>📜 故事大纲</span>
+            </div>
+            <div class="section-content open">
+                <textarea id="outline" rows="5" placeholder="故事主线、世界观、核心冲突..."></textarea>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-header" id="charactersHeader">
+                <span>👥 人物设定 <span id="charCount">(0)</span></span>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content" id="charactersContent">
+                <div id="charactersList"></div>
+                <button class="add-btn" id="addPersonBtn">+ 添加人物</button>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-header" id="inspireHeader">
+                <span>✨ 灵感碎片 <span id="inspireCount">(0)</span></span>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content" id="inspireContent">
+                <div id="inspireList"></div>
+                <button class="add-btn" id="addInspireBtn">+ 添加灵感</button>
+            </div>
+        </div>
+
+        <div class="export-bottom">
+            <button class="export-bottom-btn" id="exportBottomBtn">📤 导出所有小说（备份）</button>
+            <button class="import-bottom-btn" id="importBottomBtn">📥 导入备份恢复</button>
+        </div>
+    </div>
+</div>
+
+<div id="trashPanel" class="trash-panel">
+    <div class="panel-header">
+        <span>🗑️ 回收站 (已删除的章节)</span>
+        <button class="close-btn" id="closeTrash">关闭</button>
+    </div>
+    <div class="panel-content">
+        <div id="trashList" class="trash-list"></div>
+        <div style="padding: 12px; text-align: center; font-size: 12px;">点击章节旁的↩️可恢复，彻底删除不可逆</div>
+    </div>
+</div>
+
+<input type="file" id="fileInput" accept=".json">
+
+<script>
+    // 数据结构
+    let novels = {};
+    let trashChapters = {};
+    let currentNovel = "empty";
+    let currentChapterName = "";
+    let isChapterMode = false;
+
+    const builtInNovels = {
+        empty: { name: "📝 空白新作", content: "", outline: "", characters: [], inspirations: [], chaptersOrder: [] },
+        xianxia1: {
+            name: "《剑道永恒》",
+            content: `第一章 断剑崖\n\n清晨的雾气还未散去，少年林尘站在断剑崖边...\n\n第二章 宗门大比\n\n阳光洒在演武场上...\n\n第三章 剑心觉醒\n\n异变突生...`,
+            outline: "剑道永恒的世界观和主线...",
+            characters: [{ name: "林尘", desc: "主角，18岁" }, { name: "云老", desc: "师父" }],
+            inspirations: [{ text: "星辰剑觉醒", time: "2024-01-10" }],
+            chaptersOrder: []
+        }
+    };
+
+    function loadFromStorage() {
+        const savedNovels = localStorage.getItem("writingNovels_final_v7");
+        const savedTrash = localStorage.getItem("writingNovels_trashChapters_v7");
+        if (savedNovels) {
+            novels = JSON.parse(savedNovels);
+        } else {
+            novels = {};
+            for (let key in builtInNovels) {
+                novels[key] = JSON.parse(JSON.stringify(builtInNovels[key]));
+                if (!novels[key].chaptersOrder) novels[key].chaptersOrder = [];
+            }
+        }
+        if (savedTrash) {
+            trashChapters = JSON.parse(savedTrash);
+        } else {
+            trashChapters = {};
+        }
+        if (!novels["empty"]) {
+            novels["empty"] = { name: "📝 空白新作", content: "", outline: "", characters: [], inspirations: [], chaptersOrder: [] };
+        }
+        currentNovel = "empty";
+        if (!novels[currentNovel]) currentNovel = Object.keys(novels)[0];
+    }
+
+    function persistAll() {
+        localStorage.setItem("writingNovels_final_v7", JSON.stringify(novels));
+        localStorage.setItem("writingNovels_trashChapters_v7", JSON.stringify(trashChapters));
+    }
+
+    function showSaveIndicator(msg) {
+        const ind = document.getElementById("saveIndicator");
+        ind.textContent = msg || "✓ 已保存";
+        ind.classList.add("saving");
+        setTimeout(() => {
+            ind.textContent = "✓ 已保存";
+            ind.classList.remove("saving");
+        }, 2000);
+    }
+
+    function loadCurrentNovel() {
+        const data = novels[currentNovel];
+        if (!data) return;
+        isChapterMode = false;
+        currentChapterName = "";
+        document.getElementById("editor").value = data.content || "";
+        document.getElementById("chapterModeIndicator").innerHTML = "📖 当前显示: 编辑区";
+        document.getElementById("outline").value = data.outline || "";
+        if (!data.characters) data.characters = [];
+        if (!data.inspirations) data.inspirations = [];
+        renderCharacters();
+        renderInspirations();
+        updateWordCount();
+        refreshChapterList();
+    }
+
+    function saveCurrentNovel() {
+        if (!novels[currentNovel]) return;
+        const currentContent = document.getElementById("editor").value;
+        
+        if (isChapterMode && currentChapterName) {
+            let fullContent = novels[currentNovel].content || "";
+            const lines = fullContent.split("\n");
+            let chapterStartIndex = -1;
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].trim() === currentChapterName) {
+                    chapterStartIndex = i;
+                    break;
+                }
+            }
+            if (chapterStartIndex !== -1) {
+                let chapterEndIndex = lines.length;
+                for (let i = chapterStartIndex + 1; i < lines.length; i++) {
+                    if (/^(第[一二三四五六七八九十百千万0-9]+[章节回篇]|[\d]+[\.、\s]|序言|楔子|尾声)/.test(lines[i].trim())) {
+                        chapterEndIndex = i;
+                        break;
+                    }
+                }
+                const before = lines.slice(0, chapterStartIndex).join("\n");
+                const after = lines.slice(chapterEndIndex).join("\n");
+                fullContent = before + (before ? "\n" : "") + currentContent + (after ? "\n" + after : "");
+                novels[currentNovel].content = fullContent;
+            } else {
+                novels[currentNovel].content = fullContent + (fullContent ? "\n\n" : "") + currentContent;
+            }
+        } else {
+            novels[currentNovel].content = currentContent;
+        }
+        
+        novels[currentNovel].outline = document.getElementById("outline").value;
+        persistAll();
+        updateWordCount();
+        refreshChapterList();
+        showSaveIndicator("✓ 已保存");
+    }
+
+    // 获取所有章节 - 改进正则，支持更多章节格式
+    function getAllChapters() {
+        const content = novels[currentNovel]?.content || "";
+        const lines = content.split("\n");
+        const chapters = [];
+        // 更全面的章节标题匹配
+        const pattern = /^(第[零一二三四五六七八九十百千万0-9]+[章回节]|[\d]+[\.、\s]|序言|楔子|尾声|引子|第[零一二三四五六七八九十百千万0-9]+卷)/;
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i].trim();
+            if (pattern.test(line) && line.length < 60 && line.length > 0) {
+                chapters.push({ name: line, startIndex: i });
+            }
+        }
+        for (let i = 0; i < chapters.length; i++) {
+            const end = (i + 1 < chapters.length) ? chapters[i + 1].startIndex : lines.length;
+            chapters[i].content = lines.slice(chapters[i].startIndex, end).join("\n");
+        }
+        return chapters;
+    }
+
+    // 删除章节并移至回收站 - 修复版
+    function deleteChapterByName(chapterName) {
+        if (!confirm(`确定将章节「${chapterName}」移至回收站吗？可在回收站恢复。`)) return;
+        
+        let content = novels[currentNovel].content || "";
+        const lines = content.split("\n");
+        let chapterContent = "";
+        let newLines = [];
+        let skip = false;
+        let found = false;
+        
+        for (let i = 0; i < lines.length; i++) {
+            const trimmed = lines[i].trim();
+            if (!found && trimmed === chapterName) {
+                found = true;
+                skip = true;
+                chapterContent = lines[i] + "\n";
+                continue;
+            }
+            if (skip && /^(第[零一二三四五六七八九十百千万0-9]+[章回节]|[\d]+[\.、\s]|序言|楔子|尾声|引子)/.test(trimmed)) {
+                skip = false;
+            }
+            if (!skip) {
+                newLines.push(lines[i]);
+            } else {
+                chapterContent += lines[i] + (i < lines.length-1 ? "\n" : "");
+            }
+        }
+        
+        if (found) {
+            novels[currentNovel].content = newLines.join("\n");
+            // 存入回收站
+            if (!trashChapters[currentNovel]) trashChapters[currentNovel] = [];
+            trashChapters[currentNovel].push({
+                chapterName: chapterName,
+                content: chapterContent.trim(),
+                deleteTime: new Date().toLocaleString(),
+                novelName: novels[currentNovel].name
+            });
+            persistAll();
+            
+            if (isChapterMode && currentChapterName === chapterName) {
+                isChapterMode = false;
+                currentChapterName = "";
+                document.getElementById("editor").value = novels[currentNovel].content || "";
+                document.getElementById("chapterModeIndicator").innerHTML = "📖 当前显示: 编辑区";
+            }
+            
+            refreshChapterList();
+            renderTrashList();
+            showSaveIndicator(`🗑️ 已移至回收站: ${chapterName}`);
+        } else {
+            alert("未找到该章节");
+        }
+    }
+
+    function refreshChapterList() {
+        const chapters = getAllChapters();
+        const container = document.getElementById("chapterList");
+        if (chapters.length === 0) {
+            container.innerHTML = "<div style='padding:20px; text-align:center; opacity:0.6'>📖 暂无章节<br><small>点击「新加章节」创建</small></div>";
+            return;
+        }
+        container.innerHTML = chapters.map((ch, idx) => `
+            <div class="chapter-item" data-idx="${idx}">
+                <span class="chapter-name">📖 ${escapeHtml(ch.name)}</span>
+                <div>
+                    <button class="edit-chapter" data-name="${escapeHtml(ch.name)}">✏️</button>
+                    <button class="delete-chapter" data-name="${escapeHtml(ch.name)}">🗑️</button>
+                </div>
+            </div>
+        `).join("");
+        
+        // 绑定章节点击事件
+        document.querySelectorAll(".chapter-item").forEach(item => {
+            item.addEventListener("click", (e) => {
+                if (e.target.classList.contains("edit-chapter") || e.target.classList.contains("delete-chapter")) return;
+                const idx = parseInt(item.dataset.idx);
+                const chapter = chapters[idx];
+                if (chapter) {
+                    isChapterMode = true;
+                    currentChapterName = chapter.name;
+                    document.getElementById("editor").value = chapter.content;
+                    document.getElementById("chapterModeIndicator").innerHTML = `📖 当前显示: ${chapter.name}`;
+                    document.getElementById("chapterModeIndicator").classList.add("show");
+                    setTimeout(() => document.getElementById("chapterModeIndicator").classList.remove("show"), 1500);
+                    updateWordCount();
+                    document.getElementById("leftPanel").classList.remove("open");
+                }
+            });
+        });
+        
+        // 编辑章节名
+        document.querySelectorAll(".edit-chapter").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const oldName = btn.dataset.name;
+                const newName = prompt("修改章节名:", oldName);
+                if (newName && newName.trim() && newName !== oldName) {
+                    let content = novels[currentNovel].content || "";
+                    // 精确替换章节标题
+                    const lines = content.split("\n");
+                    for (let i = 0; i < lines.length; i++) {
+                        if (lines[i].trim() === oldName) {
+                            lines[i] = newName.trim();
+                            break;
+                        }
+                    }
+                    novels[currentNovel].content = lines.join("\n");
+                    if (isChapterMode && currentChapterName === oldName) currentChapterName = newName.trim();
+                    saveCurrentNovel();
+                    refreshChapterList();
+                    showSaveIndicator(`已修改为: ${newName}`);
+                }
+            });
+        });
+        
+        // 删除章节
+        document.querySelectorAll(".delete-chapter").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                deleteChapterByName(btn.dataset.name);
+            });
+        });
+    }
+
+    // 添加新章节 - 修复版，确保格式正确并立即刷新目录
+    function addNewChapter() {
+        let input = prompt("输入章节名称:", "第一章");
+        if (input && input.trim()) {
+            let chapterName = input.trim();
+            let currentContent = novels[currentNovel].content || "";
+            // 确保章节格式规范，便于后续识别
+            let newChapter = chapterName + "\n\n（在这里开始你的故事...）\n";
+            let newFullContent = currentContent + (currentContent ? "\n\n" : "") + newChapter;
+            novels[currentNovel].content = newFullContent;
+            persistAll();
+            
+            // 立即刷新目录
+            refreshChapterList();
+            
+            // 自动进入章节编辑模式
+            isChapterMode = true;
+            currentChapterName = chapterName;
+            document.getElementById("editor").value = newChapter;
+            document.getElementById("chapterModeIndicator").innerHTML = `📖 当前显示: ${chapterName}`;
+            document.getElementById("chapterModeIndicator").classList.add("show");
+            setTimeout(() => document.getElementById("chapterModeIndicator").classList.remove("show"), 1500);
+            document.getElementById("editor").focus();
+            updateWordCount();
+            showSaveIndicator(`✅ 已创建章节: ${chapterName}`);
+        }
+    }
+
+    // 删除小说
+    function deleteCurrentNovel() {
+        if (currentNovel === "empty") {
+            alert("默认空白作品不可删除，但你可以清空内容。");
+            return;
+        }
+        if (!novels[currentNovel]) return;
+        if (confirm(`确定删除小说「${novels[currentNovel].name}」吗？此操作不可恢复！`)) {
+            delete novels[currentNovel];
+            delete trashChapters[currentNovel];
+            persistAll();
+            const keys = Object.keys(novels);
+            currentNovel = keys.includes("empty") ? "empty" : (keys[0] || "empty");
+            if (!novels[currentNovel]) novels[currentNovel] = { name: "📝 空白新作", content: "", outline: "", characters: [], inspirations: [], chaptersOrder: [] };
+            loadCurrentNovel();
+            updateNovelSelector();
+            renderTrashList();
+            showSaveIndicator("已删除小说");
+        }
+    }
+
+    // 回收站渲染
+    function renderTrashList() {
+        const container = document.getElementById("trashList");
+        const currentTrash = trashChapters[currentNovel] || [];
+        if (currentTrash.length === 0) {
+            container.innerHTML = "<div style='padding:20px;text-align:center;opacity:0.6'>🗑️ 回收站为空</div>";
+            return;
+        }
+        container.innerHTML = currentTrash.map((item, idx) => `
+            <div class="trash-item" data-idx="${idx}">
+                <span class="trash-name">📄 ${escapeHtml(item.chapterName)}<br><small style="font-size:10px">删除于: ${item.deleteTime}</small></span>
+                <div>
+                    <button class="restore-trash" data-idx="${idx}" title="恢复">↩️</button>
+                    <button class="delete-trash-permanent" data-idx="${idx}" style="color:var(--danger);background:none;border:none;" title="彻底删除">💀</button>
+                </div>
+            </div>
+        `).join("");
+        
+        document.querySelectorAll(".restore-trash").forEach(btn => {
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                const idx = parseInt(btn.dataset.idx);
+                const trashItem = trashChapters[currentNovel][idx];
+                if (trashItem) {
+                    let currentContent = novels[currentNovel].content || "";
+                    let restoredContent = trashItem.content;
+                    novels[currentNovel].content = currentContent + (currentContent ? "\n\n" : "") + restoredContent;
+                    trashChapters[currentNovel].splice(idx, 1);
+                    if (trashChapters[currentNovel].length === 0) delete trashChapters[currentNovel];
+                    persistAll();
+                    refreshChapterList();
+                    renderTrashList();
+                    loadCurrentNovel();
+                    showSaveIndicator(`已恢复: ${trashItem.chapterName}`);
+                }
+            };
+        });
+        document.querySelectorAll(".delete-trash-permanent").forEach(btn => {
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                const idx = parseInt(btn.dataset.idx);
+                if (confirm(`彻底删除章节「${trashChapters[currentNovel][idx].chapterName}」？不可恢复！`)) {
+                    trashChapters[currentNovel].splice(idx, 1);
+                    if (trashChapters[currentNovel].length === 0) delete trashChapters[currentNovel];
+                    persistAll();
+                    renderTrashList();
+                    showSaveIndicator("已彻底删除");
+                }
+            };
+        });
+    }
+
+    // 全局搜索
+    function globalSearch(keyword) {
+        if (!keyword.trim()) return [];
+        const kw = keyword.toLowerCase();
+        const results = [];
+        for (let novelId in novels) {
+            const novel = novels[novelId];
+            const content = novel.content || "";
+            const lowerContent = content.toLowerCase();
+            let idx = -1;
+            while ((idx = lowerContent.indexOf(kw, idx + 1)) !== -1) {
+                const start = Math.max(0, idx - 40);
+                const end = Math.min(content.length, idx + keyword.length + 40);
+                results.push({
+                    novelId: novelId,
+                    novelName: novel.name,
+                    pos: idx,
+                    preview: content.substring(start, end)
+                });
+                if (results.length > 100) break;
+            }
+        }
+        return results;
+    }
+
+    function updateNovelSelector() {
+        const sel = document.getElementById("novelSelector");
+        sel.innerHTML = "";
+        for (let key in novels) {
+            const opt = document.createElement("option");
+            opt.value = key;
+            opt.textContent = novels[key].name;
+            if (key === currentNovel) opt.selected = true;
+            sel.appendChild(opt);
+        }
+        const addOpt = document.createElement("option");
+        addOpt.value = "__new__";
+        addOpt.textContent = "+ 新建小说";
+        sel.appendChild(addOpt);
+    }
+
+    document.getElementById("novelSelector").addEventListener("change", (e) => {
+        if (e.target.value === "__new__") {
+            let name = prompt("输入小说名称:");
+            if (name && !novels[name]) {
+                novels[name] = { name: name, content: "", outline: "", characters: [], inspirations: [], chaptersOrder: [] };
+                currentNovel = name;
+                saveCurrentNovel();
+                loadCurrentNovel();
+                updateNovelSelector();
+                renderTrashList();
+            } else if (name) alert("名称已存在");
+            document.getElementById("novelSelector").value = currentNovel;
+        } else {
+            currentNovel = e.target.value;
+            loadCurrentNovel();
+            renderTrashList();
+        }
+    });
+
+    // 搜索UI
+    document.getElementById("searchBtn").addEventListener("click", () => {
+        const panel = document.getElementById("searchPanel");
+        panel.classList.toggle("open");
+        if (panel.classList.contains("open")) document.getElementById("searchInput").focus();
+    });
+    document.getElementById("closeSearchBtn").onclick = () => {
+        document.getElementById("searchPanel").classList.remove("open");
+    };
+    document.getElementById("searchInput").addEventListener("input", () => {
+        const keyword = document.getElementById("searchInput").value.trim();
+        if (!keyword) {
+            document.getElementById("searchStats").innerHTML = "输入关键词，将搜索全部小说";
+            document.getElementById("searchResultsList").innerHTML = "";
+            return;
+        }
+        const results = globalSearch(keyword);
+        if (results.length === 0) {
+            document.getElementById("searchStats").innerHTML = `未找到 "${keyword}"`;
+            document.getElementById("searchResultsList").innerHTML = "<div style='text-align:center;padding:12px;'>未找到</div>";
+        } else {
+            document.getElementById("searchStats").innerHTML = `找到 ${results.length} 个结果 (共${Object.keys(novels).length}部小说)`;
+            document.getElementById("searchResultsList").innerHTML = results.map((r, i) => `<div class="search-result-item" data-novel="${escapeHtml(r.novelId)}" data-pos="${r.pos}">📘 ${escapeHtml(r.novelName)}<br>🔍 ${escapeHtml(r.preview)}</div>`).join("");
+            document.querySelectorAll(".search-result-item").forEach(item => {
+                item.onclick = () => {
+                    const targetNovelId = item.dataset.novel;
+                    const pos = parseInt(item.dataset.pos);
+                    if (targetNovelId && novels[targetNovelId]) {
+                        currentNovel = targetNovelId;
+                        loadCurrentNovel();
+                        updateNovelSelector();
+                        renderTrashList();
+                        const editor = document.getElementById("editor");
+                        editor.focus();
+                        editor.setSelectionRange(pos, pos);
+                        editor.scrollTop = Math.floor(pos / 100) * 20;
+                        document.getElementById("searchPanel").classList.remove("open");
+                        showSaveIndicator(`跳转到: ${novels[currentNovel].name}`);
+                    }
+                };
+            });
+        }
+    });
+
+    function renderCharacters() {
+        const chars = novels[currentNovel]?.characters || [];
+        document.getElementById("charCount").innerText = `(${chars.length})`;
+        const container = document.getElementById("charactersList");
+        if (chars.length === 0) { container.innerHTML = "<div style='padding:12px;text-align:center'>暂无人物</div>"; return; }
+        container.innerHTML = chars.map((c, i) => `<div class="person-item"><div class="person-header"><input class="person-name-input" value="${escapeHtml(c.name)}" data-i="${i}"><div class="action-buttons"><button class="delete-btn" data-i="${i}" style="color:var(--danger)">🗑️</button></div></div><textarea class="person-desc" data-i="${i}" rows="2">${escapeHtml(c.desc || '')}</textarea></div>`).join("");
+        document.querySelectorAll(".person-name-input").forEach(inp => { inp.onchange = () => { const i = parseInt(inp.dataset.i); novels[currentNovel].characters[i].name = inp.value; saveCurrentNovel(); }; });
+        document.querySelectorAll(".person-desc").forEach(ta => { ta.onchange = () => { const i = parseInt(ta.dataset.i); novels[currentNovel].characters[i].desc = ta.value; saveCurrentNovel(); }; });
+        document.querySelectorAll(".delete-btn[data-i]").forEach(btn => { btn.onclick = () => { const i = parseInt(btn.dataset.i); novels[currentNovel].characters.splice(i,1); saveCurrentNovel(); renderCharacters(); }; });
+    }
+    
+    function renderInspirations() {
+        const insp = novels[currentNovel]?.inspirations || [];
+        document.getElementById("inspireCount").innerText = `(${insp.length})`;
+        const container = document.getElementById("inspireList");
+        if (insp.length === 0) { container.innerHTML = "<div style='padding:12px;text-align:center'>暂无灵感</div>"; return; }
+        container.innerHTML = insp.map((c,i) => `<div class="inspire-item"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-size:11px">${c.time||''}</span><button class="delete-inspire" data-i="${i}" style="color:var(--danger);background:none;border:none">🗑️</button></div><textarea class="inspire-text" data-i="${i}" rows="2">${escapeHtml(c.text||'')}</textarea></div>`).join("");
+        document.querySelectorAll(".inspire-text").forEach(ta => { ta.onchange = () => { const i=parseInt(ta.dataset.i); novels[currentNovel].inspirations[i].text = ta.value; saveCurrentNovel(); }; });
+        document.querySelectorAll(".delete-inspire").forEach(btn => { btn.onclick = () => { const i=parseInt(btn.dataset.i); novels[currentNovel].inspirations.splice(i,1); saveCurrentNovel(); renderInspirations(); }; });
+    }
+
+    // 事件绑定
+    document.getElementById("editor").addEventListener("input", () => { updateWordCount(); saveCurrentNovel(); });
+    document.getElementById("saveBtn").onclick = () => saveCurrentNovel();
+    document.getElementById("leftPanelBtn").onclick = () => { refreshChapterList(); document.getElementById("leftPanel").classList.add("open"); };
+    document.getElementById("closeLeft").onclick = () => document.getElementById("leftPanel").classList.remove("open");
+    document.getElementById("rightPanelBtn").onclick = () => document.getElementById("rightPanel").classList.add("open");
+    document.getElementById("closeRight").onclick = () => document.getElementById("rightPanel").classList.remove("open");
+    document.getElementById("addChapterTopBtn").onclick = () => addNewChapter();
+    document.getElementById("quickInspireBtn").onclick = () => { let txt = prompt("✨ 记录灵感碎片:"); if(txt&&txt.trim()){ if(!novels[currentNovel].inspirations) novels[currentNovel].inspirations=[]; novels[currentNovel].inspirations.unshift({text:txt,time:new Date().toLocaleString()}); saveCurrentNovel(); renderInspirations(); } };
+    document.getElementById("addPersonBtn").onclick = () => { if(!novels[currentNovel].characters) novels[currentNovel].characters=[]; novels[currentNovel].characters.push({name:"新人物",desc:""}); saveCurrentNovel(); renderCharacters(); };
+    document.getElementById("addInspireBtn").onclick = () => { if(!novels[currentNovel].inspirations) novels[currentNovel].inspirations=[]; novels[currentNovel].inspirations.push({text:"",time:new Date().toLocaleString()}); saveCurrentNovel(); renderInspirations(); };
+    document.getElementById("exportBottomBtn").onclick = () => { const data = JSON.stringify({novels, trashChapters}); const blob = new Blob([data]); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `backup_${Date.now()}.json`; a.click(); URL.revokeObjectURL(a.href); };
+    document.getElementById("importBottomBtn").onclick = () => document.getElementById("fileInput").click();
+    document.getElementById("fileInput").onchange = (e) => { const file = e.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = (ev) => { try { const imported = JSON.parse(ev.target.result); if(imported.novels) novels = imported.novels; if(imported.trashChapters) trashChapters = imported.trashChapters; else if(!imported.novels) novels = imported; persistAll(); currentNovel = Object.keys(novels)[0] || "empty"; loadCurrentNovel(); updateNovelSelector(); renderTrashList(); alert("恢复成功"); } catch(err){ alert("文件错误"); } }; reader.readAsText(file); };
+    document.getElementById("deleteNovelBtn").onclick = () => deleteCurrentNovel();
+    document.getElementById("trashBtn").onclick = () => { renderTrashList(); document.getElementById("trashPanel").classList.add("open"); };
+    document.getElementById("closeTrash").onclick = () => document.getElementById("trashPanel").classList.remove("open");
+    
+    function updateWordCount() { const text = document.getElementById("editor").value; document.getElementById("wordCount").innerText = text.replace(/\s/g,"").length + " 字"; }
+    function escapeHtml(str){ if(!str) return ""; return str.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'); }
+    
+    let darkMode = localStorage.getItem("darkMode") === "true";
+    function setTheme(){ if(darkMode){ document.documentElement.setAttribute("data-theme","dark"); document.getElementById("themeToggle").innerHTML="☀️"; } else { document.documentElement.removeAttribute("data-theme"); document.getElementById("themeToggle").innerHTML="🌙"; } }
+    document.getElementById("themeToggle").onclick = () => { darkMode = !darkMode; localStorage.setItem("darkMode", darkMode); setTheme(); };
+    setTheme();
+    
+    function setupCollapsible(headerId, contentId){ const header=document.getElementById(headerId); const content=document.getElementById(contentId); if(!header||!content) return; let isOpen=localStorage.getItem(`${headerId}_open`)!=="false"; if(isOpen) content.classList.add("open"); header.onclick=()=>{ content.classList.toggle("open"); localStorage.setItem(`${headerId}_open`, content.classList.contains("open")); }; }
+    
+    setInterval(()=>{ if(document.visibilityState === 'visible') saveCurrentNovel(); }, 30000);
+    document.getElementById("outline").addEventListener("input", () => saveCurrentNovel());
+    
+    loadFromStorage();
+    if (!novels[currentNovel]) currentNovel = Object.keys(novels)[0];
+    loadCurrentNovel();
+    updateNovelSelector();
+    renderTrashList();
+    setupCollapsible("charactersHeader", "charactersContent");
+    setupCollapsible("inspireHeader", "inspireContent");
+</script>
+</body>
+</html>
