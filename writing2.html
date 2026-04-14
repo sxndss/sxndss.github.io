@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="瞬记">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%233B82F6'/%3E%3Ctext x='50' y='67' text-anchor='middle' fill='white' font-size='44' font-weight='bold'%3E💡%3C/text%3E%3C/svg%3E">
+    <title>瞬记 - 随时记录感悟</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Helvetica, sans-serif;
+            background: #ffffff;
+            color: #1c1c1e;
+            padding-bottom: 70px;
+        }
+
+        /* 状态栏适配 */
+        .status-bar {
+            height: env(safe-area-inset-top);
+            background: #ffffff;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 头部 */
+        .header {
+            background: #ffffff;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e9e9ef;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.95);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 快速记录按钮（浮动） */
+        .fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 28px;
+            background: #3B82F6;
+            color: white;
+            border: none;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(59,130,246,0.4);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fab:active {
+            transform: scale(0.95);
+        }
+
+        /* 卡片样式 - 白色背景 */
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            transition: all 0.2s;
+            border: 1px solid #f0f0f0;
+        }
+
+        /* 随机回顾卡片 - 随机深色纯色 */
+        .random-card {
+            color: white;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease;
+            border: none;
+        }
+
+        .random-card .random-label {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .random-card .refresh-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .random-card .refresh-btn:active {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .random-card .thought-number {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            opacity: 0.8;
+        }
+
+        .random-card .thought {
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            color: #ffffff;
+        }
+
+        .random-card .event {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .random-card .meta {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 12px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* 记录卡片 */
+        .note-item {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+            border: 1px solid #f0f0f0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+
+        .note-header {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .note-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #3B82F6;
+            background: #eff6ff;
+            padding: 2px 8px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .note-time {
+            font-size: 12px;
+            color: #8e8e93;
+            font-family: monospace;
+        }
+
+        .note-thought {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1c1c1e;
+            margin: 12px 0 8px;
+            line-height: 1.4;
+            padding-left: 4px;
+        }
+
+        .note-event-preview {
+            font-size: 14px;
+            color: #8e8e93;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .note-event-preview.show {
+            display: block;
+        }
+
+        .note-event-full {
+            background: #f8f9fc;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 8px 0;
+            font-size: 14px;
+            color: #3a3a3c;
+            line-height: 1.5;
+        }
+
+        .note-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 10px 0 0;
+        }
+
+        .tag {
+            background: #f2f2f7;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            color: #3B82F6;
+        }
+
+        .expand-btn {
+            background: none;
+            border: none;
+            color: #3B82F6;
+            font-size: 12px;
+            padding: 4px 0;
+            margin-top: 8px;
+            cursor: pointer;
+        }
+
+        /* 回收站卡片 */
+        .recycle-item {
+            background: #fff5f5;
+            border-left: 3px solid #ff3b30;
+        }
+
+        .restore-btn {
+            background: #34c759;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        /* 标签筛选器 - 可折叠 */
+        .tags-filter-container {
+            margin-bottom: 20px;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .tags-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-height: 48px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .tags-filter.expanded {
+            max-height: 500px;
+        }
+
+        .filter-tag {
+            background: #f2f2f7;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            color: #1c1c1e;
+        }
+
+        .filter-tag.active {
+            background: #3B82F6;
+            color: white;
+        }
+
+        .toggle-tags-btn {
+            background: none;
+            border: none;
+            color: #3B82F6;
+            font-size: 12px;
+            padding: 8px;
+            margin-top: 8px;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* 日期选择器 */
+        .date-selector {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #f0f0f0;
+        }
+
+        .date-selector input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #e9e9ef;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #ffffff;
+            color: #1c1c1e;
+        }
+
+        .date-nav-btn {
+            background: #f2f2f7;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #1c1c1e;
+        }
+
+        /* 分页 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 20px;
+            padding: 16px;
+        }
+
+        .page-btn {
+            background: #f2f2f7;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #1c1c1e;
+            font-size: 14px;
+        }
+
+        .page-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            padding: 8px 16px;
+            color: #8e8e93;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8e8e93;
+        }
+
+        /* 搜索框 */
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            background: #ffffff;
+            border: 1px solid #e9e9ef;
+            border-radius: 12px;
+            padding: 12px 16px;
+            width: 100%;
+            font-size: 16px;
+            color: #1c1c1e;
+        }
+
+        .search-input::placeholder {
+            color: #c7c7cc;
+        }
+
+        /* 设置页面 */
+        .stats-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #3B82F6;
+        }
+
+        /* 设置中的标签容器 */
+        .settings-tags-container {
+            margin-top: 12px;
+        }
+
+        .settings-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-height: 48px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .settings-tags.expanded {
+            max-height: 500px;
+        }
+
+        /* 底部导航 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #e9e9ef;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 20px 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+        }
+
+        .nav-item {
+            text-align: center;
+            padding: 8px;
+            font-size: 12px;
+            color: #8e8e93;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .nav-item.active {
+            color: #3B82F6;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: flex-end;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            width: 100%;
+            border-radius: 20px 20px 0 0;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e9e9ef;
+            font-weight: 600;
+            font-size: 18px;
+            position: sticky;
+            top: 0;
+            background: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #1c1c1e;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e9e9ef;
+            display: flex;
+            gap: 12px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            border: 1px solid #e9e9ef;
+            border-radius: 12px;
+            resize: vertical;
+            margin-bottom: 16px;
+            background: #ffffff;
+            color: #1c1c1e;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #e9e9ef;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            background: #ffffff;
+            color: #1c1c1e;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: #3B82F6;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f2f2f7;
+            color: #1c1c1e;
+        }
+
+        .btn-danger {
+            background: #ff3b30;
+            color: white;
+        }
+
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: #3B82F6;
+        }
+
+        /* 随机界面按钮组 */
+        .random-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        /* 加载动画 */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8e8e93;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f2f2f7;
+            border-top-color: #3B82F6;
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="status-bar"></div>
+    
+    <div class="header">
+        <h1>💡 瞬记</h1>
+    </div>
+
+    <div class="container" id="app"></div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" data-view="random">
+            <div class="nav-icon">🎲</div>
+            <div>随机</div>
+        </div>
+        <div class="nav-item" data-view="timeline">
+            <div class="nav-icon">📅</div>
+            <div>时间</div>
+        </div>
+        <div class="nav-item" data-view="recycle">
+            <div class="nav-icon">🗑️</div>
+            <div>回收站</div>
+        </div>
+        <div class="nav-item" data-view="settings">
+            <div class="nav-icon">⚙️</div>
+            <div>设置</div>
+        </div>
+    </div>
+
+    <button class="fab" id="fabBtn">✏️</button>
+
+    <!-- 编辑模态框 -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>记录感悟</span>
+                <span style="cursor: pointer;" onclick="closeModal()">✕</span>
+            </div>
+            <div class="modal-body">
+                <textarea id="noteThought" placeholder="💭 感悟总结&#10;我的想法是什么？"></textarea>
+                <textarea id="noteEvent" placeholder="📝 事情经过&#10;发生了什么？"></textarea>
+                <input type="text" id="noteTags" placeholder="🏷️ 标签（用空格分隔，如：灵感 工作）">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" id="saveBtn">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 数据库配置
+        const DB_NAME = 'ShunJiDB';
+        const DB_VERSION = 6;
+        const STORE_NAME = 'notes';
+        const RECYCLE_STORE_NAME = 'recycle';
+        
+        let db = null;
+        let currentEditId = null;
+        let currentView = 'random';
+        let currentTag = 'all';
+        let tagsExpanded = false;
+        let settingsTagsExpanded = false;
+        let currentPage = 1;
+        const PAGE_SIZE = 10;
+        let currentDateNotes = [];
+        let searchTimeout = null;
+        
+        // 丰富的深色纯色数组（随机使用）
+        const darkColors = [
+            '#1e1e2e', '#2d2d3a', '#252530', '#2a2a35',
+            '#20202a', '#282833', '#22222c', '#2c2c38',
+            '#1a1a24', '#262630', '#2e2e3a', '#24242e',
+            '#2f2f3a', '#272732', '#2b2b36', '#21212b',
+            '#2a2a32', '#23232d', '#2d2d35', '#26262e',
+            '#3a3a44', '#35353f', '#30303a', '#3c3c46'
+        ];
+
+        // 格式化时间
+        function formatDateTime(date) {
+            const d = new Date(date);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const hours = String(d.getHours()).padStart(2, '0');
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            const seconds = String(d.getSeconds()).padStart(2, '0');
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
+
+        function formatDateOnly(date) {
+            const d = new Date(date);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // 获取随机深色纯色
+        function getRandomDarkColor() {
+            const randomIndex = Math.floor(Math.random() * darkColors.length);
+            return darkColors[randomIndex];
+        }
+
+        // 打开数据库
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => {
+                    db = request.result;
+                    resolve(db);
+                };
+                
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        const store = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+                        store.createIndex('date', 'date', { unique: false });
+                        store.createIndex('dateOnly', 'dateOnly', { unique: false });
+                        store.createIndex('timestamp', 'timestamp', { unique: false });
+                    }
+                    if (!db.objectStoreNames.contains(RECYCLE_STORE_NAME)) {
+                        db.createObjectStore(RECYCLE_STORE_NAME, { keyPath: 'id', autoIncrement: true });
+                    }
+                };
+            });
+        }
+
+        // 添加感悟
+        async function addNote(thought, event, tags) {
+            const now = new Date();
+            const note = {
+                thought: thought,
+                event: event || '',
+                tags: tags.split(/\s+/).filter(t => t.trim()),
+                date: now.toISOString(),
+                dateTime: formatDateTime(now),
+                dateOnly: formatDateOnly(now),
+                timestamp: now.getTime()
+            };
+            
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            return new Promise((resolve, reject) => {
+                const request = store.add(note);
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // 更新感悟
+        async function updateNote(id, thought, event, tags) {
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            
+            const note = await new Promise((resolve) => {
+                const getRequest = store.get(id);
+                getRequest.onsuccess = () => resolve(getRequest.result);
+            });
+            
+            note.thought = thought;
+            note.event = event || '';
+            note.tags = tags.split(/\s+/).filter(t => t.trim());
+            
+            return new Promise((resolve, reject) => {
+                const request = store.put(note);
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // 删除感悟（移到回收站）
+        async function deleteToRecycle(id) {
+            const transaction = db.transaction([STORE_NAME, RECYCLE_STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            const recycleStore = transaction.objectStore(RECYCLE_STORE_NAME);
+            
+            const note = await new Promise((resolve) => {
+                const getRequest = store.get(id);
+                getRequest.onsuccess = () => resolve(getRequest.result);
+            });
+            
+            if (note) {
+                const recycledNote = {
+                    ...note,
+                    deletedAt: formatDateTime(new Date()),
+                    deletedTimestamp: Date.now()
+                };
+                await new Promise((resolve, reject) => {
+                    const request = recycleStore.add(recycledNote);
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject();
+                });
+                await new Promise((resolve, reject) => {
+                    const request = store.delete(id);
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject();
+                });
+            }
+        }
+
+        // 从回收站恢复
+        async function restoreFromRecycle(id) {
+            const transaction = db.transaction([STORE_NAME, RECYCLE_STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            const recycleStore = transaction.objectStore(RECYCLE_STORE_NAME);
+            
+            const recycledNote = await new Promise((resolve) => {
+                const getRequest = recycleStore.get(id);
+                getRequest.onsuccess = () => resolve(getRequest.result);
+            });
+            
+            if (recycledNote) {
+                const { deletedAt, deletedTimestamp, ...note } = recycledNote;
+                await new Promise((resolve, reject) => {
+                    const request = store.add(note);
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject();
+                });
+                await new Promise((resolve, reject) => {
+                    const request = recycleStore.delete(id);
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject();
+                });
+            }
+        }
+
+        // 永久删除
+        async function permanentDelete(id) {
+            const transaction = db.transaction([RECYCLE_STORE_NAME], 'readwrite');
+            const recycleStore = transaction.objectStore(RECYCLE_STORE_NAME);
+            return new Promise((resolve, reject) => {
+                const request = recycleStore.delete(id);
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject();
+            });
+        }
+
+        // 清空回收站
+        async function clearRecycle() {
+            const transaction = db.transaction([RECYCLE_STORE_NAME], 'readwrite');
+            const recycleStore = transaction.objectStore(RECYCLE_STORE_NAME);
+            return new Promise((resolve, reject) => {
+                const request = recycleStore.clear();
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject();
+            });
+        }
+
+        // 获取回收站内容
+        async function getRecycleNotes() {
+            const transaction = db.transaction([RECYCLE_STORE_NAME], 'readonly');
+            const recycleStore = transaction.objectStore(RECYCLE_STORE_NAME);
+            
+            return new Promise((resolve, reject) => {
+                const notes = [];
+                const request = recycleStore.openCursor();
+                request.onsuccess = (event) => {
+                    const cursor = event.target.result;
+                    if (cursor) {
+                        notes.push(cursor.value);
+                        cursor.continue();
+                    } else {
+                        resolve(notes.sort((a, b) => b.deletedTimestamp - a.deletedTimestamp));
+                    }
+                };
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // 获取所有感悟
+        async function getAllNotes() {
+            const transaction = db.transaction([STORE_NAME], 'readonly');
+            const store = transaction.objectStore(STORE_NAME);
+            
+            return new Promise((resolve, reject) => {
+                const notes = [];
+                const request = store.openCursor();
+                request.onsuccess = (event) => {
+                    const cursor = event.target.result;
+                    if (cursor) {
+                        notes.push(cursor.value);
+                        cursor.continue();
+                    } else {
+                        resolve(notes.sort((a, b) => b.timestamp - a.timestamp));
+                    }
+                };
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // 搜索感悟
+        async function searchNotes(keyword) {
+            const allNotes = await getAllNotes();
+            if (!keyword) return allNotes;
+            
+            return allNotes.filter(note => 
+                note.thought.includes(keyword) || 
+                note.event.includes(keyword) ||
+                note.tags.some(tag => tag.includes(keyword))
+            );
+        }
+
+        // 渲染单条记录（带序号）
+        function renderNoteItem(note, index) {
+            return `
+                <div class="note-item" data-id="${note.id}">
+                    <div class="note-header">
+                        <span class="note-number">${index}</span>
+                        <span class="note-time">🕐 ${note.dateTime}</span>
+                    </div>
+                    <div class="note-thought">💭 ${escapeHtml(note.thought)}</div>
+                    <div id="event-${note.id}" class="note-event-preview">
+                        <div class="note-event-full">📝 ${escapeHtml(note.event || '无事情经过')}</div>
+                    </div>
+                    <div class="note-tags">
+                        ${note.tags.map(tag => `<span class="tag">#${escapeHtml(tag)}</span>`).join('')}
+                    </div>
+                    <button class="expand-btn" onclick="toggleEvent(${note.id})">展开 ▼</button>
+                    <div style="margin-top: 8px; display: flex; gap: 12px;">
+                        <button class="expand-btn" onclick="editNote(${note.id})">编辑</button>
+                        <button class="expand-btn" style="color: #ff3b30;" onclick="deleteConfirm(${note.id})">删除</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 渲染回收站项目
+        function renderRecycleItem(note, index) {
+            return `
+                <div class="note-item recycle-item" data-id="${note.id}">
+                    <div class="note-header">
+                        <span class="note-number">${index}</span>
+                        <span class="note-time">🗑️ 删除于 ${note.deletedAt}</span>
+                    </div>
+                    <div class="note-thought">💭 ${escapeHtml(note.thought)}</div>
+                    <div class="note-event-full" style="margin: 8px 0;">📝 ${escapeHtml(note.event || '无事情经过')}</div>
+                    <div class="note-tags">
+                        ${note.tags.map(tag => `<span class="tag">#${escapeHtml(tag)}</span>`).join('')}
+                    </div>
+                    <div style="margin-top: 12px; display: flex; gap: 12px;">
+                        <button class="restore-btn" onclick="restoreNote(${note.id})">↩️ 恢复</button>
+                        <button class="expand-btn" style="color: #ff3b30;" onclick="permanentDeleteConfirm(${note.id})">🗑️ 永久删除</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 切换事情经过显示
+        window.toggleEvent = function(id) {
+            const eventDiv = document.getElementById(`event-${id}`);
+            if (eventDiv) {
+                eventDiv.classList.toggle('show');
+                const btn = eventDiv.parentElement.querySelector('.expand-btn');
+                if (eventDiv.classList.contains('show')) {
+                    btn.textContent = '收起 ▲';
+                } else {
+                    btn.textContent = '展开 ▼';
+                }
+            }
+        };
+
+        // 渲染标签筛选器
+        function renderTagsFilter(notes, currentTag, containerId) {
+            const allTags = new Set();
+            notes.forEach(note => {
+                note.tags.forEach(tag => allTags.add(tag));
+            });
+            
+            const tagsArray = Array.from(allTags).sort();
+            
+            return `
+                <div class="tags-filter-container">
+                    <div class="tags-filter ${tagsExpanded ? 'expanded' : ''}" id="${containerId}">
+                        <div class="filter-tag ${currentTag === 'all' ? 'active' : ''}" onclick="setTagFilter('all')">全部</div>
+                        ${tagsArray.map(tag => `
+                            <div class="filter-tag ${currentTag === tag ? 'active' : ''}" onclick="setTagFilter('${tag}')">#${escapeHtml(tag)}</div>
+                        `).join('')}
+                    </div>
+                    ${tagsArray.length > 4 ? `<button class="toggle-tags-btn" onclick="toggleTagsFilter()">${tagsExpanded ? '收起 ▲' : '展开 ▼'}</button>` : ''}
+                </div>
+            `;
+        }
+
+        // 切换标签筛选器展开状态
+        window.toggleTagsFilter = function() {
+            tagsExpanded = !tagsExpanded;
+            renderTimelineView();
+        };
+
+        // 切换设置中的标签展开状态
+        window.toggleSettingsTags = function() {
+            settingsTagsExpanded = !settingsTagsExpanded;
+            renderSettingsView();
+        };
+
+        // 渲染时间轴视图
+        async function renderTimelineView() {
+            const allNotes = await getAllNotes();
+            let notes = allNotes;
+            
+            if (currentTag !== 'all') {
+                notes = notes.filter(note => note.tags.includes(currentTag));
+            }
+            
+            const dates = [...new Set(notes.map(n => n.dateOnly))].sort().reverse();
+            const today = formatDateOnly(new Date());
+            const defaultDate = dates.length > 0 ? dates[0] : today;
+            
+            let html = `
+                <div class="date-selector">
+                    <button class="date-nav-btn" onclick="changeDate(-1)">◀</button>
+                    <input type="date" id="datePicker" value="${defaultDate}" onchange="changeDateSelect(this.value)">
+                    <button class="date-nav-btn" onclick="changeDate(1)">▶</button>
+                </div>
+                ${renderTagsFilter(notes, currentTag, 'timelineTagsFilter')}
+                <div id="timelineContent"></div>
+            `;
+            document.getElementById('app').innerHTML = html;
+            
+            await loadDateNotes(defaultDate);
+        }
+        
+        async function loadDateNotes(dateOnly) {
+            const allNotes = await getAllNotes();
+            let notes = allNotes;
+            
+            if (currentTag !== 'all') {
+                notes = notes.filter(note => note.tags.includes(currentTag));
+            }
+            
+            const filteredNotes = notes.filter(note => note.dateOnly === dateOnly);
+            currentDateNotes = filteredNotes;
+            currentPage = 1;
+            
+            renderTimelineContent();
+        }
+        
+        function renderTimelineContent() {
+            const start = (currentPage - 1) * PAGE_SIZE;
+            const end = start + PAGE_SIZE;
+            const pageNotes = currentDateNotes.slice(start, end);
+            const totalPages = Math.ceil(currentDateNotes.length / PAGE_SIZE);
+            
+            let content = '';
+            
+            if (currentDateNotes.length === 0) {
+                content = `
+                    <div class="empty-state">
+                        <div style="font-size: 48px; margin-bottom: 16px;">📭</div>
+                        <div>该日期暂无感悟</div>
+                        <div style="font-size: 14px; margin-top: 8px;">点击右下角按钮开始记录</div>
+                    </div>
+                `;
+            } else {
+                pageNotes.forEach((note, idx) => {
+                    content += renderNoteItem(note, start + idx + 1);
+                });
+                
+                if (totalPages > 1) {
+                    content += `
+                        <div class="pagination">
+                            <button class="page-btn ${currentPage === 1 ? 'disabled' : ''}" onclick="changePage(${currentPage - 1})">上一页</button>
+                            <span class="page-info">第 ${currentPage} / ${totalPages} 页</span>
+                            <button class="page-btn ${currentPage === totalPages ? 'disabled' : ''}" onclick="changePage(${currentPage + 1})">下一页</button>
+                        </div>
+                    `;
+                }
+            }
+            
+            document.getElementById('timelineContent').innerHTML = content;
+        }
+        
+        window.changeDate = async function(delta) {
+            const datePicker = document.getElementById('datePicker');
+            const currentDate = new Date(datePicker.value);
+            currentDate.setDate(currentDate.getDate() + delta);
+            const newDate = formatDateOnly(currentDate);
+            datePicker.value = newDate;
+            await loadDateNotes(newDate);
+        };
+        
+        window.changeDateSelect = async function(date) {
+            await loadDateNotes(date);
+        };
+        
+        window.changePage = function(page) {
+            currentPage = page;
+            renderTimelineContent();
+        };
+
+        // 渲染随机视图（首页）- 使用随机深色纯色
+        async function renderRandomView() {
+            // 显示加载状态
+            document.getElementById('app').innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <div>加载中...</div>
+                </div>
+            `;
+            
+            const notes = await getAllNotes();
+            
+            let html = `
+                <div class="search-box">
+                    <input type="text" class="search-input" id="searchInput" placeholder="🔍 搜索感悟、事情经过或标签...">
+                </div>
+                <div id="randomContent">
+            `;
+            
+            if (notes.length === 0) {
+                html += `
+                    <div class="empty-state">
+                        <div style="font-size: 48px; margin-bottom: 16px;">🎲</div>
+                        <div>暂无感悟</div>
+                        <div style="font-size: 14px; margin-top: 8px;">点击右下角按钮开始记录</div>
+                    </div>
+                `;
+                html += `</div>`;
+                document.getElementById('app').innerHTML = html;
+                return;
+            }
+            
+            let currentIndex = Math.floor(Math.random() * notes.length);
+            let currentColor = getRandomDarkColor();
+            
+            function renderRandomNote() {
+                const note = notes[currentIndex];
+                const noteNumber = notes.findIndex(n => n.id === note.id) + 1;
+                return `
+                    <div class="card random-card" style="background: ${currentColor}">
+                        <div class="random-label">
+                            <span>✨ 随机回顾 #${noteNumber}</span>
+                            <button class="refresh-btn" onclick="randomNext()">🎲 换一条</button>
+                        </div>
+                        <div class="thought">💭 ${escapeHtml(note.thought)}</div>
+                        ${note.event ? `<div class="event">📝 ${escapeHtml(note.event)}</div>` : ''}
+                        <div class="meta">
+                            <span>🕐 ${note.dateTime}</span>
+                            <span>🏷️ ${note.tags.map(t => '#' + t).join(' ') || '无标签'}</span>
+                        </div>
+                    </div>
+                    <div class="random-actions">
+                        <button class="btn btn-secondary" onclick="editNote(${note.id})">✏️ 编辑这条</button>
+                        <button class="btn btn-secondary" style="background: #fff0f0; color: #ff3b30;" onclick="deleteConfirm(${note.id})">🗑️ 删除这条</button>
+                    </div>
+                `;
+            }
+            
+            window.randomNext = async function() {
+                const newNotes = await getAllNotes();
+                if (newNotes.length > 0) {
+                    currentIndex = Math.floor(Math.random() * newNotes.length);
+                    currentColor = getRandomDarkColor(); // 随机新颜色
+                    notes.length = 0;
+                    notes.push(...newNotes);
+                    document.getElementById('randomContent').innerHTML = renderRandomNote();
+                } else {
+                    renderRandomView();
+                }
+            };
+            
+            html += renderRandomNote();
+            html += `</div>`;
+            document.getElementById('app').innerHTML = html;
+            
+            // 搜索功能（带防抖）
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    if (searchTimeout) clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(async () => {
+                        const keyword = e.target.value;
+                        if (!keyword.trim()) {
+                            renderRandomView();
+                            return;
+                        }
+                        const results = await searchNotes(keyword);
+                        const resultsDiv = document.getElementById('randomContent');
+                        if (results.length === 0) {
+                            resultsDiv.innerHTML = '<div class="empty-state">未找到相关感悟</div>';
+                        } else {
+                            resultsDiv.innerHTML = results.map((note, idx) => renderNoteItem(note, idx + 1)).join('');
+                        }
+                    }, 300);
+                });
+            }
+        }
+
+        // 渲染回收站视图
+        async function renderRecycleView() {
+            const notes = await getRecycleNotes();
+            
+            let html = `<div id="notesList">`;
+            
+            if (notes.length === 0) {
+                html += `
+                    <div class="empty-state">
+                        <div style="font-size: 48px; margin-bottom: 16px;">🗑️</div>
+                        <div>回收站为空</div>
+                        <div style="font-size: 14px; margin-top: 8px;">删除的感悟会在这里保留</div>
+                    </div>
+                `;
+            } else {
+                html += `<div style="margin-bottom: 12px; text-align: right;">
+                            <button class="expand-btn" style="color: #ff3b30;" onclick="clearRecycleConfirm()">清空回收站</button>
+                         </div>`;
+                notes.forEach((note, idx) => {
+                    html += renderRecycleItem(note, idx + 1);
+                });
+            }
+            
+            html += `</div>`;
+            document.getElementById('app').innerHTML = html;
+        }
+
+        // 渲染设置视图
+        async function renderSettingsView() {
+            const notes = await getAllNotes();
+            const recycleNotes = await getRecycleNotes();
+            
+            let streak = 0;
+            const dates = [...new Set(notes.map(n => n.dateOnly))].sort();
+            let currentDate = new Date();
+            for (let i = dates.length - 1; i >= 0; i--) {
+                const dateStr = formatDateOnly(currentDate);
+                if (dates[i] === dateStr) {
+                    streak++;
+                    currentDate.setDate(currentDate.getDate() - 1);
+                } else {
+                    break;
+                }
+            }
+            
+            const tagCount = {};
+            notes.forEach(note => {
+                note.tags.forEach(tag => {
+                    tagCount[tag] = (tagCount[tag] || 0) + 1;
+                });
+            });
+            const topTags = Object.entries(tagCount).sort((a,b) => b[1]-a[1]);
+            
+            let html = `
+                <div class="card">
+                    <h3 style="margin-bottom: 16px;">📊 统计</h3>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); text-align: center;">
+                        <div>
+                            <div class="stats-number">${notes.length}</div>
+                            <div style="font-size: 12px; color: #8e8e93;">总记录</div>
+                        </div>
+                        <div>
+                            <div class="stats-number">${streak}</div>
+                            <div style="font-size: 12px; color: #8e8e93;">连续天数</div>
+                        </div>
+                        <div>
+                            <div class="stats-number">${topTags.length}</div>
+                            <div style="font-size: 12px; color: #8e8e93;">标签总数</div>
+                        </div>
+                        <div>
+                            <div class="stats-number">${recycleNotes.length}</div>
+                            <div style="font-size: 12px; color: #8e8e93;">回收站</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 style="margin-bottom: 16px;">🏷️ 常用标签</h3>
+                    <div class="settings-tags-container">
+                        <div class="settings-tags ${settingsTagsExpanded ? 'expanded' : ''}" id="settingsTags">
+                            ${topTags.length > 0 ? topTags.map(([tag, count]) => `
+                                <span class="tag">#${tag} (${count})</span>
+                            `).join('') : '<span style="color: #8e8e93;">暂无标签</span>'}
+                        </div>
+                        ${topTags.length > 4 ? `<button class="toggle-tags-btn" onclick="toggleSettingsTags()">${settingsTagsExpanded ? '收起 ▲' : '展开 ▼'}</button>` : ''}
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 style="margin-bottom: 16px;">💾 数据管理</h3>
+                    <button class="btn btn-secondary" onclick="exportData()" style="margin-bottom: 12px;">📤 导出数据</button>
+                    <button class="btn btn-secondary" onclick="importData()" style="margin-bottom: 12px;">📥 导入数据</button>
+                    <button class="btn btn-secondary" onclick="backupData()">💾 备份记录</button>
+                    <p style="font-size: 12px; color: #8e8e93; margin-top: 12px;">数据仅存储在本地，完全隐私</p>
+                </div>
+                
+                <div class="card">
+                    <h3 style="margin-bottom: 16px;">ℹ️ 关于</h3>
+                    <p style="font-size: 14px; color: #1c1c1e;">瞬记 - 随时记录感悟</p>
+                    <p style="font-size: 12px; color: #8e8e93; margin-top: 8px;">版本 4.1</p>
+                </div>
+            `;
+            document.getElementById('app').innerHTML = html;
+        }
+
+        // 备份记录
+        window.backupData = async function() {
+            const notes = await getAllNotes();
+            const recycleNotes = await getRecycleNotes();
+            const backupData = {
+                version: '4.1',
+                backupTime: formatDateTime(new Date()),
+                totalCount: notes.length,
+                recycleCount: recycleNotes.length,
+                notes: notes,
+                recycle: recycleNotes
+            };
+            const dataStr = JSON.stringify(backupData, null, 2);
+            const blob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `瞬记_备份_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            alert('备份已保存');
+        };
+
+        // 导出数据
+        window.exportData = async function() {
+            const notes = await getAllNotes();
+            const dataStr = JSON.stringify(notes, null, 2);
+            const blob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `瞬记_数据_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+        
+        // 导入数据（优化版）
+        window.importData = function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                const text = await file.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                    const notes = Array.isArray(data) ? data : (data.notes || []);
+                    
+                    // 使用单个事务
+                    const transaction = db.transaction([STORE_NAME], 'readwrite');
+                    const store = transaction.objectStore(STORE_NAME);
+                    
+                    let imported = 0;
+                    for (const note of notes) {
+                        if (note.thought) {
+                            // 移除id，让数据库自动生成，避免冲突
+                            const { id, ...newNote } = note;
+                            store.add(newNote);
+                            imported++;
+                        }
+                    }
+                    
+                    transaction.oncomplete = () => {
+                        alert(`导入成功！共导入 ${imported} 条记录`);
+                        switchView(currentView);
+                    };
+                    
+                    transaction.onerror = () => {
+                        alert('导入失败，请重试');
+                    };
+                } catch (err) {
+                    alert('文件格式错误，请选择正确的备份文件');
+                }
+            };
+            input.click();
+        };
+
+        // 恢复笔记
+        window.restoreNote = async function(id) {
+            await restoreFromRecycle(id);
+            renderRecycleView();
+        };
+
+        // 永久删除确认
+        window.permanentDeleteConfirm = function(id) {
+            if (confirm('确定永久删除这条感悟吗？此操作不可恢复！')) {
+                permanentDelete(id).then(() => renderRecycleView());
+            }
+        };
+
+        // 清空回收站确认
+        window.clearRecycleConfirm = function() {
+            if (confirm('确定清空回收站吗？所有感悟将被永久删除！')) {
+                clearRecycle().then(() => renderRecycleView());
+            }
+        };
+
+        // 切换视图
+        async function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (item.dataset.view === view) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+            
+            if (view === 'random') {
+                await renderRandomView();
+            } else if (view === 'timeline') {
+                await renderTimelineView();
+            } else if (view === 'recycle') {
+                await renderRecycleView();
+            } else if (view === 'settings') {
+                await renderSettingsView();
+            }
+        }
+        
+        // 设置标签筛选
+        window.setTagFilter = function(tag) {
+            currentTag = tag;
+            renderTimelineView();
+        };
+        
+        // 保存感悟
+        async function saveNote() {
+            const thought = document.getElementById('noteThought').value.trim();
+            if (!thought) {
+                alert('请填写感悟总结');
+                return;
+            }
+            
+            const event = document.getElementById('noteEvent').value;
+            const tags = document.getElementById('noteTags').value;
+            
+            if (currentEditId) {
+                await updateNote(currentEditId, thought, event, tags);
+            } else {
+                await addNote(thought, event, tags);
+            }
+            
+            closeModal();
+            switchView(currentView);
+        }
+        
+        // 编辑感悟
+        window.editNote = async function(id) {
+            const notes = await getAllNotes();
+            const note = notes.find(n => n.id === id);
+            if (note) {
+                currentEditId = id;
+                document.getElementById('noteThought').value = note.thought;
+                document.getElementById('noteEvent').value = note.event || '';
+                document.getElementById('noteTags').value = note.tags.join(' ');
+                document.getElementById('editModal').classList.add('show');
+            }
+        };
+        
+        // 删除确认
+        window.deleteConfirm = function(id) {
+            if (confirm('确定删除这条感悟吗？它将移至回收站')) {
+                deleteToRecycle(id).then(() => switchView(currentView));
+            }
+        };
+        
+        // 关闭模态框
+        function closeModal() {
+            currentEditId = null;
+            document.getElementById('noteThought').value = '';
+            document.getElementById('noteEvent').value = '';
+            document.getElementById('noteTags').value = '';
+            document.getElementById('editModal').classList.remove('show');
+        }
+        
+        // 工具函数
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // 初始化
+        async function init() {
+            await openDB();
+            
+            const notes = await getAllNotes();
+            if (notes.length === 0) {
+                await addNote('产品经理不是画原型的，而是解决用户问题的', '今天开会讨论产品方向，发现大家过于关注功能实现，忽略了用户真正的痛点', '产品 感悟');
+                await addNote('要相信直觉，但也要用数据验证', '做了一个决策，凭直觉觉得是对的，但还是需要找数据支撑', '工作 思考');
+                await addNote('每天进步1%，一年就是37倍', '睡前想到的，坚持的力量真的很可怕', '生活 激励');
+            }
+            
+            await switchView('random');
+            
+            document.getElementById('fabBtn').onclick = () => {
+                currentEditId = null;
+                document.getElementById('noteThought').value = '';
+                document.getElementById('noteEvent').value = '';
+                document.getElementById('noteTags').value = '';
+                document.getElementById('editModal').classList.add('show');
+            };
+            
+            document.getElementById('saveBtn').onclick = saveNote;
+            
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.onclick = () => switchView(item.dataset.view);
+            });
+        }
+        
+        init();
+    </script>
+</body>
+</html>
