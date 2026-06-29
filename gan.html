@@ -1,0 +1,1921 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>瞬记 · 时光印记</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Helvetica, sans-serif;
+            background: #f5f7fa;
+            color: #1c1c1e;
+            padding-bottom: 80px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+        .header {
+            background: #ffffff;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e9e9ef;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.95);
+        }
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .fab {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #3B82F6;
+            color: white;
+            border: none;
+            font-size: 28px;
+            box-shadow: 0 4px 12px rgba(59,130,246,0.4);
+            cursor: pointer;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .fab:active {
+            transform: scale(0.92);
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid #e9e9ef;
+        }
+        .random-card {
+            color: white;
+            margin-bottom: 20px;
+            border: none;
+        }
+        .random-card .random-label {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .random-card .refresh-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .random-card .thought {
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            color: #ffffff;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .random-card .event {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .random-card .meta {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 12px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .note-item {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid #e9e9ef;
+        }
+        .note-header {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        .note-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: #3B82F6;
+            background: #eff6ff;
+            padding: 2px 10px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        .note-time {
+            font-size: 12px;
+            color: #8e8e93;
+            font-family: monospace;
+        }
+        .note-thought {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1c1c1e;
+            margin: 8px 0;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .note-event-full {
+            background: #f8f9fc;
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin: 8px 0;
+            font-size: 14px;
+            color: #3a3a3c;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .note-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 8px 0 0;
+        }
+        .tag {
+            background: #f2f2f7;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            color: #3B82F6;
+        }
+        .expand-btn {
+            background: none;
+            border: none;
+            color: #3B82F6;
+            font-size: 12px;
+            padding: 4px 0;
+            margin-top: 6px;
+            cursor: pointer;
+        }
+        .recycle-item {
+            background: #fff5f5;
+            border-left: 3px solid #ff3b30;
+        }
+        .restore-btn {
+            background: #34c759;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .tags-filter-container {
+            margin-bottom: 16px;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid #e9e9ef;
+        }
+        .tags-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-height: 48px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .tags-filter.expanded {
+            max-height: 500px;
+        }
+        .filter-tag {
+            background: #f2f2f7;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            color: #1c1c1e;
+        }
+        .filter-tag.active {
+            background: #3B82F6;
+            color: white;
+        }
+        .toggle-tags-btn {
+            background: none;
+            border: none;
+            color: #3B82F6;
+            font-size: 12px;
+            padding: 8px;
+            margin-top: 8px;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+        }
+        .date-selector {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            border: 1px solid #e9e9ef;
+        }
+        .date-selector input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #e9e9ef;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #ffffff;
+            color: #1c1c1e;
+        }
+        .date-nav-btn {
+            background: #f2f2f7;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #1c1c1e;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 16px;
+            padding: 12px;
+        }
+        .page-btn {
+            background: #f2f2f7;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #1c1c1e;
+            font-size: 14px;
+        }
+        .page-btn.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .page-info {
+            padding: 8px 16px;
+            color: #8e8e93;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #8e8e93;
+        }
+        .search-box {
+            margin-bottom: 16px;
+        }
+        .search-input {
+            background: #ffffff;
+            border: 1px solid #e9e9ef;
+            border-radius: 12px;
+            padding: 12px 16px;
+            width: 100%;
+            font-size: 16px;
+            color: #1c1c1e;
+        }
+        .search-input::placeholder {
+            color: #c7c7cc;
+        }
+        .stats-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #3B82F6;
+        }
+        .settings-tags-container {
+            margin-top: 12px;
+        }
+        .settings-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-height: 48px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .settings-tags.expanded {
+            max-height: 500px;
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #e9e9ef;
+            display: flex;
+            justify-content: space-around;
+            padding: 6px 12px 12px;
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
+            z-index: 300;
+        }
+        .nav-item {
+            text-align: center;
+            padding: 6px 8px;
+            font-size: 11px;
+            color: #8e8e93;
+            cursor: pointer;
+            transition: color 0.2s;
+            user-select: none;
+            min-width: 50px;
+        }
+        .nav-item.active {
+            color: #3B82F6;
+        }
+        .nav-icon {
+            font-size: 22px;
+            margin-bottom: 2px;
+            display: block;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: flex-end;
+        }
+        .modal.show {
+            display: flex;
+        }
+        .modal-content {
+            background: #ffffff;
+            width: 100%;
+            border-radius: 20px 20px 0 0;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e9e9ef;
+            font-weight: 600;
+            font-size: 18px;
+            position: sticky;
+            top: 0;
+            background: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #1c1c1e;
+        }
+        .modal-body {
+            padding: 20px;
+        }
+        .modal-footer {
+            padding: 16px 20px;
+            border-top: 1px solid #e9e9ef;
+            display: flex;
+            gap: 12px;
+        }
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            border: 1px solid #e9e9ef;
+            border-radius: 12px;
+            resize: vertical;
+            margin-bottom: 12px;
+            background: #ffffff;
+            color: #1c1c1e;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            border: 1px solid #e9e9ef;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            background: #ffffff;
+            color: #1c1c1e;
+        }
+        .btn {
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            flex: 1;
+        }
+        .btn-primary {
+            background: #3B82F6;
+            color: white;
+        }
+        .btn-secondary {
+            background: #f2f2f7;
+            color: #1c1c1e;
+        }
+        .random-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #8e8e93;
+        }
+        .loading-spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid #f2f2f7;
+            border-top-color: #3B82F6;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        /* 印记样式 */
+        .imprint-card {
+            background: white;
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid #5fa7c2;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            border: 1px solid #e9e9ef;
+        }
+        .imprint-info {
+            flex: 3;
+            min-width: 180px;
+        }
+        .imprint-title {
+            font-weight: 700;
+            font-size: 15px;
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        .imprint-datetime-badge {
+            font-size: 11px;
+            background: #eef3fc;
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-weight: normal;
+            color: #2c6282;
+            font-family: monospace;
+        }
+        .imprint-desc-preview {
+            font-size: 13px;
+            color: #6b7f8c;
+            word-break: break-word;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .imprint-actions {
+            display: flex;
+            gap: 6px;
+        }
+        .imprint-icon-btn {
+            background: transparent;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 20px;
+        }
+        .imprint-stats-bar {
+            background: white;
+            border-radius: 40px;
+            padding: 8px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            border: 1px solid #e9e9ef;
+        }
+        .imprint-stats-badge {
+            background: #e9f0f5;
+            padding: 4px 16px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .imprint-filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+            background: white;
+            padding: 12px 16px;
+            border-radius: 16px;
+            align-items: center;
+            border: 1px solid #e9e9ef;
+        }
+        .imprint-filter-input {
+            flex: 3;
+            min-width: 120px;
+            padding: 8px 14px;
+            border-radius: 20px;
+            border: 1px solid #dce4ec;
+            font-size: 14px;
+            outline: none;
+        }
+        .imprint-clear-filter {
+            background: #eef2f8;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .imprint-small-btn {
+            background: #eef2f8;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 13px;
+        }
+        .imprint-add-card {
+            background: rgba(255,255,255,0.9);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            border: 1px solid #e9e9ef;
+        }
+        .imprint-add-card .card-header {
+            padding: 12px 18px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 16px;
+            background: #f8fafc;
+            user-select: none;
+        }
+        .imprint-add-card .card-body {
+            padding: 16px 18px 18px;
+            border-top: 1px solid #e9e9ef;
+        }
+        .imprint-add-card.collapsed .card-body {
+            display: none;
+        }
+        .imprint-collapse-icon {
+            transition: transform 0.2s;
+        }
+        .imprint-add-card.collapsed .imprint-collapse-icon {
+            transform: rotate(-90deg);
+        }
+        .imprint-flex-btns {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .imprint-flex-btns .btn {
+            flex: 1;
+            margin-top: 0;
+        }
+        .imprint-view-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+        }
+        .imprint-view-modal-content {
+            background: white;
+            width: 92%;
+            max-width: 700px;
+            max-height: 85vh;
+            border-radius: 20px;
+            padding: 24px;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .imprint-view-modal-content .view-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            word-break: break-word;
+            padding-right: 16px;
+        }
+        .imprint-view-modal-content .view-datetime {
+            display: inline-block;
+            background: #eef3fc;
+            padding: 4px 16px;
+            border-radius: 40px;
+            font-size: 13px;
+            margin-bottom: 12px;
+            font-family: monospace;
+        }
+        .imprint-view-modal-content .view-description {
+            font-size: 15px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-word;
+            background: #f8fafc;
+            padding: 14px;
+            border-radius: 12px;
+            margin: 12px 0;
+            max-height: 45vh;
+            overflow-y: auto;
+        }
+        .imprint-recycle-item {
+            background: #fef7f0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            border-left: 4px solid #cb6e6e;
+            margin-bottom: 12px;
+        }
+        .view-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 12px;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+        /* 回收站折叠 */
+        .recycle-section {
+            margin-bottom: 12px;
+        }
+        .recycle-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 8px 4px;
+            user-select: none;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .recycle-section-header .arrow {
+            transition: transform 0.2s;
+            font-size: 14px;
+        }
+        .recycle-section-header .arrow.collapsed {
+            transform: rotate(-90deg);
+        }
+        .recycle-section-content {
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            max-height: 0;
+        }
+        .recycle-section-content.expanded {
+            max-height: 9999px;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 12px;
+            }
+            .imprint-view-modal-content {
+                padding: 16px;
+            }
+            .imprint-view-modal-content .view-title {
+                font-size: 18px;
+            }
+            .bottom-nav {
+                padding: 4px 8px 10px;
+            }
+            .nav-item {
+                font-size: 10px;
+                padding: 4px 6px;
+                min-width: 40px;
+            }
+            .nav-icon {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>💡 瞬记 · 时光印记</h1>
+    </div>
+
+    <div class="container" id="app">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <div>加载中...</div>
+        </div>
+    </div>
+
+    <div class="bottom-nav" id="bottomNav">
+        <div class="nav-item active" data-view="random">
+            <span class="nav-icon">🎲</span>
+            <span>随机</span>
+        </div>
+        <div class="nav-item" data-view="timeline">
+            <span class="nav-icon">📅</span>
+            <span>时间</span>
+        </div>
+        <div class="nav-item" data-view="imprint">
+            <span class="nav-icon">⏱️</span>
+            <span>印记</span>
+        </div>
+        <div class="nav-item" data-view="recycle">
+            <span class="nav-icon">🗑️</span>
+            <span>回收站</span>
+        </div>
+        <div class="nav-item" data-view="settings">
+            <span class="nav-icon">⚙️</span>
+            <span>设置</span>
+        </div>
+    </div>
+
+    <button class="fab" id="fabBtn">✏️</button>
+
+    <!-- 瞬记编辑模态框 -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>记录感悟</span>
+                <span style="cursor:pointer;font-size:24px;" onclick="closeModal()">✕</span>
+            </div>
+            <div class="modal-body">
+                <textarea id="noteThought" placeholder="💭 感悟总结&#10;我的想法是什么？"></textarea>
+                <textarea id="noteEvent" placeholder="📝 事情经过&#10;发生了什么？"></textarea>
+                <input type="text" id="noteTags" placeholder="🏷️ 标签（用空格分隔）">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" id="saveBtn">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 印记查看详情模态框 -->
+    <div id="imprintViewModal" class="imprint-view-modal">
+        <div class="imprint-view-modal-content">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <div class="view-title" id="imprintViewTitle"></div>
+                <button id="imprintCloseViewBtn" style="background:none;border:none;font-size:28px;cursor:pointer;">&times;</button>
+            </div>
+            <div>
+                <span class="view-datetime" id="imprintViewDatetime"></span>
+            </div>
+            <div class="view-description" id="imprintViewDescription"></div>
+            <div class="view-actions">
+                <button id="imprintViewEditBtn" class="btn btn-primary">✏️ 编辑</button>
+                <button id="imprintViewCloseBtn" class="btn btn-secondary">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // 数据库
+        // ============================================================
+        const DB_NAME = 'ShunJiDB';
+        const DB_VERSION = 8;
+        const STORE_NAME = 'notes';
+        const RECYCLE_STORE_NAME = 'recycle';
+        const IMPRINT_STORE_NAME = 'imprints';
+        const IMPRINT_RECYCLE_STORE_NAME = 'imprint_recycle';
+
+        let db = null;
+        let currentEditId = null;
+        let currentView = 'random';
+        let currentTag = 'all';
+        let tagsExpanded = false;
+        let settingsTagsExpanded = false;
+        let currentPage = 1;
+        const PAGE_SIZE = 8;
+        let currentDateNotes = [];
+        let searchTimeout = null;
+        let imprintEditingId = null;
+        let imprintCurrentViewId = null;
+
+        const darkColors = [
+            '#1e1e2e', '#2d2d3a', '#252530', '#2a2a35',
+            '#20202a', '#282833', '#22222c', '#2c2c38',
+            '#1a1a24', '#262630', '#2e2e3a', '#24242e',
+            '#2f2f3a', '#272732', '#2b2b36', '#21212b'
+        ];
+
+        function formatDateTime(date) {
+            const d = new Date(date);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const hours = String(d.getHours()).padStart(2, '0');
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            const seconds = String(d.getSeconds()).padStart(2, '0');
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
+
+        function formatDateOnly(date) {
+            const d = new Date(date);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function getRandomDarkColor() {
+            return darkColors[Math.floor(Math.random() * darkColors.length)];
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatImprintDateTime(dateTimeStr) {
+            if (!dateTimeStr) return "无效时间";
+            return dateTimeStr.replace('T', ' ');
+        }
+
+        // ---- 打开数据库 ----
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => {
+                    db = request.result;
+                    resolve(db);
+                };
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        const store = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+                        store.createIndex('dateOnly', 'dateOnly', { unique: false });
+                        store.createIndex('timestamp', 'timestamp', { unique: false });
+                    }
+                    if (!db.objectStoreNames.contains(RECYCLE_STORE_NAME)) {
+                        db.createObjectStore(RECYCLE_STORE_NAME, { keyPath: 'id', autoIncrement: true });
+                    }
+                    if (!db.objectStoreNames.contains(IMPRINT_STORE_NAME)) {
+                        const imprintStore = db.createObjectStore(IMPRINT_STORE_NAME, { keyPath: 'id',
+                            autoIncrement: true });
+                        imprintStore.createIndex('datetime', 'datetime', { unique: false });
+                    }
+                    if (!db.objectStoreNames.contains(IMPRINT_RECYCLE_STORE_NAME)) {
+                        db.createObjectStore(IMPRINT_RECYCLE_STORE_NAME, { keyPath: 'id', autoIncrement: true });
+                    }
+                };
+            });
+        }
+
+        // ---- 瞬记 CRUD ----
+        async function addNote(thought, event, tags) {
+            const now = new Date();
+            const note = {
+                thought,
+                event: event || '',
+                tags: tags.split(/\s+/).filter(t => t.trim()),
+                date: now.toISOString(),
+                dateTime: formatDateTime(now),
+                dateOnly: formatDateOnly(now),
+                timestamp: now.getTime()
+            };
+            const tx = db.transaction([STORE_NAME], 'readwrite');
+            const store = tx.objectStore(STORE_NAME);
+            return new Promise((resolve, reject) => {
+                const req = store.add(note);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        async function updateNote(id, thought, event, tags) {
+            const tx = db.transaction([STORE_NAME], 'readwrite');
+            const store = tx.objectStore(STORE_NAME);
+            const note = await new Promise(r => { const req = store.get(id);
+                req.onsuccess = () => r(req.result); });
+            if (!note) return;
+            note.thought = thought;
+            note.event = event || '';
+            note.tags = tags.split(/\s+/).filter(t => t.trim());
+            return new Promise((resolve, reject) => {
+                const req = store.put(note);
+                req.onsuccess = () => resolve();
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        async function deleteToRecycle(id) {
+            const tx = db.transaction([STORE_NAME, RECYCLE_STORE_NAME], 'readwrite');
+            const store = tx.objectStore(STORE_NAME);
+            const recycleStore = tx.objectStore(RECYCLE_STORE_NAME);
+            const note = await new Promise(r => { const req = store.get(id);
+                req.onsuccess = () => r(req.result); });
+            if (note) {
+                const recycled = { ...note,
+                    deletedAt: formatDateTime(new Date()),
+                    deletedTimestamp: Date.now() };
+                await new Promise((r, rej) => { const req = recycleStore.add(recycled);
+                    req.onsuccess = r;
+                    req.onerror = rej; });
+                await new Promise((r, rej) => { const req = store.delete(id);
+                    req.onsuccess = r;
+                    req.onerror = rej; });
+            }
+        }
+
+        async function restoreFromRecycle(id) {
+            const tx = db.transaction([STORE_NAME, RECYCLE_STORE_NAME], 'readwrite');
+            const store = tx.objectStore(STORE_NAME);
+            const recycleStore = tx.objectStore(RECYCLE_STORE_NAME);
+            const recycled = await new Promise(r => { const req = recycleStore.get(id);
+                req.onsuccess = () => r(req.result); });
+            if (recycled) {
+                const { deletedAt, deletedTimestamp, ...note } = recycled;
+                await new Promise((r, rej) => { const req = store.add(note);
+                    req.onsuccess = r;
+                    req.onerror = rej; });
+                await new Promise((r, rej) => { const req = recycleStore.delete(id);
+                    req.onsuccess = r;
+                    req.onerror = rej; });
+            }
+        }
+
+        async function permanentDelete(id) {
+            const tx = db.transaction([RECYCLE_STORE_NAME], 'readwrite');
+            const store = tx.objectStore(RECYCLE_STORE_NAME);
+            return new Promise((resolve, reject) => {
+                const req = store.delete(id);
+                req.onsuccess = resolve;
+                req.onerror = reject;
+            });
+        }
+
+        async function clearRecycle() {
+            const tx = db.transaction([RECYCLE_STORE_NAME], 'readwrite');
+            const store = tx.objectStore(RECYCLE_STORE_NAME);
+            return new Promise((resolve, reject) => {
+                const req = store.clear();
+                req.onsuccess = resolve;
+                req.onerror = reject;
+            });
+        }
+
+        async function getRecycleNotes() {
+            const tx = db.transaction([RECYCLE_STORE_NAME], 'readonly');
+            const store = tx.objectStore(RECYCLE_STORE_NAME);
+            const notes = [];
+            return new Promise((resolve, reject) => {
+                const req = store.openCursor();
+                req.onsuccess = (e) => {
+                    const c = e.target.result;
+                    if (c) { notes.push(c.value);
+                        c.continue(); } else resolve(notes.sort((a, b) => b.deletedTimestamp - a.deletedTimestamp));
+                };
+                req.onerror = reject;
+            });
+        }
+
+        async function getAllNotes() {
+            const tx = db.transaction([STORE_NAME], 'readonly');
+            const store = tx.objectStore(STORE_NAME);
+            const notes = [];
+            return new Promise((resolve, reject) => {
+                const req = store.openCursor();
+                req.onsuccess = (e) => {
+                    const c = e.target.result;
+                    if (c) { notes.push(c.value);
+                        c.continue(); } else resolve(notes.sort((a, b) => b.timestamp - a.timestamp));
+                };
+                req.onerror = reject;
+            });
+        }
+
+        async function searchNotes(keyword) {
+            const all = await getAllNotes();
+            if (!keyword) return all;
+            const kw = keyword.toLowerCase();
+            return all.filter(n =>
+                n.thought.toLowerCase().includes(kw) ||
+                n.event.toLowerCase().includes(kw) ||
+                n.tags.some(t => t.toLowerCase().includes(kw))
+            );
+        }
+
+        // ---- 印记 CRUD ----
+        async function getImprints() {
+            const tx = db.transaction([IMPRINT_STORE_NAME], 'readonly');
+            const store = tx.objectStore(IMPRINT_STORE_NAME);
+            const items = [];
+            return new Promise((resolve, reject) => {
+                const req = store.openCursor();
+                req.onsuccess = (e) => {
+                    const c = e.target.result;
+                    if (c) { items.push(c.value);
+                        c.continue(); } else resolve(items.sort((a, b) => b.datetime.localeCompare(a.datetime)));
+                };
+                req.onerror = reject;
+            });
+        }
+
+        async function getImprintRecycle() {
+            const tx = db.transaction([IMPRINT_RECYCLE_STORE_NAME], 'readonly');
+            const store = tx.objectStore(IMPRINT_RECYCLE_STORE_NAME);
+            const items = [];
+            return new Promise((resolve, reject) => {
+                const req = store.openCursor();
+                req.onsuccess = (e) => {
+                    const c = e.target.result;
+                    if (c) { items.push(c.value);
+                        c.continue(); } else resolve(items.sort((a, b) => (b.deletedAt || 0) - (a.deletedAt || 0)));
+                };
+                req.onerror = reject;
+            });
+        }
+
+        async function addImprint(title, datetime, description) {
+            const item = { title, datetime, description: description || '', createdAt: Date.now() };
+            const tx = db.transaction([IMPRINT_STORE_NAME], 'readwrite');
+            const store = tx.objectStore(IMPRINT_STORE_NAME);
+            return new Promise((resolve, reject) => {
+                const req = store.add(item);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = reject;
+            });
+        }
+
+        async function updateImprint(id, title, datetime, description) {
+            const tx = db.transaction([IMPRINT_STORE_NAME], 'readwrite');
+            const store = tx.objectStore(IMPRINT_STORE_NAME);
+            const item = await new Promise(r => { const req = store.get(id);
+                req.onsuccess = () => r(req.result); });
+            if (item) {
+                item.title = title;
+                item.datetime = datetime;
+                item.description = description || '';
+                return new Promise((resolve, reject) => {
+                    const req = store.put(item);
+                    req.onsuccess = resolve;
+                    req.onerror = reject;
+                });
+            }
+        }
+
+        async function deleteImprintToRecycle(id) {
+            const tx = db.transaction([IMPRINT_STORE_NAME, IMPRINT_RECYCLE_STORE_NAME], 'readwrite');
+            const store = tx.objectStore(IMPRINT_STORE_NAME);
+            const recycleStore = tx.objectStore(IMPRINT_RECYCLE_STORE_NAME);
+            const item = await new Promise(r => { const req = store.get(id);
+                req.onsuccess = () => r(req.result); });
+            if (item) {
+                const recycled = { ...item,
+                    deletedAt: Date.now() };
+                await new Promise((r, rej) => { const req = recycleStore.add(recycled);
+                    req.onsuccess = r;
+                    req.onerror = rej; });
+                await new Promise((r, rej) => { const req = store.delete(id);
+                    req.onsuccess = r;
+                    req.onerror = rej; });
+            }
+        }
+
+        async function restoreImprintFromRecycle(id) {
+            const tx = db.transaction([IMPRINT_STORE_NAME, IMPRINT_RECYCLE_STORE_NAME], 'readwrite');
+            const store = tx.objectStore(IMPRINT_STORE_NAME);
+            const recycleStore = tx.objectStore(IMPRINT_RECYCLE_STORE_NAME);
+            const recycled = await new Promise(r => { const req = recycleStore.get(id);
+                req.onsuccess = () => r(req.result); });
+            if (recycled) {
+                const { deletedAt, ...item } = recycled;
+                await new Promise((r, rej) => { const req = store.add(item);
+                    req.onsuccess = r;
+                    req.onerror = rej; });
+                await new Promise((r, rej) => { const req = recycleStore.delete(id);
+                    req.onsuccess = r;
+                    req.onerror = rej; });
+            }
+        }
+
+        async function permanentDeleteImprint(id) {
+            const tx = db.transaction([IMPRINT_RECYCLE_STORE_NAME], 'readwrite');
+            const store = tx.objectStore(IMPRINT_RECYCLE_STORE_NAME);
+            return new Promise((resolve, reject) => {
+                const req = store.delete(id);
+                req.onsuccess = resolve;
+                req.onerror = reject;
+            });
+        }
+
+        async function clearImprintRecycle() {
+            const tx = db.transaction([IMPRINT_RECYCLE_STORE_NAME], 'readwrite');
+            const store = tx.objectStore(IMPRINT_RECYCLE_STORE_NAME);
+            return new Promise((resolve, reject) => {
+                const req = store.clear();
+                req.onsuccess = resolve;
+                req.onerror = reject;
+            });
+        }
+
+        // ============================================================
+        // 渲染函数
+        // ============================================================
+        function renderNoteItem(note, index) {
+            return `
+                <div class="note-item" data-id="${note.id}">
+                    <div class="note-header">
+                        <span class="note-number">${index}</span>
+                        <span class="note-time">🕐 ${note.dateTime}</span>
+                    </div>
+                    <div class="note-thought">${escapeHtml(note.thought)}</div>
+                    ${note.event ? `<div class="note-event-full">${escapeHtml(note.event)}</div>` : ''}
+                    <div class="note-tags">
+                        ${note.tags.map(t => `<span class="tag">#${escapeHtml(t)}</span>`).join('')}
+                    </div>
+                    <div style="margin-top:8px;display:flex;gap:12px;flex-wrap:wrap;">
+                        <button class="expand-btn" onclick="editNote(${note.id})">✏️ 编辑</button>
+                        <button class="expand-btn" style="color:#ff3b30;" onclick="deleteConfirm(${note.id})">🗑️ 删除</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderRecycleItem(note, index) {
+            return `
+                <div class="note-item recycle-item" data-id="${note.id}">
+                    <div class="note-header">
+                        <span class="note-number">${index}</span>
+                        <span class="note-time">🗑️ 删除于 ${note.deletedAt}</span>
+                    </div>
+                    <div class="note-thought">${escapeHtml(note.thought)}</div>
+                    ${note.event ? `<div class="note-event-full">${escapeHtml(note.event)}</div>` : ''}
+                    <div class="note-tags">
+                        ${note.tags.map(t => `<span class="tag">#${escapeHtml(t)}</span>`).join('')}
+                    </div>
+                    <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;">
+                        <button class="restore-btn" onclick="restoreNote(${note.id})">↩️ 恢复</button>
+                        <button class="expand-btn" style="color:#ff3b30;" onclick="permanentDeleteConfirm(${note.id})">🗑️ 永久删除</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ---- 随机视图 ----
+        async function renderRandomView() {
+            const app = document.getElementById('app');
+            app.innerHTML = `<div class="loading"><div class="loading-spinner"></div><div>加载中...</div></div>`;
+
+            const notes = await getAllNotes();
+            let html = `
+                <div class="search-box">
+                    <input type="text" class="search-input" id="searchInput" placeholder="🔍 搜索感悟、事情经过或标签...">
+                </div>
+                <div id="randomContent">
+            `;
+
+            if (notes.length === 0) {
+                html +=
+                    `<div class="empty-state"><div style="font-size:48px;margin-bottom:12px;">🎲</div><div>暂无感悟</div><div style="font-size:14px;margin-top:8px;color:#aaa;">点击右下角按钮开始记录</div></div>`;
+                html += `</div>`;
+                app.innerHTML = html;
+                return;
+            }
+
+            let currentIndex = Math.floor(Math.random() * notes.length);
+            let currentColor = getRandomDarkColor();
+
+            function renderRandomNote() {
+                const note = notes[currentIndex];
+                const num = notes.findIndex(n => n.id === note.id) + 1;
+                return `
+                    <div class="card random-card" style="background:${currentColor}">
+                        <div class="random-label">
+                            <span>✨ 随机回顾 #${num}</span>
+                            <button class="refresh-btn" onclick="randomNext()">🎲 换一条</button>
+                        </div>
+                        <div class="thought">${escapeHtml(note.thought)}</div>
+                        ${note.event ? `<div class="event">${escapeHtml(note.event)}</div>` : ''}
+                        <div class="meta">
+                            <span>🕐 ${note.dateTime}</span>
+                            <span>🏷️ ${note.tags.map(t => '#' + t).join(' ') || '无标签'}</span>
+                        </div>
+                    </div>
+                    <div class="random-actions">
+                        <button class="btn btn-secondary" onclick="editNote(${note.id})">✏️ 编辑</button>
+                        <button class="btn btn-secondary" style="background:#fff0f0;color:#ff3b30;" onclick="deleteConfirm(${note.id})">🗑️ 删除</button>
+                    </div>
+                `;
+            }
+
+            window.randomNext = async function() {
+                const newNotes = await getAllNotes();
+                if (newNotes.length > 0) {
+                    currentIndex = Math.floor(Math.random() * newNotes.length);
+                    currentColor = getRandomDarkColor();
+                    notes.length = 0;
+                    notes.push(...newNotes);
+                    document.getElementById('randomContent').innerHTML = renderRandomNote();
+                } else {
+                    renderRandomView();
+                }
+            };
+
+            html += renderRandomNote();
+            html += `</div>`;
+            app.innerHTML = html;
+
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    if (searchTimeout) clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(async () => {
+                        const keyword = this.value.trim();
+                        if (!keyword) { renderRandomView(); return; }
+                        const results = await searchNotes(keyword);
+                        const div = document.getElementById('randomContent');
+                        if (results.length === 0) {
+                            div.innerHTML = '<div class="empty-state">未找到相关感悟</div>';
+                        } else {
+                            div.innerHTML = results.map((n, i) => renderNoteItem(n, i + 1)).join('');
+                        }
+                    }, 300);
+                });
+            }
+        }
+
+        // ---- 时间轴视图 ----
+        async function renderTimelineView() {
+            const allNotes = await getAllNotes();
+            let notes = allNotes;
+            if (currentTag !== 'all') notes = notes.filter(n => n.tags.includes(currentTag));
+            const dates = [...new Set(notes.map(n => n.dateOnly))].sort().reverse();
+            const today = formatDateOnly(new Date());
+            const defaultDate = dates.length > 0 ? dates[0] : today;
+
+            let html = `
+                <div class="date-selector">
+                    <button class="date-nav-btn" onclick="changeDate(-1)">◀</button>
+                    <input type="date" id="datePicker" value="${defaultDate}" onchange="changeDateSelect(this.value)">
+                    <button class="date-nav-btn" onclick="changeDate(1)">▶</button>
+                </div>
+                ${renderTagsFilter(notes, currentTag)}
+                <div id="timelineContent"></div>
+            `;
+            document.getElementById('app').innerHTML = html;
+            await loadDateNotes(defaultDate);
+        }
+
+        function renderTagsFilter(notes, currentTag) {
+            const allTags = new Set();
+            notes.forEach(n => n.tags.forEach(t => allTags.add(t)));
+            const tagsArray = Array.from(allTags).sort();
+            return `
+                <div class="tags-filter-container">
+                    <div class="tags-filter ${tagsExpanded ? 'expanded' : ''}">
+                        <div class="filter-tag ${currentTag === 'all' ? 'active' : ''}" onclick="setTagFilter('all')">全部</div>
+                        ${tagsArray.map(t => `<div class="filter-tag ${currentTag === t ? 'active' : ''}" onclick="setTagFilter('${t}')">#${escapeHtml(t)}</div>`).join('')}
+                    </div>
+                    ${tagsArray.length > 4 ? `<button class="toggle-tags-btn" onclick="toggleTagsFilter()">${tagsExpanded ? '收起 ▲' : '展开 ▼'}</button>` : ''}
+                </div>
+            `;
+        }
+
+        async function loadDateNotes(dateOnly) {
+            const allNotes = await getAllNotes();
+            let notes = allNotes;
+            if (currentTag !== 'all') notes = notes.filter(n => n.tags.includes(currentTag));
+            currentDateNotes = notes.filter(n => n.dateOnly === dateOnly);
+            currentPage = 1;
+            renderTimelineContent();
+        }
+
+        function renderTimelineContent() {
+            const start = (currentPage - 1) * PAGE_SIZE;
+            const end = start + PAGE_SIZE;
+            const pageNotes = currentDateNotes.slice(start, end);
+            const totalPages = Math.ceil(currentDateNotes.length / PAGE_SIZE);
+            let content = '';
+            if (currentDateNotes.length === 0) {
+                content =
+                    `<div class="empty-state"><div style="font-size:48px;margin-bottom:12px;">📭</div><div>该日期暂无感悟</div></div>`;
+            } else {
+                pageNotes.forEach((n, i) => content += renderNoteItem(n, start + i + 1));
+                if (totalPages > 1) {
+                    content += `<div class="pagination">
+                        <button class="page-btn ${currentPage===1?'disabled':''}" onclick="changePage(${currentPage-1})">上一页</button>
+                        <span class="page-info">第 ${currentPage} / ${totalPages} 页</span>
+                        <button class="page-btn ${currentPage===totalPages?'disabled':''}" onclick="changePage(${currentPage+1})">下一页</button>
+                    </div>`;
+                }
+            }
+            document.getElementById('timelineContent').innerHTML = content;
+        }
+
+        window.changeDate = async function(delta) {
+            const picker = document.getElementById('datePicker');
+            const d = new Date(picker.value);
+            d.setDate(d.getDate() + delta);
+            picker.value = formatDateOnly(d);
+            await loadDateNotes(picker.value);
+        };
+        window.changeDateSelect = async function(date) { await loadDateNotes(date); };
+        window.changePage = function(page) { currentPage = page;
+            renderTimelineContent(); };
+        window.setTagFilter = function(tag) { currentTag = tag;
+            renderTimelineView(); };
+        window.toggleTagsFilter = function() { tagsExpanded = !tagsExpanded;
+            renderTimelineView(); };
+        window.toggleSettingsTags = function() { settingsTagsExpanded = !settingsTagsExpanded;
+            renderSettingsView(); };
+
+        // ---- 回收站视图（默认折叠） ----
+        async function renderRecycleView() {
+            const notes = await getRecycleNotes();
+            const imprints = await getImprintRecycle();
+
+            let html = `<div id="recycleContent">`;
+
+            if (notes.length === 0 && imprints.length === 0) {
+                html +=
+                    `<div class="empty-state"><div style="font-size:48px;margin-bottom:12px;">🗑️</div><div>回收站为空</div></div>`;
+            } else {
+                // 瞬记回收站 - 默认折叠
+                if (notes.length > 0) {
+                    html += `
+                        <div class="recycle-section">
+                            <div class="recycle-section-header" onclick="toggleRecycleSection(this)">
+                                <span>📝 瞬记回收站 (${notes.length})</span>
+                                <span class="arrow collapsed">▼</span>
+                            </div>
+                            <div class="recycle-section-content" id="noteRecycleContent">
+                                ${notes.map((n, i) => renderRecycleItem(n, i + 1)).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // 印记回收站 - 默认折叠
+                if (imprints.length > 0) {
+                    html += `
+                        <div class="recycle-section">
+                            <div class="recycle-section-header" onclick="toggleRecycleSection(this)">
+                                <span>⏱️ 印记回收站 (${imprints.length})</span>
+                                <span class="arrow collapsed">▼</span>
+                            </div>
+                            <div class="recycle-section-content" id="imprintRecycleContent">
+                                ${imprints.map((item, i) => `
+                                    <div class="imprint-recycle-item">
+                                        <div><strong>${escapeHtml(item.title)}</strong> <span style="font-size:12px;">⏱️ ${formatImprintDateTime(item.datetime)}</span></div>
+                                        <div style="font-size:13px;margin-top:4px;white-space:pre-wrap;">${escapeHtml(item.description || '无描述')}</div>
+                                        <div style="font-size:11px;margin-top:4px;color:#888;">🗑️ 删除于 ${new Date(item.deletedAt).toLocaleString()}</div>
+                                        <div style="margin-top:8px;display:flex;gap:10px;flex-wrap:wrap;">
+                                            <button class="restore-btn" onclick="restoreImprint(${item.id})">↩️ 恢复</button>
+                                            <button class="expand-btn" style="color:#ff3b30;" onclick="permanentDeleteImprintConfirm(${item.id})">🗑️ 永久删除</button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                html += `
+                    <div style="margin-top:16px;">
+                        <button class="btn btn-secondary" onclick="clearAllRecycle()">清空所有回收站</button>
+                    </div>
+                `;
+            }
+
+            html += `</div>`;
+            document.getElementById('app').innerHTML = html;
+        }
+
+        // 切换回收站折叠
+        window.toggleRecycleSection = function(header) {
+            const content = header.nextElementSibling;
+            const arrow = header.querySelector('.arrow');
+            if (content) {
+                content.classList.toggle('expanded');
+                if (arrow) {
+                    arrow.classList.toggle('collapsed');
+                }
+            }
+        };
+
+        async function clearAllRecycle() {
+            if (confirm('确定清空所有回收站？此操作不可恢复！')) {
+                await clearRecycle();
+                await clearImprintRecycle();
+                renderRecycleView();
+            }
+        }
+
+        // ---- 设置视图 ----
+        async function renderSettingsView() {
+            const notes = await getAllNotes();
+            const recycleNotes = await getRecycleNotes();
+            const imprints = await getImprints();
+            const imprintRecycle = await getImprintRecycle();
+
+            let streak = 0;
+            const dates = [...new Set(notes.map(n => n.dateOnly))].sort();
+            let d = new Date();
+            for (let i = dates.length - 1; i >= 0; i--) {
+                const ds = formatDateOnly(d);
+                if (dates[i] === ds) { streak++;
+                    d.setDate(d.getDate() - 1); } else break;
+            }
+
+            const tagCount = {};
+            notes.forEach(n => n.tags.forEach(t => tagCount[t] = (tagCount[t] || 0) + 1));
+            const topTags = Object.entries(tagCount).sort((a, b) => b[1] - a[1]);
+
+            let html = `
+                <div class="card">
+                    <h3 style="margin-bottom:12px;font-size:16px;">📊 统计</h3>
+                    <div style="display:grid;grid-template-columns:repeat(4,1fr);text-align:center;gap:8px;">
+                        <div><div class="stats-number">${notes.length}</div><div style="font-size:12px;color:#8e8e93;">瞬记</div></div>
+                        <div><div class="stats-number">${imprints.length}</div><div style="font-size:12px;color:#8e8e93;">印记</div></div>
+                        <div><div class="stats-number">${streak}</div><div style="font-size:12px;color:#8e8e93;">连续天数</div></div>
+                        <div><div class="stats-number">${recycleNotes.length + imprintRecycle.length}</div><div style="font-size:12px;color:#8e8e93;">回收站</div></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 style="margin-bottom:12px;font-size:16px;">🏷️ 常用标签</h3>
+                    <div class="settings-tags-container">
+                        <div class="settings-tags ${settingsTagsExpanded ? 'expanded' : ''}">
+                            ${topTags.length ? topTags.map(([t,c]) => `<span class="tag">#${t} (${c})</span>`).join('') : '<span style="color:#8e8e93;">暂无标签</span>'}
+                        </div>
+                        ${topTags.length > 4 ? `<button class="toggle-tags-btn" onclick="toggleSettingsTags()">${settingsTagsExpanded ? '收起 ▲' : '展开 ▼'}</button>` : ''}
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 style="margin-bottom:12px;font-size:16px;">💾 数据管理</h3>
+                    <button class="btn btn-secondary" onclick="exportData()" style="margin-bottom:10px;">📤 导出瞬记</button>
+                    <button class="btn btn-secondary" onclick="importData()" style="margin-bottom:10px;">📥 导入瞬记</button>
+                    <button class="btn btn-secondary" onclick="backupData()">💾 完整备份</button>
+                    <p style="font-size:12px;color:#8e8e93;margin-top:12px;">数据仅存储在本地浏览器</p>
+                </div>
+                <div class="card">
+                    <h3 style="margin-bottom:12px;font-size:16px;">ℹ️ 关于</h3>
+                    <p style="font-size:14px;">瞬记 · 时光印记 v4.3</p>
+                    <p style="font-size:12px;color:#8e8e93;margin-top:4px;">数据存储在 IndexedDB</p>
+                </div>
+            `;
+            document.getElementById('app').innerHTML = html;
+        }
+
+        // ---- 印记视图 ----
+        async function renderImprintView() {
+            const imprints = await getImprints();
+            const app = document.getElementById('app');
+
+            let html = `
+                <div class="imprint-stats-bar">
+                    <span class="imprint-stats-badge">📋 总计: ${imprints.length} 件事</span>
+                </div>
+                <div class="imprint-filter-bar">
+                    <input type="text" id="imprintSearchInput" class="imprint-filter-input" placeholder="🔍 实时搜索...">
+                    <button id="imprintClearFilterBtn" class="imprint-clear-filter">✖️ 清除</button>
+                    <button id="imprintExportBtn" class="imprint-small-btn">📤 导出</button>
+                    <label class="imprint-small-btn" style="cursor:pointer;">📥 导入 <input type="file" id="imprintImportFile" accept=".json" style="display:none;"></label>
+                </div>
+                <div class="imprint-add-card collapsed" id="imprintAddCard">
+                    <div class="card-header" id="imprintCardHeader">
+                        <span>✏️ 添加新事件</span>
+                        <span class="imprint-collapse-icon">▼</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>📖 标题 <span style="color:#c2410c;">*</span></label>
+                            <input type="text" id="imprintTitle" placeholder="例：项目答辩、纪念日...">
+                        </div>
+                        <div class="form-group">
+                            <label>⏰ 日期时间</label>
+                            <input type="datetime-local" id="imprintDatetime">
+                        </div>
+                        <div class="form-group">
+                            <label>✏️ 详细描述</label>
+                            <textarea id="imprintDesc" placeholder="写下重要细节..." style="min-height:60px;"></textarea>
+                        </div>
+                        <button class="btn btn-primary" id="imprintSubmitBtn">➕ 添加事件</button>
+                        <div class="imprint-flex-btns" id="imprintEditCancelGroup" style="display:none;">
+                            <button class="btn btn-secondary" id="imprintCancelEditBtn">取消编辑</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="imprintList"></div>
+            `;
+            app.innerHTML = html;
+
+            const now = new Date();
+            const defaultDT =
+                `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}T${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+            const dtInput = document.getElementById('imprintDatetime');
+            if (dtInput && !dtInput.value) dtInput.value = defaultDT;
+
+            const header = document.getElementById('imprintCardHeader');
+            if (header) {
+                header.addEventListener('click', function(e) {
+                    if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+                    document.getElementById('imprintAddCard').classList.toggle('collapsed');
+                });
+            }
+
+            document.getElementById('imprintSubmitBtn').addEventListener('click', async function() {
+                const title = document.getElementById('imprintTitle').value.trim();
+                const datetime = document.getElementById('imprintDatetime').value;
+                const desc = document.getElementById('imprintDesc').value;
+                if (!title) { alert('请填写标题'); return; }
+                if (!datetime) { alert('请选择日期时间'); return; }
+                if (imprintEditingId) {
+                    await updateImprint(imprintEditingId, title, datetime, desc);
+                    imprintEditingId = null;
+                    document.getElementById('imprintSubmitBtn').textContent = '➕ 添加事件';
+                    document.getElementById('imprintEditCancelGroup').style.display = 'none';
+                } else {
+                    await addImprint(title, datetime, desc);
+                }
+                document.getElementById('imprintTitle').value = '';
+                document.getElementById('imprintDesc').value = '';
+                document.getElementById('imprintAddCard').classList.add('collapsed');
+                renderImprintView();
+            });
+
+            document.getElementById('imprintCancelEditBtn').addEventListener('click', function() {
+                imprintEditingId = null;
+                document.getElementById('imprintSubmitBtn').textContent = '➕ 添加事件';
+                document.getElementById('imprintEditCancelGroup').style.display = 'none';
+                document.getElementById('imprintTitle').value = '';
+                document.getElementById('imprintDesc').value = '';
+                document.getElementById('imprintAddCard').classList.add('collapsed');
+            });
+
+            document.getElementById('imprintSearchInput').addEventListener('input', function() {
+                const keyword = this.value.trim().toLowerCase();
+                document.querySelectorAll('.imprint-card').forEach(el => {
+                    const title = (el.dataset.title || '').toLowerCase();
+                    const desc = (el.dataset.desc || '').toLowerCase();
+                    el.style.display = (title.includes(keyword) || desc.includes(keyword)) ? '' : 'none';
+                });
+            });
+            document.getElementById('imprintClearFilterBtn').addEventListener('click', function() {
+                document.getElementById('imprintSearchInput').value = '';
+                document.querySelectorAll('.imprint-card').forEach(el => el.style.display = '');
+            });
+
+            document.getElementById('imprintExportBtn').addEventListener('click', async function() {
+                const data = await getImprints();
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `imprints_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+
+            document.getElementById('imprintImportFile').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = async function(ev) {
+                    try {
+                        const data = JSON.parse(ev.target.result);
+                        if (!Array.isArray(data)) throw new Error('格式错误');
+                        let count = 0;
+                        for (const item of data) {
+                            if (item.title && item.datetime) {
+                                await addImprint(item.title, item.datetime, item.description || '');
+                                count++;
+                            }
+                        }
+                        alert(`导入成功！共 ${count} 条`);
+                        renderImprintView();
+                    } catch (err) { alert('导入失败：' + err.message); }
+                };
+                reader.readAsText(file);
+                e.target.value = '';
+            });
+
+            renderImprintList(imprints);
+        }
+
+        function renderImprintList(imprints) {
+            const container = document.getElementById('imprintList');
+            if (!container) return;
+            if (imprints.length === 0) {
+                container.innerHTML = `<div class="empty-state">✨ 暂无重要事件，点击上方添加一条吧</div>`;
+                return;
+            }
+            container.innerHTML = imprints.map(item => `
+                <div class="imprint-card" data-id="${item.id}" data-title="${escapeHtml(item.title)}" data-desc="${escapeHtml(item.description||'')}">
+                    <div class="imprint-info">
+                        <div class="imprint-title">
+                            <strong>${escapeHtml(item.title)}</strong>
+                            <span class="imprint-datetime-badge">⏱️ ${formatImprintDateTime(item.datetime)}</span>
+                        </div>
+                        <div class="imprint-desc-preview">${escapeHtml(item.description) || '无详细描述'}</div>
+                    </div>
+                    <div class="imprint-actions">
+                        <button class="imprint-icon-btn imprint-delete" data-id="${item.id}" title="删除">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+
+            document.querySelectorAll('.imprint-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    if (e.target.closest('.imprint-icon-btn')) return;
+                    const id = parseInt(this.dataset.id);
+                    showImprintDetail(id);
+                });
+            });
+
+            document.querySelectorAll('.imprint-delete').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const id = parseInt(this.dataset.id);
+                    if (confirm('确定移至回收站吗？')) {
+                        deleteImprintToRecycle(id).then(() => renderImprintView());
+                    }
+                });
+            });
+        }
+
+        async function showImprintDetail(id) {
+            const imprints = await getImprints();
+            const item = imprints.find(i => i.id === id);
+            if (!item) return;
+            imprintCurrentViewId = id;
+            document.getElementById('imprintViewTitle').textContent = item.title;
+            document.getElementById('imprintViewDatetime').textContent = formatImprintDateTime(item.datetime);
+            document.getElementById('imprintViewDescription').textContent = item.description || '暂无详细描述';
+            document.getElementById('imprintViewModal').style.display = 'flex';
+        }
+
+        function closeImprintView() {
+            document.getElementById('imprintViewModal').style.display = 'none';
+        }
+
+        async function imprintEditFromView() {
+            if (imprintCurrentViewId) {
+                closeImprintView();
+                const imprints = await getImprints();
+                const item = imprints.find(i => i.id === imprintCurrentViewId);
+                if (item) {
+                    imprintEditingId = item.id;
+                    document.getElementById('imprintTitle').value = item.title;
+                    document.getElementById('imprintDatetime').value = item.datetime;
+                    document.getElementById('imprintDesc').value = item.description || '';
+                    document.getElementById('imprintSubmitBtn').textContent = '✏️ 更新事件';
+                    document.getElementById('imprintEditCancelGroup').style.display = 'flex';
+                    document.getElementById('imprintAddCard').classList.remove('collapsed');
+                    document.getElementById('imprintAddCard').scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        }
+
+        // ---- 印记回收站操作 ----
+        window.restoreImprint = async function(id) {
+            await restoreImprintFromRecycle(id);
+            renderRecycleView();
+        };
+        window.permanentDeleteImprintConfirm = async function(id) {
+            if (confirm('永久删除此印记？')) {
+                await permanentDeleteImprint(id);
+                renderRecycleView();
+            }
+        };
+
+        // ---- 全局函数 ----
+        window.editNote = async function(id) {
+            const notes = await getAllNotes();
+            const note = notes.find(n => n.id === id);
+            if (note) {
+                currentEditId = id;
+                document.getElementById('noteThought').value = note.thought;
+                document.getElementById('noteEvent').value = note.event || '';
+                document.getElementById('noteTags').value = note.tags.join(' ');
+                document.getElementById('editModal').classList.add('show');
+            }
+        };
+
+        window.deleteConfirm = function(id) {
+            if (confirm('确定删除？移至回收站')) {
+                deleteToRecycle(id).then(() => switchView(currentView));
+            }
+        };
+
+        window.restoreNote = async function(id) {
+            await restoreFromRecycle(id);
+            renderRecycleView();
+        };
+
+        window.permanentDeleteConfirm = function(id) {
+            if (confirm('永久删除？')) {
+                permanentDelete(id).then(() => renderRecycleView());
+            }
+        };
+
+        function closeModal() {
+            currentEditId = null;
+            document.getElementById('noteThought').value = '';
+            document.getElementById('noteEvent').value = '';
+            document.getElementById('noteTags').value = '';
+            document.getElementById('editModal').classList.remove('show');
+        }
+
+        // ---- 切换视图 ----
+        async function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.toggle('active', el.dataset.view === view);
+            });
+
+            if (view === 'random') await renderRandomView();
+            else if (view === 'timeline') await renderTimelineView();
+            else if (view === 'imprint') await renderImprintView();
+            else if (view === 'recycle') await renderRecycleView();
+            else if (view === 'settings') await renderSettingsView();
+        }
+
+        // ---- 数据管理 ----
+        window.backupData = async function() {
+            const notes = await getAllNotes();
+            const imprints = await getImprints();
+            const recycle = await getRecycleNotes();
+            const imprintRecycle = await getImprintRecycle();
+            const data = { version: '4.3', time: formatDateTime(new Date()), notes, imprints, recycle, imprintRecycle };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `瞬记_印记_备份_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            alert('完整备份已保存');
+        };
+
+        window.exportData = async function() {
+            const notes = await getAllNotes();
+            const blob = new Blob([JSON.stringify(notes, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `瞬记_数据_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+
+        window.importData = function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                const text = await file.text();
+                try {
+                    const data = JSON.parse(text);
+                    const items = Array.isArray(data) ? data : (data.notes || []);
+                    const tx = db.transaction([STORE_NAME], 'readwrite');
+                    const store = tx.objectStore(STORE_NAME);
+                    let count = 0;
+                    for (const item of items) {
+                        if (item.thought) {
+                            const { id, ...rest } = item;
+                            store.add(rest);
+                            count++;
+                        }
+                    }
+                    tx.oncomplete = () => { alert(`导入成功 ${count} 条`);
+                        switchView(currentView); };
+                    tx.onerror = () => alert('导入失败');
+                } catch (err) { alert('文件格式错误'); }
+            };
+            input.click();
+        };
+
+        // ---- 初始化 ----
+        async function init() {
+            try {
+                await openDB();
+
+                const notes = await getAllNotes();
+                if (notes.length === 0) {
+                    await addNote('产品经理不是画原型的，而是解决用户问题的', '今天开会讨论产品方向...\n发现大家过于关注功能实现\n忽略了用户真正的痛点', '产品 感悟');
+                    await addNote('要相信直觉，但也要用数据验证', '做了一个决策\n凭直觉觉得是对的\n但还是需要找数据支撑', '工作 思考');
+                    await addNote('每天进步1%，一年就是37倍', '睡前想到的\n坚持的力量真的很可怕', '生活 激励');
+                }
+
+                const imprints = await getImprints();
+                if (imprints.length === 0) {
+                    await addImprint('项目启动会', new Date().toISOString().slice(0, 16), '与团队确认了Q3目标和里程碑');
+                    await addImprint('晨会纪要', new Date(Date.now() - 3600000).toISOString().slice(0, 16),
+                        '讨论了用户反馈和下一步优化');
+                }
+
+                document.querySelectorAll('.nav-item').forEach(el => {
+                    el.addEventListener('click', function(e) {
+                        const view = this.dataset.view;
+                        if (view) switchView(view);
+                    });
+                });
+
+                document.getElementById('fabBtn').addEventListener('click', function() {
+                    currentEditId = null;
+                    document.getElementById('noteThought').value = '';
+                    document.getElementById('noteEvent').value = '';
+                    document.getElementById('noteTags').value = '';
+                    document.getElementById('editModal').classList.add('show');
+                });
+
+                document.getElementById('saveBtn').addEventListener('click', async function() {
+                    const thought = document.getElementById('noteThought').value.trim();
+                    if (!thought) { alert('请填写感悟'); return; }
+                    const event = document.getElementById('noteEvent').value;
+                    const tags = document.getElementById('noteTags').value;
+                    if (currentEditId) {
+                        await updateNote(currentEditId, thought, event, tags);
+                    } else {
+                        await addNote(thought, event, tags);
+                    }
+                    closeModal();
+                    switchView(currentView);
+                });
+
+                document.getElementById('imprintCloseViewBtn').addEventListener('click', closeImprintView);
+                document.getElementById('imprintViewCloseBtn').addEventListener('click', closeImprintView);
+                document.getElementById('imprintViewEditBtn').addEventListener('click', imprintEditFromView);
+                document.getElementById('imprintViewModal').addEventListener('click', function(e) {
+                    if (e.target === this) closeImprintView();
+                });
+
+                await switchView('random');
+
+            } catch (err) {
+                console.error('初始化失败:', err);
+                document.getElementById('app').innerHTML =
+                    `<div class="empty-state">加载失败，请刷新页面重试<br><span style="font-size:12px;color:#999;">${err.message}</span></div>`;
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    </script>
+</body>
+</html>
