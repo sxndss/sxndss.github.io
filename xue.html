@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>语文备考 · 学科知识工具</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f8f6f2;
+            color: #1e1e2a;
+            padding: 16px 12px 80px;
+            max-width: 820px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        button, .btn {
+            background: #e6e3da;
+            border: none;
+            border-radius: 40px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #1e1e2a;
+            touch-action: manipulation;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.05s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 48px;
+            min-width: 48px;
+        }
+        button:active { transform: scale(0.96); background: #d6d2c7; }
+        .btn-primary { background: #2b2b3a; color: #f8f6f2; }
+        .btn-primary:active { background: #11111c; }
+        .btn-outline { background: transparent; border: 1.5px solid #b8b2a4; }
+        .btn-danger { background: #e3d6d6; color: #a14545; }
+        .btn-success { background: #d4e3d4; color: #1f5f3f; }
+        .btn-sm { padding: 6px 14px; font-size: 0.9rem; min-height: 36px; }
+        .btn-block { width: 100%; justify-content: center; }
+
+        .card {
+            background: #ffffffd9;
+            border-radius: 28px;
+            padding: 20px 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            border: 1px solid #efede8;
+        }
+        .card-title { font-size: 1.2rem; font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+
+        .header-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px 12px;
+            margin-bottom: 12px;
+        }
+        .stat-badge {
+            background: #eae7e0;
+            border-radius: 40px;
+            padding: 6px 16px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        .streak { background: #f3ede4; color: #8a7a5a; }
+
+        .review-item {
+            background: #fcfaf7;
+            border-radius: 20px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            border-left: 6px solid #d6d0c4;
+        }
+        .review-item.highlight { border-left-color: #b8a88a; background: #f8f4ec; }
+        .review-item .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 12px;
+            font-size: 0.8rem;
+            color: #6f6a5e;
+            margin-bottom: 6px;
+        }
+        .review-item .content { font-size: 1rem; margin-bottom: 6px; word-break: break-word; }
+        .review-item .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+
+        .field-group { margin-bottom: 14px; }
+        .field-group label { display: block; font-size: 0.9rem; font-weight: 500; margin-bottom: 4px; color: #3d3a32; }
+        .field-group input, .field-group textarea, .field-group select {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 1rem;
+            border: 1.5px solid #ded9d0;
+            border-radius: 20px;
+            background: #fefcf9;
+            font-family: inherit;
+        }
+        .field-group textarea { min-height: 70px; resize: vertical; }
+        .field-group input:focus, .field-group textarea:focus { outline: none; border-color: #9a8e7a; }
+
+        .tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+        .tab-btn {
+            background: #eae7e0;
+            border-radius: 40px;
+            padding: 8px 18px;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            min-height: 40px;
+        }
+        .tab-btn.active { background: #2b2b3a; color: #f8f6f2; }
+
+        .entry-item {
+            background: #fcfaf7;
+            border-radius: 18px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border: 1px solid #efede8;
+        }
+        .entry-item .title { font-weight: 500; display: flex; justify-content: space-between; gap: 8px; }
+        .entry-item .detail { font-size: 0.9rem; color: #4a463d; margin-top: 4px; }
+        .entry-item .actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+        .entry-item .checkbox-wrap { display: flex; align-items: center; gap: 8px; margin-right: 8px; }
+        .entry-item .checkbox-wrap input[type="checkbox"] { width: 20px; height: 20px; accent-color: #2b2b3a; cursor: pointer; }
+
+        .empty-state { text-align: center; padding: 30px 0; color: #8a8478; font-size: 0.95rem; }
+        .flex { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .hidden { display: none !important; }
+        .text-muted { color: #6f6a5e; font-size: 0.85rem; }
+        .mb-8 { margin-bottom: 8px; }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.25);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal-box {
+            background: #ffffff;
+            max-width: 620px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 32px;
+            padding: 28px 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .modal-box h2 { font-size: 1.4rem; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .modal-close { background: none; border: none; font-size: 1.8rem; line-height: 1; cursor: pointer; color: #6f6a5e; padding: 0 8px; }
+        .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 16px; flex-wrap: wrap; }
+
+        .recycled-item { opacity: 0.8; border-left-color: #b0a8a0; }
+        .recycled-item .recycle-tag { background: #d6cec4; border-radius: 20px; padding: 2px 12px; font-size: 0.7rem; color: #5a5248; }
+
+        @media (max-width: 500px) {
+            body { padding: 12px 8px 80px; }
+            .card { padding: 16px 12px; }
+            .modal-box { padding: 20px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="app"></div>
+<div id="modalContainer"></div>
+
+<script>
+    (function(){
+        'use strict';
+
+        const STORAGE_KEY = 'yuwen_beikao_data_v3';
+
+        function getDefaultData() {
+            return {
+                notes: {
+                    ziyin: [], chengyu: [], jinyici: [], wenyan: [],
+                    gushi: [], wenxue: [], jiaoxue: [], zuowen: []
+                },
+                wrongs: [],
+                reviewLog: [],
+                recycle: { notes: [], wrongs: [] }
+            };
+        }
+
+        function loadData() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (!parsed.recycle) parsed.recycle = { notes: [], wrongs: [] };
+                    if (!parsed.recycle.notes) parsed.recycle.notes = [];
+                    if (!parsed.recycle.wrongs) parsed.recycle.wrongs = [];
+                    return parsed;
+                }
+            } catch (e) {}
+            return getDefaultData();
+        }
+
+        function saveData(data) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        function genId() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 5); }
+        function todayStr() {
+            const d = new Date();
+            return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+        }
+        function getNextReviewInterval(reviewCount) {
+            if (reviewCount === 0) return 1;
+            if (reviewCount === 1) return 3;
+            if (reviewCount === 2) return 7;
+            if (reviewCount === 3) return 15;
+            return 30;
+        }
+        function calcNextReview(lastReviewStr, reviewCount) {
+            if (!lastReviewStr) return todayStr();
+            const interval = getNextReviewInterval(reviewCount);
+            const d = new Date(lastReviewStr);
+            d.setDate(d.getDate() + interval);
+            return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+        }
+        function isDueToday(nextReviewStr) {
+            return nextReviewStr <= todayStr();
+        }
+
+        let data = loadData();
+
+        function ensureFields(entry) {
+            if (!entry.starred) entry.starred = false;
+            if (entry.reviewCount === undefined) entry.reviewCount = 0;
+            if (!entry.lastReview) entry.lastReview = null;
+            if (!entry.nextReview) entry.nextReview = todayStr();
+            if (!entry.createdAt) entry.createdAt = todayStr();
+            return entry;
+        }
+
+        function ensureAllEntries() {
+            const plates = ['ziyin','chengyu','jinyici','wenyan','gushi','wenxue','jiaoxue','zuowen'];
+            plates.forEach(p => {
+                data.notes[p] = data.notes[p].map(ensureFields);
+            });
+            data.wrongs = data.wrongs.map(ensureFields);
+        }
+        ensureAllEntries();
+        saveData(data);
+
+        const app = document.getElementById('app');
+        const modalContainer = document.getElementById('modalContainer');
+
+        let currentTab = 'home';
+        let currentPlate = 'ziyin';
+        let currentWrongFilter = 'all';
+        let quizQuestions = [];
+        let quizIndex = 0;
+        let batchMode = false;
+
+        // ============================================================
+        // ★★★ 终极方案：直接在 onclick 中传递答案内容 ★★★
+        // ============================================================
+        window.toggleAnswer = function(btn, answerText) {
+            console.log('toggleAnswer 被调用, answerText:', answerText);
+            // 找到 answer-box
+            const reviewItem = btn.closest('.review-item');
+            if (!reviewItem) {
+                alert('未找到答案显示区域');
+                return;
+            }
+            const answerBox = reviewItem.querySelector('.answer-box');
+            if (!answerBox) {
+                alert('未找到答案显示区域');
+                return;
+            }
+
+            // 切换显示/隐藏
+            if (!answerBox.classList.contains('hidden')) {
+                answerBox.classList.add('hidden');
+                return;
+            }
+
+            // 显示答案
+            answerBox.innerHTML = answerText.replace(/\n/g, '<br>');
+            answerBox.classList.remove('hidden');
+        };
+
+        window.toggleQuizAnswer = function(btn, answerText) {
+            const container = btn.closest('div[style*="background:#f8f4ec"]');
+            if (!container) {
+                alert('未找到题目容器');
+                return;
+            }
+            const answerBox = container.querySelector('.answer-box');
+            if (!answerBox) {
+                alert('未找到答案显示区域');
+                return;
+            }
+
+            if (!answerBox.classList.contains('hidden')) {
+                answerBox.classList.add('hidden');
+                return;
+            }
+
+            answerBox.innerHTML = answerText.replace(/\n/g, '<br>');
+            answerBox.classList.remove('hidden');
+        };
+
+        // ---------- 辅助函数 ----------
+        function getDueEntries() {
+            const result = [];
+            const plates = ['ziyin','chengyu','jinyici','wenyan','gushi','wenxue','jiaoxue','zuowen'];
+            const plateMap = {
+                ziyin:'字音字形', chengyu:'成语', jinyici:'近义词辨析', wenyan:'文言一词多义',
+                gushi:'古诗文默写', wenxue:'文学常识', jiaoxue:'教学设计', zuowen:'作文素材'
+            };
+            plates.forEach(p => {
+                data.notes[p].forEach(item => {
+                    if (isDueToday(item.nextReview)) {
+                        result.push({ type: 'note', plate: p, plateLabel: plateMap[p], entry: item });
+                    }
+                });
+            });
+            data.wrongs.forEach(item => {
+                if (isDueToday(item.nextReview)) {
+                    result.push({ type: 'wrong', plate: item.plate || '其他', plateLabel: item.plate || '其他', entry: item });
+                }
+            });
+            result.sort((a,b) => {
+                if (a.entry.starred && !b.entry.starred) return -1;
+                if (!a.entry.starred && b.entry.starred) return 1;
+                return a.entry.nextReview.localeCompare(b.entry.nextReview);
+            });
+            return result;
+        }
+
+        function getFavorites() {
+            const result = [];
+            const plates = ['ziyin','chengyu','jinyici','wenyan','gushi','wenxue','jiaoxue','zuowen'];
+            const plateMap = {
+                ziyin:'字音字形', chengyu:'成语', jinyici:'近义词辨析', wenyan:'文言一词多义',
+                gushi:'古诗文默写', wenxue:'文学常识', jiaoxue:'教学设计', zuowen:'作文素材'
+            };
+            plates.forEach(p => {
+                data.notes[p].forEach(item => {
+                    if (item.starred) {
+                        result.push({ type: 'note', plate: p, plateLabel: plateMap[p], entry: item });
+                    }
+                });
+            });
+            data.wrongs.forEach(item => {
+                if (item.starred) {
+                    result.push({ type: 'wrong', plate: item.plate || '其他', plateLabel: item.plate || '其他', entry: item });
+                }
+            });
+            return result;
+        }
+
+        function getAllActiveEntries() {
+            const result = [];
+            const plates = ['ziyin','chengyu','jinyici','wenyan','gushi','wenxue','jiaoxue','zuowen'];
+            const plateMap = {
+                ziyin:'字音字形', chengyu:'成语', jinyici:'近义词辨析', wenyan:'文言一词多义',
+                gushi:'古诗文默写', wenxue:'文学常识', jiaoxue:'教学设计', zuowen:'作文素材'
+            };
+            plates.forEach(p => {
+                data.notes[p].forEach(item => {
+                    result.push({ type: 'note', plate: p, plateLabel: plateMap[p], entry: item });
+                });
+            });
+            data.wrongs.forEach(item => {
+                result.push({ type: 'wrong', plate: item.plate || '其他', plateLabel: item.plate || '其他', entry: item });
+            });
+            return result;
+        }
+
+        function checkSimilarWrongs(newQuestion) {
+            if (!newQuestion || newQuestion.length < 3) return [];
+            const similar = [];
+            data.wrongs.forEach(item => {
+                const q = item.question || '';
+                if (q.length < 2) return;
+                const words = newQuestion.split(/[\s,，、。.！？;；：""''（）()《》<>/]+/).filter(w => w.length >= 2);
+                let matchCount = 0;
+                words.forEach(w => {
+                    if (q.includes(w)) matchCount++;
+                });
+                const ratio = words.length > 0 ? matchCount / words.length : 0;
+                if (ratio >= 0.4 && item.id) {
+                    similar.push({ entry: item, ratio: Math.round(ratio * 100) });
+                }
+            });
+            return similar.sort((a,b) => b.ratio - a.ratio).slice(0, 5);
+        }
+
+        function getNoteDetail(item, plate) {
+            if (plate === 'ziyin') return '读音: ' + (item.pronunciation||'');
+            if (plate === 'chengyu') return '释字: ' + (item.shizi||'') + ' 释义: ' + (item.shiyi||'');
+            if (plate === 'jinyici') return '辨析: ' + (item.bianxi||'') + ' 例: ' + (item.example||'');
+            if (plate === 'wenyan') return '用法: ' + (item.usage||'') + ' 例: ' + (item.example||'');
+            if (plate === 'gushi') return '出处: ' + (item.chuchu||'');
+            if (plate === 'wenxue') return (item.dynasty||'') + ' ' + (item.author||'') + ' ' + (item.work||'') + ' ' + (item.title||'') + ' 备注: ' + (item.remark||'');
+            if (plate === 'jiaoxue') return '框架: ' + (item.framework||'') + ' 要点: ' + (item.points||'');
+            if (plate === 'zuowen') return '主题: ' + (item.theme||'') + ' 概括: ' + (item.summary||'') + ' 金句: ' + (item.quote||'');
+            return '';
+        }
+
+        function getEntryPreview(item) {
+            const e = item.entry;
+            if (item.type === 'note') {
+                const p = item.plate;
+                if (p === 'ziyin') return '📖 ' + (e.word || '') + ' → ' + (e.pronunciation || '');
+                if (p === 'chengyu') return '📖 ' + (e.chengyu || '') + ' : ' + (e.shiyi || '');
+                if (p === 'jinyici') return '📖 ' + (e.word1 || '') + ' / ' + (e.word2 || '');
+                if (p === 'wenyan') return '📖 ' + (e.word || '') + ' : ' + (e.usage || '');
+                if (p === 'gushi') return '📖 ' + (e.shangju || '') + ' / ' + (e.xiaju || '');
+                if (p === 'wenxue') return '📖 ' + (e.author || '') + ' · ' + (e.work || '');
+                if (p === 'jiaoxue') return '📖 ' + (e.type || '') + ' : ' + (e.framework || '');
+                if (p === 'zuowen') return '📖 ' + (e.name || '') + ' : ' + (e.theme || '');
+                return '📖 笔记';
+            } else {
+                return '❓ ' + (e.question || '');
+            }
+        }
+
+        function getNotePreview(item, plate) {
+            if (plate === 'ziyin') return item.word || '';
+            if (plate === 'chengyu') return item.chengyu || '';
+            if (plate === 'jinyici') return (item.word1||'') + ' / ' + (item.word2||'');
+            if (plate === 'wenyan') return item.word || '';
+            if (plate === 'gushi') return (item.shangju||'') + ' / ' + (item.xiaju||'');
+            if (plate === 'wenxue') return (item.author||'') + ' · ' + (item.work||'');
+            if (plate === 'jiaoxue') return item.type || '';
+            if (plate === 'zuowen') return item.name || '';
+            return '';
+        }
+
+        function getPlateLabel(key) {
+            const map = {
+                ziyin:'字音字形', chengyu:'成语', jinyici:'近义词辨析',
+                wenyan:'文言一词多义', gushi:'古诗文默写', wenxue:'文学常识',
+                jiaoxue:'教学设计', zuowen:'作文素材'
+            };
+            return map[key] || key;
+        }
+
+        function getNoteFields(plateKey) {
+            const map = {
+                ziyin: [{key:'word',label:'字词'},{key:'pronunciation',label:'正确读音'}],
+                chengyu: [{key:'chengyu',label:'成语'},{key:'shizi',label:'释字'},{key:'shiyi',label:'释义'}],
+                jinyici: [{key:'word1',label:'词1'},{key:'word2',label:'词2'},{key:'bianxi',label:'辨析要点'},{key:'example',label:'例句'}],
+                wenyan: [{key:'word',label:'字词'},{key:'usage',label:'用法'},{key:'example',label:'出处例句'}],
+                gushi: [{key:'shangju',label:'上句'},{key:'xiaju',label:'下句'},{key:'chuchu',label:'出处'}],
+                wenxue: [{key:'dynasty',label:'朝代'},{key:'author',label:'作家'},{key:'work',label:'代表作'},{key:'title',label:'称号'},{key:'remark',label:'备注'}],
+                jiaoxue: [{key:'type',label:'课型'},{key:'framework',label:'流程框架'},{key:'points',label:'各环节要点'}],
+                zuowen: [{key:'name',label:'素材名'},{key:'theme',label:'适用主题'},{key:'summary',label:'一句话概括'},{key:'quote',label:'关键金句'}]
+            };
+            return map[plateKey] || [];
+        }
+
+        // ---------- 弹窗 ----------
+        function openModal(htmlContent) {
+            modalContainer.innerHTML = `
+                <div class="modal-overlay" id="modalOverlay">
+                    <div class="modal-box">
+                        ${htmlContent}
+                    </div>
+                </div>
+            `;
+            document.getElementById('modalOverlay')?.addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+        }
+
+        function closeModal() {
+            modalContainer.innerHTML = '';
+        }
+
+        function showAddNoteModal(plateKey) {
+            const plateLabels = {
+                ziyin:'字音字形', chengyu:'成语', jinyici:'近义词辨析',
+                wenyan:'文言一词多义', gushi:'古诗文默写', wenxue:'文学常识',
+                jiaoxue:'教学设计', zuowen:'作文素材'
+            };
+            const label = plateLabels[plateKey] || plateKey;
+            const fields = getNoteFields(plateKey);
+            let formHtml = fields.map(f => `
+                <div class="field-group">
+                    <label>${f.label}</label>
+                    <input type="text" id="noteField_${f.key}" placeholder="请输入${f.label}" />
+                </div>
+            `).join('');
+
+            const modalContent = `
+                <h2>📝 新增笔记 · ${label}
+                    <button class="modal-close" id="modalCloseBtn">✕</button>
+                </h2>
+                ${formHtml}
+                <div class="modal-actions">
+                    <button class="btn btn-outline" id="modalCancelBtn">取消</button>
+                    <button class="btn btn-primary" id="modalSaveNoteBtn">保存</button>
+                </div>
+            `;
+            openModal(modalContent);
+
+            document.getElementById('modalCloseBtn')?.addEventListener('click', closeModal);
+            document.getElementById('modalCancelBtn')?.addEventListener('click', closeModal);
+
+            document.getElementById('modalSaveNoteBtn')?.addEventListener('click', function() {
+                const entry = { id: genId(), reviewCount: 0, lastReview: null, nextReview: todayStr(), createdAt: todayStr(), starred: false };
+                fields.forEach(f => {
+                    const el = document.getElementById('noteField_' + f.key);
+                    if (el) entry[f.key] = el.value.trim();
+                });
+                const hasValue = fields.some(f => entry[f.key] && entry[f.key].length > 0);
+                if (!hasValue) { alert('请至少填写一个字段'); return; }
+                data.notes[plateKey].push(entry);
+                saveData(data);
+                closeModal();
+                render();
+            });
+        }
+
+        function showAddWrongModal() {
+            const modalContent = `
+                <h2>❌ 新增错题
+                    <button class="modal-close" id="modalCloseBtn">✕</button>
+                </h2>
+                <div class="field-group"><label>题目</label><input type="text" id="wrong_question" placeholder="请输入错题题目" /></div>
+                <div class="field-group"><label>正确答案</label><input type="text" id="wrong_correct" placeholder="请输入正确答案" /></div>
+                <div class="field-group"><label>错误原因</label><input type="text" id="wrong_reason" placeholder="分析错误原因" /></div>
+                <div class="field-group"><label>所属板块</label>
+                    <select id="wrong_plate">
+                        <option value="字音字形">字音字形</option><option value="成语">成语</option><option value="近义词">近义词</option>
+                        <option value="文言文">文言文</option><option value="古诗文">古诗文</option><option value="文学常识">文学常识</option>
+                        <option value="教学设计">教学设计</option><option value="作文">作文</option><option value="其他" selected>其他</option>
+                    </select>
+                </div>
+                <div id="similarAlert" class="hidden" style="background:#fdf0e0;padding:12px;border-radius:16px;margin-bottom:12px;"></div>
+                <div class="modal-actions">
+                    <button class="btn btn-outline" id="modalCancelBtn">取消</button>
+                    <button class="btn btn-primary" id="modalSaveWrongBtn">保存</button>
+                </div>
+            `;
+            openModal(modalContent);
+
+            document.getElementById('modalCloseBtn')?.addEventListener('click', closeModal);
+            document.getElementById('modalCancelBtn')?.addEventListener('click', closeModal);
+
+            const questionInput = document.getElementById('wrong_question');
+            if (questionInput) {
+                questionInput.addEventListener('input', function() {
+                    const val = this.value.trim();
+                    const alertDiv = document.getElementById('similarAlert');
+                    if (val.length < 3) { alertDiv.classList.add('hidden'); return; }
+                    const similar = checkSimilarWrongs(val);
+                    if (similar.length > 0) {
+                        alertDiv.classList.remove('hidden');
+                        alertDiv.innerHTML = '⚠️ 检测到 ' + similar.length + ' 道相似错题：<br>' +
+                            similar.map(s => '• ' + (s.entry.question || '') + ' (相似度 ' + s.ratio + '%)').join('<br>') +
+                            '<br><span class="text-muted">建议查看是否重复犯错</span>';
+                    } else {
+                        alertDiv.classList.add('hidden');
+                    }
+                });
+            }
+
+            document.getElementById('modalSaveWrongBtn')?.addEventListener('click', function() {
+                const question = document.getElementById('wrong_question').value.trim();
+                const correct = document.getElementById('wrong_correct').value.trim();
+                const reason = document.getElementById('wrong_reason').value.trim();
+                const plate = document.getElementById('wrong_plate').value;
+                if (!question || !correct || !reason) {
+                    alert('题目、正确答案、错误原因均为必填项');
+                    return;
+                }
+                const entry = {
+                    id: genId(), question, correct, reason, plate,
+                    mastered: 'unknown',
+                    reviewCount: 0, lastReview: null, nextReview: todayStr(),
+                    createdAt: todayStr(), starred: false
+                };
+                data.wrongs.push(entry);
+                saveData(data);
+                closeModal();
+                render();
+            });
+        }
+
+        function showExportModal() {
+            const plates = [
+                {key:'ziyin', label:'字音字形'},{key:'chengyu', label:'成语'},{key:'jinyici', label:'近义词辨析'},
+                {key:'wenyan', label:'文言一词多义'},{key:'gushi', label:'古诗文默写'},{key:'wenxue', label:'文学常识'},
+                {key:'jiaoxue', label:'教学设计'},{key:'zuowen', label:'作文素材'}
+            ];
+            const wrongPlates = ['字音字形','成语','近义词','文言文','古诗文','文学常识','教学设计','作文','其他'];
+
+            let noteCheckboxes = plates.map(p =>
+                '<label style="display:inline-flex;align-items:center;gap:4px;margin-right:10px;">' +
+                    '<input type="checkbox" class="export-note-plate" value="' + p.key + '" checked> ' + p.label +
+                '</label>'
+            ).join('');
+
+            let wrongCheckboxes = wrongPlates.map(p =>
+                '<label style="display:inline-flex;align-items:center;gap:4px;margin-right:10px;">' +
+                    '<input type="checkbox" class="export-wrong-plate" value="' + p + '" checked> ' + p +
+                '</label>'
+            ).join('');
+
+            const modalContent = `
+                <h2>📤 导出数据
+                    <button class="modal-close" id="modalCloseBtn">✕</button>
+                </h2>
+                <div class="field-group">
+                    <label>导出范围</label>
+                    <select id="exportScope">
+                        <option value="all">全部数据</option>
+                        <option value="notes">仅笔记</option>
+                        <option value="wrongs">仅错题</option>
+                    </select>
+                </div>
+                <div class="field-group" id="exportNoteFilter">
+                    <label>笔记分类（可多选）</label>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;">${noteCheckboxes}</div>
+                </div>
+                <div class="field-group" id="exportWrongFilter">
+                    <label>错题分类（可多选）</label>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;">${wrongCheckboxes}</div>
+                </div>
+                <div class="field-group">
+                    <label>导出格式</label>
+                    <select id="exportFormat">
+                        <option value="word">Word (.doc)</option>
+                        <option value="json">JSON 备份</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-outline" id="modalCancelBtn">取消</button>
+                    <button class="btn btn-primary" id="modalExportBtn">📤 导出</button>
+                </div>
+            `;
+            openModal(modalContent);
+
+            document.getElementById('modalCloseBtn')?.addEventListener('click', closeModal);
+            document.getElementById('modalCancelBtn')?.addEventListener('click', closeModal);
+
+            document.getElementById('exportScope')?.addEventListener('change', function() {
+                const val = this.value;
+                document.getElementById('exportNoteFilter').style.display = (val === 'all' || val === 'notes') ? 'block' : 'none';
+                document.getElementById('exportWrongFilter').style.display = (val === 'all' || val === 'wrongs') ? 'block' : 'none';
+            });
+
+            document.getElementById('modalExportBtn')?.addEventListener('click', function() {
+                const scope = document.getElementById('exportScope').value;
+                const format = document.getElementById('exportFormat').value;
+                const notePlates = [];
+                document.querySelectorAll('.export-note-plate:checked').forEach(el => notePlates.push(el.value));
+                const wrongPlatesSelected = [];
+                document.querySelectorAll('.export-wrong-plate:checked').forEach(el => wrongPlatesSelected.push(el.value));
+
+                const exportData = { notes: {}, wrongs: [] };
+                if (scope === 'all' || scope === 'notes') {
+                    const plates = ['ziyin','chengyu','jinyici','wenyan','gushi','wenxue','jiaoxue','zuowen'];
+                    plates.forEach(p => {
+                        if (notePlates.includes(p)) {
+                            exportData.notes[p] = data.notes[p] || [];
+                        } else {
+                            exportData.notes[p] = [];
+                        }
+                    });
+                }
+                if (scope === 'all' || scope === 'wrongs') {
+                    data.wrongs.forEach(w => {
+                        if (wrongPlatesSelected.includes(w.plate || '其他')) {
+                            exportData.wrongs.push(w);
+                        }
+                    });
+                }
+
+                if (format === 'json') {
+                    const json = JSON.stringify(exportData, null, 2);
+                    const blob = new Blob([json], { type: 'application/json' });
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = 'yuwen_beikao_' + todayStr() + '.json';
+                    a.click();
+                } else {
+                    const wordContent = generateWordContent(exportData);
+                    const blob = new Blob(['\uFEFF' + wordContent], { type: 'application/msword;charset=utf-8' });
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = '语文备考数据_' + todayStr() + '.doc';
+                    a.click();
+                }
+                closeModal();
+            });
+        }
+
+        function generateWordContent(exportData) {
+            const plateLabels = {
+                ziyin:'字音字形', chengyu:'成语', jinyici:'近义词辨析',
+                wenyan:'文言一词多义', gushi:'古诗文默写', wenxue:'文学常识',
+                jiaoxue:'教学设计', zuowen:'作文素材'
+            };
+            let lines = [];
+            lines.push('语文备考数据导出');
+            lines.push('导出日期：' + todayStr());
+            lines.push('='.repeat(50));
+            lines.push('');
+
+            let hasNote = false;
+            for (const [key, items] of Object.entries(exportData.notes)) {
+                if (items && items.length > 0) {
+                    hasNote = true;
+                    lines.push('【' + (plateLabels[key] || key) + '】');
+                    items.forEach(item => {
+                        const detail = getNoteDetail(item, key);
+                        const preview = getNotePreview(item, key);
+                        lines.push('  ' + (preview || '无标题') + (item.starred ? ' ⭐' : ''));
+                        if (detail) lines.push('    ' + detail);
+                        lines.push('');
+                    });
+                    lines.push('');
+                }
+            }
+            if (!hasNote) lines.push('（无笔记数据）');
+
+            if (exportData.wrongs && exportData.wrongs.length > 0) {
+                lines.push('');
+                lines.push('【错题本】');
+                exportData.wrongs.forEach(w => {
+                    const mastered = w.mastered === 'mastered' ? '已掌握' : w.mastered === 'half' ? '半生不熟' : '未掌握';
+                    lines.push('  题目：' + (w.question || ''));
+                    lines.push('  正确答案：' + (w.correct || ''));
+                    lines.push('  错误原因：' + (w.reason || ''));
+                    lines.push('  板块：' + (w.plate || '其他') + ' | 状态：' + mastered);
+                    lines.push('');
+                });
+            } else {
+                lines.push('');
+                lines.push('（无错题数据）');
+            }
+
+            return lines.join('\n');
+        }
+
+        // ---------- 渲染 ----------
+        function render() {
+            let html = '';
+
+            html += '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">' +
+                '<button class="tab-btn ' + (currentTab==='home'?'active':'') + '" data-tab="home">🏠 复习</button>' +
+                '<button class="tab-btn ' + (currentTab==='notes'?'active':'') + '" data-tab="notes">📝 笔记本</button>' +
+                '<button class="tab-btn ' + (currentTab==='wrongs'?'active':'') + '" data-tab="wrongs">📊 错题本</button>' +
+                '<button class="tab-btn ' + (currentTab==='quiz'?'active':'') + '" data-tab="quiz">📝 组卷</button>' +
+                '<button class="tab-btn ' + (currentTab==='favorites'?'active':'') + '" data-tab="favorites">⭐ 收藏</button>' +
+                '<button class="tab-btn ' + (currentTab==='search'?'active':'') + '" data-tab="search">🔍 搜索</button>' +
+                '<button class="tab-btn ' + (currentTab==='recycle'?'active':'') + '" data-tab="recycle">🗑️ 回收站</button>' +
+                '<button class="btn btn-sm btn-outline" id="exportBtn">📤 导出</button>' +
+                '<button class="btn btn-sm btn-outline" id="importBtn">📂 导入</button>' +
+                '<input type="file" id="importFileInput" accept=".json, .doc" style="display:none">' +
+            '</div>';
+
+            const dueList = getDueEntries();
+            const dueCount = dueList.length;
+            const today = todayStr();
+            let streak = 0;
+            if (data.reviewLog && data.reviewLog.length > 0) {
+                const sorted = [...data.reviewLog].sort((a,b) => b.date.localeCompare(a.date));
+                let checkDate = today;
+                for (let i=0; i<sorted.length; i++) {
+                    if (sorted[i].date === checkDate) {
+                        streak++;
+                        const d = new Date(checkDate);
+                        d.setDate(d.getDate() - 1);
+                        checkDate = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+                    } else break;
+                }
+            }
+            const hasReviewedToday = data.reviewLog && data.reviewLog.some(r => r.date === today);
+
+            html += '<div class="card">' +
+                '<div class="header-stats">' +
+                    '<div><span style="font-weight:600;">📚 今日待复习</span> <span class="stat-badge">' + dueCount + ' 条</span></div>' +
+                    '<div class="flex">' +
+                        '<span class="stat-badge streak">🔥 连续 ' + streak + ' 天</span>' +
+                        '<span class="stat-badge">' + (hasReviewedToday ? '✅ 今日已打卡' : '⏳ 今日未打卡') + '</span>' +
+                    '</div>' +
+                '</div>' +
+                '<div style="font-size:0.85rem;color:#6f6a5e;display:flex;gap:16px;flex-wrap:wrap;">' +
+                    '<span>📝 笔记 ' + (data.notes.ziyin.length+data.notes.chengyu.length+data.notes.jinyici.length+data.notes.wenyan.length+data.notes.gushi.length+data.notes.wenxue.length+data.notes.jiaoxue.length+data.notes.zuowen.length) + '</span>' +
+                    '<span>📊 错题 ' + data.wrongs.length + '</span>' +
+                    '<span>⭐ 收藏 ' + getFavorites().length + '</span>' +
+                    '<span>🗑️ 回收站 ' + ((data.recycle.notes?.length||0) + (data.recycle.wrongs?.length||0)) + '</span>' +
+                '</div>' +
+            '</div>';
+
+            if (currentTab === 'home') html += renderHome(dueList);
+            else if (currentTab === 'notes') html += renderNotes();
+            else if (currentTab === 'wrongs') html += renderWrongs();
+            else if (currentTab === 'quiz') html += renderQuiz();
+            else if (currentTab === 'favorites') html += renderFavorites();
+            else if (currentTab === 'search') html += renderSearch();
+            else if (currentTab === 'recycle') html += renderRecycle();
+
+            app.innerHTML = html;
+            bindEvents();
+        }
+
+        // ---------- 各模块渲染 ----------
+        function renderHome(dueList) {
+            if (dueList.length === 0) {
+                return '<div class="card"><div class="empty-state">🎉 今日待复习已清空！<br>可以继续刷题或录入新内容。</div>' +
+                    '<div class="flex" style="justify-content:center;gap:12px;flex-wrap:wrap;">' +
+                        '<button class="btn btn-block btn-primary" id="randomBtn" style="flex:1;min-width:140px;">🎲 随便背一个</button>' +
+                        '<button class="btn btn-block btn-success" id="randomWrongBtn" style="flex:1;min-width:140px;">⚡ 随机错题</button>' +
+                    '</div>' +
+                '</div>';
+            }
+            let html = '<div class="card">' +
+                '<div class="flex-between mb-8">' +
+                    '<div class="flex">' +
+                        '<button class="btn btn-sm" id="sortPriority">⭐ 优先级</button>' +
+                        '<button class="btn btn-sm" id="sortRandom">🎲 随机</button>' +
+                        '<button class="btn btn-sm" id="sortOld">📅 最旧</button>' +
+                    '</div>' +
+                    '<div class="flex">' +
+                        '<button class="btn btn-sm btn-success" id="batchCompleteBtn">✅ 全部完成</button>' +
+                        '<button class="btn btn-sm btn-outline" id="randomOneBtn">🎲 随便背</button>' +
+                    '</div>' +
+                '</div>';
+            let sortMode = localStorage.getItem('reviewSort') || 'priority';
+            let list = [...dueList];
+            if (sortMode === 'random') list = list.sort(() => Math.random() - 0.5);
+            else if (sortMode === 'old') list = list.sort((a,b) => a.entry.nextReview.localeCompare(b.entry.nextReview));
+            else list = list.sort((a,b) => {
+                if (a.entry.starred && !b.entry.starred) return -1;
+                if (!a.entry.starred && b.entry.starred) return 1;
+                return a.entry.nextReview.localeCompare(b.entry.nextReview);
+            });
+
+            list.forEach(item => {
+                const entry = item.entry;
+                const label = item.type === 'note' ? '📝 ' + item.plateLabel : '❌ 错题 (' + item.plateLabel + ')';
+                const content = getEntryPreview(item);
+                const days = entry.lastReview ? Math.floor((new Date() - new Date(entry.lastReview)) / (1000*60*60*24)) : '从未';
+
+                // ============================================================
+                // ★★★ 核心：直接构建答案文本，在 onclick 中传递 ★★★
+                // ============================================================
+                let answerText = '';
+                if (item.type === 'note') {
+                    answerText = getNoteDetail(entry, item.plate) || '（无详细内容）';
+                } else {
+                    answerText = '✅ 正确答案: ' + (entry.correct || '') + '\n📝 错误原因: ' + (entry.reason || '');
+                }
+                // 转义单引号和换行符，确保 onclick 属性安全
+                answerText = answerText.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n');
+
+                html += '<div class="review-item ' + (entry.starred?'highlight':'') + '">' +
+                    '<div class="meta"><span>' + label + '</span><span>距上次复习 ' + days + ' 天</span>' + (entry.starred?'⭐':'') + '</div>' +
+                    '<div class="content">' + content + '</div>' +
+                    '<div class="actions">' +
+                        '<button class="btn btn-sm btn-success review-done" data-id="' + entry.id + '" data-type="' + item.type + '" data-plate="' + (item.plate||'') + '">✅ 复习完成</button>' +
+                        // 直接传递答案文本
+                        '<button class="btn btn-sm review-show-answer" onclick="window.toggleAnswer(this, \'' + answerText + '\')">👁️ 显示答案</button>' +
+                        '<button class="btn btn-sm btn-outline toggle-star" data-id="' + entry.id + '" data-type="' + item.type + '" data-plate="' + (item.plate||'') + '">' + (entry.starred?'取消⭐':'⭐标记') + '</button>' +
+                    '</div>' +
+                    '<div class="answer-box hidden" style="margin-top:8px;background:#f3efe8;padding:12px;border-radius:16px;"></div>' +
+                '</div>';
+            });
+            html += '</div>';
+            return html;
+        }
+
+        function renderNotes() {
+            const plates = [
+                { key: 'ziyin', label: '字音字形' }, { key: 'chengyu', label: '成语' },
+                { key: 'jinyici', label: '近义词辨析' }, { key: 'wenyan', label: '文言一词多义' },
+                { key: 'gushi', label: '古诗文默写' }, { key: 'wenxue', label: '文学常识' },
+                { key: 'jiaoxue', label: '教学设计' }, { key: 'zuowen', label: '作文素材' }
+            ];
+            let html = '<div class="card"><div class="tabs">';
+            plates.forEach(p => {
+                html += '<button class="tab-btn ' + (currentPlate===p.key?'active':'') + '" data-plate="' + p.key + '">' + p.label + '</button>';
+            });
+            html += '</div>';
+
+            const plate = plates.find(p => p.key === currentPlate);
+            if (!plate) return html + '</div>';
+
+            const items = data.notes[currentPlate] || [];
+            html += '<div class="flex-between mb-8">' +
+                '<span style="font-weight:500;">共 ' + items.length + ' 条</span>' +
+                '<div class="flex">' +
+                    '<button class="btn btn-sm btn-outline" id="batchToggleNotes">' + (batchMode ? '✅ 退出批量' : '☑️ 批量操作') + '</button>' +
+                    '<button class="btn btn-sm btn-primary" id="addNoteBtn">+ 新增</button>' +
+                '</div>' +
+            '</div>';
+
+            if (batchMode) {
+                html += '<div class="flex mb-8" style="background:#f3efe8;padding:8px 14px;border-radius:30px;">' +
+                    '<span class="text-muted">已选 <span id="batchCount">0</span> 项</span>' +
+                    '<button class="btn btn-sm btn-danger" id="batchDeleteNotes">🗑 删除</button>' +
+                    '<button class="btn btn-sm btn-outline" id="batchStarNotes">⭐ 标记</button>' +
+                    '<button class="btn btn-sm btn-outline" id="batchUnstarNotes">取消⭐</button>' +
+                '</div>';
+            }
+
+            if (items.length === 0) {
+                html += '<div class="empty-state">暂无记录，点击新增</div>';
+            } else {
+                items.forEach(item => {
+                    html += '<div class="entry-item">' +
+                        '<div class="title">' +
+                            (batchMode ? '<span class="checkbox-wrap"><input type="checkbox" class="batch-check-note" data-id="' + item.id + '" data-plate="' + currentPlate + '"></span>' : '') +
+                            '<span>' + getNotePreview(item, currentPlate) + '</span>' + (item.starred?'⭐':'') +
+                        '</div>' +
+                        '<div class="detail">' + getNoteDetail(item, currentPlate) + '</div>' +
+                        '<div class="actions">' +
+                            '<button class="btn btn-sm btn-outline edit-note" data-plate="' + currentPlate + '" data-id="' + item.id + '">✎ 编辑</button>' +
+                            '<button class="btn btn-sm btn-danger delete-note" data-plate="' + currentPlate + '" data-id="' + item.id + '">🗑 删除</button>' +
+                            '<button class="btn btn-sm btn-outline toggle-star" data-id="' + item.id + '" data-type="note" data-plate="' + currentPlate + '">' + (item.starred?'取消⭐':'⭐标记') + '</button>' +
+                        '</div>' +
+                    '</div>';
+                });
+            }
+            html += '</div>';
+            return html;
+        }
+
+        function renderWrongs() {
+            let html = '<div class="card">' +
+                '<div class="flex-between mb-8">' +
+                    '<span style="font-weight:500;">❌ 错题本 (' + data.wrongs.length + ' 条) </span>' +
+                    '<div class="flex">' +
+                        '<button class="btn btn-sm btn-outline" id="batchToggleWrongs">' + (batchMode ? '✅ 退出批量' : '☑️ 批量操作') + '</button>' +
+                        '<button class="btn btn-sm btn-primary" id="addWrongBtn">+ 新增错题</button>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="flex" style="flex-wrap:wrap;gap:6px;margin-bottom:12px;">' +
+                    '<button class="btn btn-sm ' + (currentWrongFilter==='all'?'btn-primary':'btn-outline') + '" data-filter="all">全部</button>' +
+                    '<button class="btn btn-sm ' + (currentWrongFilter==='plate:字音字形'?'btn-primary':'btn-outline') + '" data-filter="plate:字音字形">字音字形</button>' +
+                    '<button class="btn btn-sm ' + (currentWrongFilter==='plate:成语'?'btn-primary':'btn-outline') + '" data-filter="plate:成语">成语</button>' +
+                    '<button class="btn btn-sm ' + (currentWrongFilter==='plate:近义词'?'btn-primary':'btn-outline') + '" data-filter="plate:近义词">近义词</button>' +
+                    '<button class="btn btn-sm ' + (currentWrongFilter==='plate:文言文'?'btn-primary':'btn-outline') + '" data-filter="plate:文言文">文言文</button>' +
+                    '<button class="btn btn-sm ' + (currentWrongFilter==='plate:古诗文'?'btn-primary':'btn-outline') + '" data-filter="plate:古诗文">古诗文</button>' +
+                    '<button class="btn btn-sm ' + (currentWrongFilter==='plate:文学常识'?'btn-primary':'btn-outline') + '" data-filter="plate:文学常识">文学常识</button>' +
+                    '<button class="btn btn-sm ' + (currentWrongFilter==='plate:教学设计'?'btn-primary':'btn-outline') + '" data-filter="plate:教学设计">教学设计</button>' +
+                    '<button class="btn btn-sm ' + (currentWrongFilter==='plate:作文'?'btn-primary':'btn-outline') + '" data-filter="plate:作文">作文</button>' +
+                    '<button class="btn btn-sm ' + (currentWrongFilter==='plate:其他'?'btn-primary':'btn-outline') + '" data-filter="plate:其他">其他</button>' +
+                '</div>';
+
+            if (batchMode) {
+                html += '<div class="flex mb-8" style="background:#f3efe8;padding:8px 14px;border-radius:30px;">' +
+                    '<span class="text-muted">已选 <span id="batchCountWrong">0</span> 项</span>' +
+                    '<button class="btn btn-sm btn-danger" id="batchDeleteWrongs">🗑 删除</button>' +
+                    '<button class="btn btn-sm btn-outline" id="batchStarWrongs">⭐ 标记</button>' +
+                    '<button class="btn btn-sm btn-outline" id="batchUnstarWrongs">取消⭐</button>' +
+                    '<button class="btn btn-sm btn-outline" id="batchMasteredWrongs">✅ 设已掌握</button>' +
+                    '<button class="btn btn-sm btn-outline" id="batchUnmasteredWrongs">❌ 设未掌握</button>' +
+                '</div>';
+            }
+
+            let filtered = data.wrongs;
+            if (currentWrongFilter.startsWith('plate:')) {
+                const plate = currentWrongFilter.replace('plate:','');
+                filtered = filtered.filter(w => w.plate === plate);
+            }
+            filtered = [...filtered].sort((a,b) => (b.createdAt||'').localeCompare(a.createdAt||''));
+
+            if (filtered.length === 0) {
+                html += '<div class="empty-state">暂无错题</div>';
+            } else {
+                filtered.forEach(w => {
+                    const mastered = w.mastered || 'unknown';
+                    const label = mastered === 'mastered' ? '✅ 已掌握' : mastered === 'half' ? '🔄 半生不熟' : '❌ 未掌握';
+                    html += '<div class="entry-item">' +
+                        '<div class="title">' +
+                            (batchMode ? '<span class="checkbox-wrap"><input type="checkbox" class="batch-check-wrong" data-id="' + w.id + '"></span>' : '') +
+                            '<span>❓ ' + (w.question || '') + '</span>' + (w.starred?'⭐':'') +
+                        '</div>' +
+                        '<div class="detail">✅ 正确: ' + (w.correct || '') + ' | 原因: ' + (w.reason || '') + ' | ' + label + '</div>' +
+                        '<div class="actions">' +
+                            '<button class="btn btn-sm btn-outline edit-wrong" data-id="' + w.id + '">✎ 编辑</button>' +
+                            '<button class="btn btn-sm btn-danger delete-wrong" data-id="' + w.id + '">🗑 删除</button>' +
+                            '<button class="btn btn-sm btn-outline toggle-star" data-id="' + w.id + '" data-type="wrong">' + (w.starred?'取消⭐':'⭐标记') + '</button>' +
+                            '<button class="btn btn-sm btn-outline set-mastered" data-id="' + w.id + '" data-level="mastered">✅ 已掌握</button>' +
+                            '<button class="btn btn-sm btn-outline set-mastered" data-id="' + w.id + '" data-level="half">🔄 半生不熟</button>' +
+                            '<button class="btn btn-sm btn-outline set-mastered" data-id="' + w.id + '" data-level="unknown">❌ 未掌握</button>' +
+                        '</div>' +
+                    '</div>';
+                });
+            }
+            html += '</div>';
+            return html;
+        }
+
+        function renderQuiz() {
+            let html = '<div class="card"><div class="card-title">📝 组卷自测</div>';
+            if (quizQuestions.length === 0 || quizIndex >= quizQuestions.length) {
+                html += '<button class="btn btn-block btn-primary" id="generateQuizBtn">🎯 生成组卷</button>' +
+                    '<div style="margin-top:12px;color:#6f6a5e;font-size:0.9rem;">从古诗文默写(5条) + 文言一词多义(3个) + 错题(5道) 随机抽题</div>';
+            } else {
+                const q = quizQuestions[quizIndex];
+                const answerText = q.answer.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n');
+                html += '<div style="background:#f8f4ec;border-radius:20px;padding:16px;margin-bottom:12px;">' +
+                    '<div style="font-size:0.85rem;color:#6f6a5e;">' + (quizIndex+1) + ' / ' + quizQuestions.length + '</div>' +
+                    '<div style="font-size:1.1rem;margin:8px 0;">' + q.question + '</div>' +
+                    '<div class="answer-box hidden" style="background:#efe8dc;padding:12px;border-radius:16px;margin-top:8px;"></div>' +
+                    '<div class="actions" style="margin-top:12px;">' +
+                        '<button class="btn btn-sm btn-success" onclick="window.toggleQuizAnswer(this, \'' + answerText + '\')">👁️ 显示答案</button>' +
+                        '<button class="btn btn-sm btn-outline" id="quizNext">' + (quizIndex === quizQuestions.length-1 ? '✅ 完成' : '下一题 →') + '</button>' +
+                    '</div>' +
+                '</div>';
+                if (quizIndex === quizQuestions.length-1) {
+                    html += '<button class="btn btn-block btn-outline" id="quizReset">🔄 重新组卷</button>';
+                }
+            }
+            html += '</div>';
+            return html;
+        }
+
+        function renderFavorites() {
+            const favs = getFavorites();
+            let html = '<div class="card"><div class="card-title">⭐ 收藏夹 (' + favs.length + ')</div>';
+            if (favs.length === 0) {
+                html += '<div class="empty-state">暂无收藏内容，点击 ⭐ 标记重要条目</div>';
+            } else {
+                favs.forEach(item => {
+                    const content = getEntryPreview(item);
+                    const label = item.type === 'note' ? '📝 ' + item.plateLabel : '❌ 错题';
+                    html += '<div class="entry-item">' +
+                        '<div class="title">' + label + ' ' + content + ' ⭐</div>' +
+                        '<div class="actions">' +
+                            '<button class="btn btn-sm btn-outline toggle-star" data-id="' + item.entry.id + '" data-type="' + item.type + '" data-plate="' + (item.plate||'') + '">取消⭐</button>' +
+                        '</div>' +
+                    '</div>';
+                });
+            }
+            html += '</div>';
+            return html;
+        }
+
+        function renderSearch() {
+            return '<div class="card"><div class="card-title">🔍 搜索</div>' +
+                '<div class="field-group"><input type="text" id="searchInput" placeholder="输入关键词搜索笔记或错题..." style="width:100%;"></div>' +
+                '<div id="searchResults"></div>' +
+            '</div>';
+        }
+
+        function renderRecycle() {
+            const notes = data.recycle?.notes || [];
+            const wrongs = data.recycle?.wrongs || [];
+            const total = notes.length + wrongs.length;
+            let html = '<div class="card"><div class="card-title">🗑️ 回收站 (' + total + ')</div>' +
+                '<div class="text-muted mb-8">回收站内容不进入复习队列，可恢复或永久删除。</div>';
+
+            if (total === 0) {
+                html += '<div class="empty-state">回收站为空</div>';
+            } else {
+                notes.forEach(item => {
+                    html += '<div class="entry-item recycled-item">' +
+                        '<div class="title"><span>📝 ' + (item.plateLabel || '笔记') + '：' + getEntryPreview({type:'note', plate:item.plate, entry:item}) + '</span><span class="recycle-tag">已删除</span></div>' +
+                        '<div class="actions">' +
+                            '<button class="btn btn-sm btn-success restore-note" data-id="' + item.id + '" data-plate="' + item.plate + '">↩️ 恢复</button>' +
+                            '<button class="btn btn-sm btn-danger permanent-delete-note" data-id="' + item.id + '" data-plate="' + item.plate + '">🗑 永久删除</button>' +
+                        '</div>' +
+                    '</div>';
+                });
+                wrongs.forEach(item => {
+                    html += '<div class="entry-item recycled-item">' +
+                        '<div class="title"><span>❌ 错题：' + (item.question || '') + '</span><span class="recycle-tag">已删除</span></div>' +
+                        '<div class="actions">' +
+                            '<button class="btn btn-sm btn-success restore-wrong" data-id="' + item.id + '">↩️ 恢复</button>' +
+                            '<button class="btn btn-sm btn-danger permanent-delete-wrong" data-id="' + item.id + '">🗑 永久删除</button>' +
+                        '</div>' +
+                    '</div>';
+                });
+            }
+            html += '</div>';
+            return html;
+        }
+
+        // ---------- 事件绑定 ----------
+        function bindEvents() {
+            const appEl = document.getElementById('app');
+
+            // Tab切换
+            appEl.querySelectorAll('[data-tab]').forEach(el => {
+                el.addEventListener('click', function() {
+                    currentTab = this.dataset.tab;
+                    if (currentTab === 'notes') currentPlate = 'ziyin';
+                    if (currentTab === 'quiz') { quizQuestions = []; quizIndex = 0; }
+                    batchMode = false;
+                    render();
+                });
+            });
+
+            // 笔记分类切换
+            appEl.querySelectorAll('[data-plate]').forEach(el => {
+                el.addEventListener('click', function() {
+                    currentPlate = this.dataset.plate;
+                    batchMode = false;
+                    render();
+                });
+            });
+
+            // 错题筛选
+            appEl.querySelectorAll('[data-filter]').forEach(el => {
+                el.addEventListener('click', function() {
+                    currentWrongFilter = this.dataset.filter;
+                    batchMode = false;
+                    render();
+                });
+            });
+
+            // 排序
+            appEl.querySelectorAll('#sortPriority, #sortRandom, #sortOld').forEach(el => {
+                if (el) {
+                    el.addEventListener('click', function() {
+                        const mode = this.id === 'sortPriority' ? 'priority' : this.id === 'sortRandom' ? 'random' : 'old';
+                        localStorage.setItem('reviewSort', mode);
+                        render();
+                    });
+                }
+            });
+
+            // 随机背一个
+            appEl.querySelectorAll('#randomBtn, #randomOneBtn').forEach(el => {
+                if (el) {
+                    el.addEventListener('click', function() {
+                        const all = getAllActiveEntries();
+                        if (all.length === 0) { alert('暂无内容，请先录入笔记或错题'); return; }
+                        const pick = all[Math.floor(Math.random() * all.length)];
+                        const content = getEntryPreview(pick);
+                        alert('🎲 随机抽中:\n' + content + '\n(来自 ' + (pick.type==='note'?'笔记':'错题') + ')');
+                    });
+                }
+            });
+
+            // 随机错题
+            appEl.querySelectorAll('#randomWrongBtn').forEach(el => {
+                if (el) {
+                    el.addEventListener('click', function() {
+                        const wrongs = data.wrongs.filter(w => w.mastered !== 'mastered');
+                        if (wrongs.length === 0) { alert('暂无未掌握的错题，恭喜！'); return; }
+                        const pick = wrongs[Math.floor(Math.random() * wrongs.length)];
+                        alert('⚡ 随机错题:\n❓ ' + (pick.question || '') + '\n✅ 正确答案: ' + (pick.correct || '') + '\n📝 错误原因: ' + (pick.reason || ''));
+                    });
+                }
+            });
+
+            // 批量完成
+            appEl.querySelectorAll('#batchCompleteBtn').forEach(el => {
+                if (el) {
+                    el.addEventListener('click', function() {
+                        const dueList = getDueEntries();
+                        if (dueList.length === 0) return;
+                        if (!confirm('确定将 ' + dueList.length + ' 条待复习全部标记为已完成？')) return;
+                        const today = todayStr();
+                        dueList.forEach(item => {
+                            const entry = item.entry;
+                            entry.lastReview = today;
+                            entry.reviewCount = (entry.reviewCount || 0) + 1;
+                            entry.nextReview = calcNextReview(today, entry.reviewCount);
+                            if (!data.reviewLog) data.reviewLog = [];
+                            if (!data.reviewLog.some(r => r.entryId === entry.id && r.date === today)) {
+                                data.reviewLog.push({ entryId: entry.id, date: today });
+                            }
+                        });
+                        saveData(data);
+                        render();
+                    });
+                }
+            });
+
+            // 复习完成
+            appEl.querySelectorAll('.review-done').forEach(el => {
+                el.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const type = this.dataset.type;
+                    const plate = this.dataset.plate;
+                    let entry = null;
+                    if (type === 'note') {
+                        entry = data.notes[plate]?.find(e => e.id === id);
+                    } else {
+                        entry = data.wrongs.find(e => e.id === id);
+                    }
+                    if (!entry) return;
+                    const today = todayStr();
+                    entry.lastReview = today;
+                    entry.reviewCount = (entry.reviewCount || 0) + 1;
+                    entry.nextReview = calcNextReview(today, entry.reviewCount);
+                    if (!data.reviewLog) data.reviewLog = [];
+                    if (!data.reviewLog.some(r => r.entryId === id && r.date === today)) {
+                        data.reviewLog.push({ entryId: id, date: today });
+                    }
+                    saveData(data);
+                    render();
+                });
+            });
+
+            // 标记⭐
+            appEl.querySelectorAll('.toggle-star').forEach(el => {
+                el.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const type = this.dataset.type;
+                    const plate = this.dataset.plate;
+                    let entry = null;
+                    if (type === 'note') {
+                        entry = data.notes[plate]?.find(e => e.id === id);
+                    } else {
+                        entry = data.wrongs.find(e => e.id === id);
+                    }
+                    if (!entry) return;
+                    entry.starred = !entry.starred;
+                    saveData(data);
+                    render();
+                });
+            });
+
+            // 编辑笔记
+            appEl.querySelectorAll('.edit-note').forEach(el => {
+                el.addEventListener('click', function() {
+                    const plate = this.dataset.plate;
+                    const id = this.dataset.id;
+                    const entry = data.notes[plate]?.find(e => e.id === id);
+                    if (!entry) return;
+                    const json = JSON.stringify(entry, null, 2);
+                    const newData = prompt('编辑笔记 (JSON格式):\n保留 id, reviewCount, lastReview, nextReview, starred 等字段', json);
+                    if (!newData) return;
+                    try {
+                        const parsed = JSON.parse(newData);
+                        Object.assign(entry, parsed);
+                        saveData(data);
+                        render();
+                    } catch(e) { alert('JSON格式错误'); }
+                });
+            });
+
+            // 编辑错题
+            appEl.querySelectorAll('.edit-wrong').forEach(el => {
+                el.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const entry = data.wrongs.find(e => e.id === id);
+                    if (!entry) return;
+                    const json = JSON.stringify(entry, null, 2);
+                    const newData = prompt('编辑错题 (JSON格式):', json);
+                    if (!newData) return;
+                    try {
+                        const parsed = JSON.parse(newData);
+                        Object.assign(entry, parsed);
+                        saveData(data);
+                        render();
+                    } catch(e) { alert('JSON格式错误'); }
+                });
+            });
+
+            // 删除 → 回收站
+            appEl.querySelectorAll('.delete-note').forEach(el => {
+                el.addEventListener('click', function() {
+                    if (!confirm('确定删除此笔记？将移入回收站')) return;
+                    const plate = this.dataset.plate;
+                    const id = this.dataset.id;
+                    const idx = data.notes[plate].findIndex(e => e.id === id);
+                    if (idx === -1) return;
+                    const item = data.notes[plate].splice(idx, 1)[0];
+                    if (!data.recycle) data.recycle = { notes: [], wrongs: [] };
+                    if (!data.recycle.notes) data.recycle.notes = [];
+                    data.recycle.notes.push({ ...item, plate: plate, plateLabel: getPlateLabel(plate) });
+                    saveData(data);
+                    render();
+                });
+            });
+
+            appEl.querySelectorAll('.delete-wrong').forEach(el => {
+                el.addEventListener('click', function() {
+                    if (!confirm('确定删除此错题？将移入回收站')) return;
+                    const id = this.dataset.id;
+                    const idx = data.wrongs.findIndex(e => e.id === id);
+                    if (idx === -1) return;
+                    const item = data.wrongs.splice(idx, 1)[0];
+                    if (!data.recycle) data.recycle = { notes: [], wrongs: [] };
+                    if (!data.recycle.wrongs) data.recycle.wrongs = [];
+                    data.recycle.wrongs.push({ ...item });
+                    saveData(data);
+                    render();
+                });
+            });
+
+            // 恢复
+            appEl.querySelectorAll('.restore-note').forEach(el => {
+                el.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const plate = this.dataset.plate;
+                    const idx = data.recycle.notes.findIndex(e => e.id === id);
+                    if (idx === -1) return;
+                    const item = data.recycle.notes.splice(idx, 1)[0];
+                    if (!data.notes[plate]) data.notes[plate] = [];
+                    data.notes[plate].push(ensureFields(item));
+                    saveData(data);
+                    render();
+                });
+            });
+
+            appEl.querySelectorAll('.restore-wrong').forEach(el => {
+                el.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const idx = data.recycle.wrongs.findIndex(e => e.id === id);
+                    if (idx === -1) return;
+                    const item = data.recycle.wrongs.splice(idx, 1)[0];
+                    data.wrongs.push(ensureFields(item));
+                    saveData(data);
+                    render();
+                });
+            });
+
+            // 永久删除（二次确认）
+            appEl.querySelectorAll('.permanent-delete-note').forEach(el => {
+                el.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const plate = this.dataset.plate;
+                    const idx = data.recycle.notes.findIndex(e => e.id === id);
+                    if (idx === -1) return;
+                    const item = data.recycle.notes[idx];
+                    const confirmText = prompt('⚠️ 永久删除 "' + (item.chengyu || item.word || item.name || item.author || '笔记') + '"\n输入 "确认删除" 以永久删除此条目（不可恢复）');
+                    if (confirmText === '确认删除') {
+                        data.recycle.notes.splice(idx, 1);
+                        saveData(data);
+                        render();
+                    }
+                });
+            });
+
+            appEl.querySelectorAll('.permanent-delete-wrong').forEach(el => {
+                el.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const idx = data.recycle.wrongs.findIndex(e => e.id === id);
+                    if (idx === -1) return;
+                    const item = data.recycle.wrongs[idx];
+                    const confirmText = prompt('⚠️ 永久删除错题 "' + (item.question || '错题') + '"\n输入 "确认删除" 以永久删除此条目（不可恢复）');
+                    if (confirmText === '确认删除') {
+                        data.recycle.wrongs.splice(idx, 1);
+                        saveData(data);
+                        render();
+                    }
+                });
+            });
+
+            // 新增笔记
+            appEl.querySelectorAll('#addNoteBtn').forEach(el => {
+                if (el) {
+                    el.addEventListener('click', function() {
+                        showAddNoteModal(currentPlate);
+                    });
+                }
+            });
+
+            // 新增错题
+            appEl.querySelectorAll('#addWrongBtn').forEach(el => {
+                if (el) {
+                    el.addEventListener('click', function() {
+                        showAddWrongModal();
+                    });
+                }
+            });
+
+            // 掌握程度
+            appEl.querySelectorAll('.set-mastered').forEach(el => {
+                el.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const level = this.dataset.level;
+                    const entry = data.wrongs.find(e => e.id === id);
+                    if (!entry) return;
+                    entry.mastered = level;
+                    saveData(data);
+                    render();
+                });
+            });
+
+            // 组卷
+            appEl.querySelectorAll('#generateQuizBtn').forEach(el => {
+                if (el) {
+                    el.addEventListener('click', function() {
+                        generateQuiz();
+                    });
+                }
+            });
+
+            appEl.querySelectorAll('#quizNext').forEach(el => {
+                if (el) {
+                    el.addEventListener('click', function() {
+                        quizIndex++;
+                        render();
+                    });
+                }
+            });
+
+            appEl.querySelectorAll('#quizReset').forEach(el => {
+                if (el) {
+                    el.addEventListener('click', function() {
+                        quizQuestions = [];
+                        quizIndex = 0;
+                        render();
+                    });
+                }
+            });
+
+            // 搜索
+            appEl.querySelectorAll('#searchInput').forEach(el => {
+                if (el) {
+                    el.addEventListener('input', function() {
+                        const keyword = this.value.trim().toLowerCase();
+                        const results = document.getElementById('searchResults');
+                        if (!keyword) { results.innerHTML = ''; return; }
+                        let matches = [];
+                        const plates = ['ziyin','chengyu','jinyici','wenyan','gushi','wenxue','jiaoxue','zuowen'];
+                        plates.forEach(p => {
+                            data.notes[p].forEach(item => {
+                                const str = JSON.stringify(item).toLowerCase();
+                                if (str.includes(keyword)) matches.push({ type: '笔记', plate: p, entry: item });
+                            });
+                        });
+                        data.wrongs.forEach(item => {
+                            const str = JSON.stringify(item).toLowerCase();
+                            if (str.includes(keyword)) matches.push({ type: '错题', plate: item.plate||'其他', entry: item });
+                        });
+                        if (matches.length === 0) {
+                            results.innerHTML = '<div class="empty-state">未找到匹配内容</div>';
+                        } else {
+                            let html = '';
+                            matches.slice(0, 20).forEach(m => {
+                                const preview = getEntryPreview({ type: m.type==='笔记'?'note':'wrong', plate: m.plate, entry: m.entry });
+                                html += '<div class="entry-item" style="margin-bottom:6px;">' + m.type + ': ' + preview + '</div>';
+                            });
+                            results.innerHTML = html;
+                        }
+                    });
+                }
+            });
+
+            // 批量模式切换
+            appEl.querySelectorAll('#batchToggleNotes, #batchToggleWrongs').forEach(el => {
+                if (el) {
+                    el.addEventListener('click', function() {
+                        batchMode = !batchMode;
+                        render();
+                    });
+                }
+            });
+
+            // 批量删除笔记
+            appEl.querySelectorAll('#batchDeleteNotes').forEach(el => {
+                if (el) {
+                    el.addEventListener('click', function() {
+                        const checks = document.querySelectorAll('.batch-check-note:checked');
+                        if (checks.length === 0) return;
+                        if (!confirm('确定将 ' + checks.length + ' 条笔记移入回收站？')) return;
+                        checks.forEach(cb => {
+                            const id = cb.dataset.id;
+                            const plate = cb.dataset.plate;
+                            const idx = data.notes[plate].findIndex(e => e.id === id);
+                            if (idx !== -1) {
+                                const item = data.notes[plate].splice(idx, 1)[0];
+                                if (!data.recycle) data.recycle = { notes: [], wrongs: [] };
+                                if (!data.recycle.notes) data.recycle.notes = [];
+                                data.recycle.notes.push({ ...item, plate: plate, plateLabel: getPlateLabel(plate) });
+                            }
+                        });
+                        saveData(data);
+                        batchMode = false;
+                        render();
+                    });
+                }
+            });
+
+            // 批量删除错题
+            appEl.querySelectorAll('#batchDeleteWrongs').forEach(el => {
+                if (el) {
+                    el.addEventListener('click', function() {
+                        const checks = document.querySelectorAll('.batch-check-wrong:checked');
+                        if (checks.length === 0) return;
+                        if (!confirm('确定将 ' + checks.length + ' 条错题移入回收站？')) return;
+                        checks.forEach(cb => {
+                            const id = cb.dataset.id;
+                            const idx = data.wrongs.findIndex(e => e.id === id);
+                            if (idx !== -1) {
+                                const item = data.wrongs.splice(idx, 1)[0];
+                                if (!data.recycle) data.recycle = { notes: [], wrongs: [] };
+                                if (!data.recycle.wrongs) data.recycle.wrongs = [];
+                                data.recycle.wrongs.push({ ...item });
+                            }
+                        });
+                        saveData(data);
+                        batchMode = false;
+                        render();
+                    });
+                }
+            });
+
+            // 批量标记⭐
+            appEl.querySelectorAll('#batchStarNotes, #batchStarWrongs').forEach(el => {
+                if (el) {
+                    el.addEventListener('click', function() {
+                        const isNote = this.id === 'batchStarNotes';
+                        const checks = document.querySelectorAll(isNote ? '.batch-check-note:checked' : '.batch-check-wrong:checked');
+                        checks.forEach(cb => {
+                            const id = cb.dataset.id;
+                            if (isNote) {
+                                const plate = cb.dataset.plate;
+                                const entry = data.notes[plate]?.find(e => e.id === id);
+                                if (entry) entry.starred = true;
+                            } else {
+                                const entry = data.wrongs.find(e => e.id === id);
+                                if (entry) entry.starred = true;
+                            }
+                        });
+                        saveData(data);
+                        render();
+                    });
+                }
+            });
+
+            appEl.querySelectorAll('#batchUnstarNotes, #batchUnstarWrongs').forEach(el => {
+                if (el) {
+                    el.addEventListener('click', function() {
+                        const isNote = this.id === 'batchUnstarNotes';
+                        const checks = document.querySelectorAll(isNote ? '.batch-check-note:checked' : '.batch-check-wrong:checked');
+                        checks.forEach(cb => {
+                            const id = cb.dataset.id;
+                            if (isNote) {
+                                const plate = cb.dataset.plate;
+                                const entry = data.notes[plate]?.find(e => e.id === id);
+                                if (entry) entry.starred = false;
+                            } else {
+                                const entry = data.wrongs.find(e => e.id === id);
+                                if (entry) entry.starred = false;
+                            }
+                        });
+                        saveData(data);
+                        render();
+                    });
+                }
+            });
+
+            // 批量掌握程度
+            appEl.querySelectorAll('#batchMasteredWrongs').forEach(el => {
+                if (el) {
+                    el.addEventListener('click', function() {
+                        const checks = document.querySelectorAll('.batch-check-wrong:checked');
+                        checks.forEach(cb => {
+                            const entry = data.wrongs.find(e => e.id === cb.dataset.id);
+                            if (entry) entry.mastered = 'mastered';
+                        });
+                        saveData(data);
+                        render();
+                    });
+                }
+            });
+
+            appEl.querySelectorAll('#batchUnmasteredWrongs').forEach(el => {
+                if (el) {
+                    el.addEventListener('click', function() {
+                        const checks = document.querySelectorAll('.batch-check-wrong:checked');
+                        checks.forEach(cb => {
+                            const entry = data.wrongs.find(e => e.id === cb.dataset.id);
+                            if (entry) entry.mastered = 'unknown';
+                        });
+                        saveData(data);
+                        render();
+                    });
+                }
+            });
+
+            // 批量计数更新
+            appEl.querySelectorAll('.batch-check-note, .batch-check-wrong').forEach(el => {
+                el.addEventListener('change', function() {
+                    updateBatchCount();
+                });
+            });
+
+            function updateBatchCount() {
+                const noteCount = document.querySelectorAll('.batch-check-note:checked').length;
+                const wrongCount = document.querySelectorAll('.batch-check-wrong:checked').length;
+                const el1 = document.getElementById('batchCount');
+                const el2 = document.getElementById('batchCountWrong');
+                if (el1) el1.textContent = noteCount;
+                if (el2) el2.textContent = wrongCount;
+            }
+
+            // 导出
+            appEl.querySelectorAll('#exportBtn').forEach(el => {
+                if (el) {
+                    el.addEventListener('click', function() {
+                        showExportModal();
+                    });
+                }
+            });
+
+            // 导入
+            appEl.querySelectorAll('#importBtn').forEach(el => {
+                if (el) {
+                    el.addEventListener('click', function() {
+                        document.getElementById('importFileInput')?.click();
+                    });
+                }
+            });
+
+            document.getElementById('importFileInput')?.addEventListener('change', function(e) {
+                const file = this.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    try {
+                        const imported = JSON.parse(ev.target.result);
+                        if (imported.notes && imported.wrongs !== undefined) {
+                            if (!imported.recycle) imported.recycle = { notes: [], wrongs: [] };
+                            data = imported;
+                            ensureAllEntries();
+                            saveData(data);
+                            alert('导入成功！');
+                            render();
+                        } else {
+                            alert('无效数据文件');
+                        }
+                    } catch(e) { alert('文件解析失败'); }
+                };
+                reader.readAsText(file);
+                this.value = '';
+            });
+
+            // 备份提醒
+            const lastBackup = localStorage.getItem('lastBackupReminderV3');
+            if (!lastBackup || (Date.now() - parseInt(lastBackup) > 7*24*60*60*1000)) {
+                setTimeout(() => {
+                    if (confirm('💾 已超过7天未备份数据，建议导出备份保存。\n点击"确定"去导出，点击"取消"稍后提醒。')) {
+                        document.getElementById('exportBtn')?.click();
+                    }
+                    localStorage.setItem('lastBackupReminderV3', Date.now().toString());
+                }, 500);
+            }
+
+            setTimeout(updateBatchCount, 100);
+        }
+
+        function generateQuiz() {
+            const questions = [];
+            const gushiList = data.notes.gushi || [];
+            if (gushiList.length > 0) {
+                const shuffled = [...gushiList].sort(() => Math.random() - 0.5);
+                shuffled.slice(0, 5).forEach(item => {
+                    const useShang = Math.random() > 0.5;
+                    questions.push({
+                        question: useShang ? '📜 上句: ' + (item.shangju || '') + ' → 下句?' : '📜 下句: ' + (item.xiaju || '') + ' → 上句?',
+                        answer: useShang ? (item.xiaju || '') : (item.shangju || '')
+                    });
+                });
+            }
+            const wenyanList = data.notes.wenyan || [];
+            if (wenyanList.length > 0) {
+                const shuffled = [...wenyanList].sort(() => Math.random() - 0.5);
+                shuffled.slice(0, 3).forEach(item => {
+                    questions.push({
+                        question: '📖 字词: ' + (item.word || '') + '  → 回忆所有用法',
+                        answer: '用法: ' + (item.usage || '') + '  (例: ' + (item.example || '') + ')'
+                    });
+                });
+            }
+            const wrongs = data.wrongs.filter(w => w.mastered !== 'mastered');
+            if (wrongs.length > 0) {
+                const shuffled = [...wrongs].sort(() => Math.random() - 0.5);
+                shuffled.slice(0, 5).forEach(item => {
+                    questions.push({
+                        question: '❌ 错题重做: ' + (item.question || ''),
+                        answer: '✅ 正确答案: ' + (item.correct || '') + '\n📝 错误原因: ' + (item.reason || '')
+                    });
+                });
+            }
+            if (questions.length === 0) {
+                alert('请先录入古诗文、文言文或错题，才能生成组卷');
+                return;
+            }
+            quizQuestions = questions;
+            quizIndex = 0;
+            render();
+        }
+
+        render();
+    })();
+</script>
+</body>
+</html>

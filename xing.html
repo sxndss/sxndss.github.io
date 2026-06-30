@@ -1,0 +1,3532 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公考备考工具箱</title>
+    <style>
+        /* ========== CSS变量与重置 ========== */
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --primary-bg: #eff6ff;
+            --success: #16a34a;
+            --warning: #f59e0b;
+            --danger: #dc2626;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --radius: 8px;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
+            --transition: all 0.2s ease;
+            --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--gray-50);
+            color: var(--gray-900);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ========== 滚动条 ========== */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--gray-100);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gray-400);
+        }
+
+        /* ========== 顶部导航 ========== */
+        .app-header {
+            height: 56px;
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            flex-shrink: 0;
+            gap: 16px;
+            z-index: 100;
+        }
+
+        .app-header .logo {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .app-header .logo span {
+            font-size: 20px;
+        }
+
+        .header-search {
+            flex: 1;
+            max-width: 480px;
+            position: relative;
+        }
+
+        .header-search input {
+            width: 100%;
+            padding: 7px 14px 7px 36px;
+            border: 1.5px solid var(--gray-200);
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+            transition: var(--transition);
+            background: var(--gray-50);
+        }
+
+        .header-search input:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .header-search .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            font-size: 14px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .header-actions .btn {
+            padding: 5px 14px;
+            font-size: 13px;
+            border-radius: 6px;
+            border: 1px solid var(--gray-200);
+            background: white;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--gray-700);
+        }
+
+        .header-actions .btn:hover {
+            background: var(--gray-100);
+            border-color: var(--gray-300);
+        }
+
+        .header-actions .btn-primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .header-actions .btn-primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        /* ========== 统计看板 ========== */
+        .stats-bar {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 12px;
+            color: var(--gray-600);
+            padding: 0 8px;
+            flex-shrink: 0;
+        }
+
+        .stats-bar .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 2px 8px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .stats-bar .stat-item:hover {
+            background: var(--gray-100);
+        }
+
+        .stats-bar .stat-item .num {
+            font-weight: 700;
+            color: var(--gray-900);
+            font-size: 14px;
+        }
+
+        .stats-bar .stat-item .num.danger {
+            color: var(--danger);
+        }
+        .stats-bar .stat-item .num.warning {
+            color: var(--warning);
+        }
+        .stats-bar .stat-item .num.success {
+            color: var(--success);
+        }
+        .stats-bar .stat-item .num.primary {
+            color: var(--primary);
+        }
+
+        /* ========== 主体布局 ========== */
+        .app-body {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ========== 左侧大纲树 ========== */
+        .sidebar {
+            width: 260px;
+            min-width: 260px;
+            background: white;
+            border-right: 1px solid var(--gray-200);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 12px 16px 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--gray-100);
+            flex-shrink: 0;
+        }
+
+        .sidebar-header h3 {
+            font-size: 14px;
+            color: var(--gray-600);
+            font-weight: 600;
+        }
+
+        .sidebar-header .btn-sm {
+            font-size: 12px;
+            padding: 2px 10px;
+            border: 1px solid var(--gray-200);
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            color: var(--gray-600);
+            transition: var(--transition);
+        }
+
+        .sidebar-header .btn-sm:hover {
+            background: var(--gray-100);
+        }
+
+        .tree-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 8px 20px;
+        }
+
+        .tree-node {
+            user-select: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tree-node .node-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--gray-700);
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .tree-node .node-label:hover {
+            background: var(--gray-100);
+        }
+
+        .tree-node .node-label.active {
+            background: var(--primary-bg);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .tree-node .node-label .toggle {
+            font-size: 10px;
+            color: var(--gray-400);
+            width: 16px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .tree-node .node-label .node-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .tree-node .node-label .node-count {
+            font-size: 11px;
+            color: var(--gray-400);
+            background: var(--gray-100);
+            padding: 0 8px;
+            border-radius: 10px;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+
+        .tree-node .node-label .node-count.has-notes {
+            background: var(--primary-bg);
+            color: var(--primary);
+        }
+
+        .tree-node .node-children {
+            padding-left: 18px;
+        }
+
+        .tree-node .node-children.collapsed {
+            display: none;
+        }
+
+        /* ========== 右侧主内容 ========== */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--gray-50);
+        }
+
+        /* 标签页切换 */
+        .tab-bar {
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 4px;
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+            flex-shrink: 0;
+            height: 44px;
+        }
+
+        .tab-bar .tab {
+            padding: 8px 18px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--gray-500);
+            cursor: pointer;
+            border: none;
+            background: none;
+            border-bottom: 2.5px solid transparent;
+            transition: var(--transition);
+            border-radius: 0;
+        }
+
+        .tab-bar .tab:hover {
+            color: var(--gray-700);
+        }
+
+        .tab-bar .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-bar .tab .badge {
+            font-size: 11px;
+            background: var(--gray-200);
+            color: var(--gray-600);
+            padding: 0 8px;
+            border-radius: 10px;
+            margin-left: 4px;
+            font-weight: 400;
+        }
+
+        .tab-bar .tab .badge.danger {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .tab-bar .spacer {
+            flex: 1;
+        }
+
+        .tab-bar .btn-new {
+            padding: 5px 16px;
+            font-size: 13px;
+            border-radius: 6px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .tab-bar .btn-new:hover {
+            background: var(--primary-dark);
+        }
+
+        /* 内容工具栏 */
+        .content-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: white;
+            border-bottom: 1px solid var(--gray-100);
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+
+        .content-toolbar .toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            flex-wrap: wrap;
+        }
+
+        .content-toolbar select,
+        .content-toolbar input[type="text"] {
+            padding: 4px 10px;
+            font-size: 13px;
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            background: white;
+            outline: none;
+            color: var(--gray-700);
+        }
+
+        .content-toolbar select:focus,
+        .content-toolbar input[type="text"]:focus {
+            border-color: var(--primary);
+        }
+
+        .content-toolbar .btn-sm {
+            padding: 4px 12px;
+            font-size: 12px;
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            color: var(--gray-600);
+            transition: var(--transition);
+        }
+
+        .content-toolbar .btn-sm:hover {
+            background: var(--gray-100);
+        }
+
+        .content-toolbar .btn-sm.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .content-toolbar .btn-sm.danger {
+            color: var(--danger);
+            border-color: #fca5a5;
+        }
+
+        .content-toolbar .btn-sm.danger:hover {
+            background: #fee2e2;
+        }
+
+        /* 内容列表 */
+        .content-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+        }
+
+        .content-list .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray-400);
+        }
+
+        .content-list .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .content-list .empty-state p {
+            font-size: 15px;
+        }
+
+        /* ========== 卡片样式 ========== */
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card .card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .card .card-header .color-bar {
+            width: 4px;
+            min-height: 28px;
+            border-radius: 2px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .card .card-header .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-900);
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .card .card-header .card-title .pinned-icon {
+            color: var(--danger);
+            margin-right: 4px;
+        }
+
+        .card .card-header .card-actions {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .card .card-header .card-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            padding: 2px 4px;
+            border-radius: 4px;
+            color: var(--gray-400);
+            transition: var(--transition);
+        }
+
+        .card .card-header .card-actions button:hover {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        .card .card-header .card-actions button.starred {
+            color: #f59e0b;
+        }
+
+        .card .card-body {
+            font-size: 13px;
+            color: var(--gray-700);
+            line-height: 1.6;
+            word-break: break-word;
+            padding-left: 14px;
+        }
+
+        .card .card-body .field-label {
+            color: var(--gray-500);
+            font-weight: 500;
+            font-size: 12px;
+        }
+
+        .card .card-footer {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--gray-100);
+            font-size: 12px;
+            color: var(--gray-400);
+            flex-wrap: wrap;
+        }
+
+        .card .card-footer .tags {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .card .card-footer .tag {
+            background: var(--gray-100);
+            padding: 0 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            color: var(--gray-600);
+        }
+
+        .card .card-footer .tag.color-tag {
+            padding: 0 6px;
+        }
+
+        .card .card-footer .meta {
+            margin-left: auto;
+            font-size: 11px;
+        }
+
+        .card .card-footer .btn-sm {
+            font-size: 12px;
+            padding: 2px 10px;
+            border: 1px solid var(--gray-200);
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            color: var(--gray-600);
+            transition: var(--transition);
+        }
+
+        .card .card-footer .btn-sm:hover {
+            background: var(--gray-100);
+        }
+
+        .card .card-footer .btn-sm.danger {
+            color: var(--danger);
+            border-color: #fca5a5;
+        }
+        .card .card-footer .btn-sm.danger:hover {
+            background: #fee2e2;
+        }
+
+        /* 错题特殊样式 */
+        .card.error-card {
+            border-left: 4px solid var(--danger);
+        }
+
+        .card.error-card .error-reason {
+            background: #fef2f2;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--danger);
+            display: inline-block;
+        }
+
+        .card.error-card .error-solution {
+            background: #f0fdf4;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--gray-700);
+            border-left: 3px solid var(--success);
+            margin-top: 4px;
+        }
+
+        /* 规范词特殊样式 */
+        .card.word-card {
+            border-left: 4px solid var(--primary);
+        }
+        .card.word-card .word-pair {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .card.word-card .word-pair .arrow {
+            color: var(--gray-400);
+            font-size: 18px;
+        }
+        .card.word-card .word-pair .from {
+            color: var(--gray-600);
+            font-size: 14px;
+        }
+        .card.word-card .word-pair .to {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* ========== 弹窗 ========== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(2px);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-overlay.hidden {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            max-width: 700px;
+            width: 95%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .modal-header h3 {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .modal-header .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray-400);
+            padding: 0 4px;
+            transition: var(--transition);
+        }
+
+        .modal-header .close-btn:hover {
+            color: var(--gray-900);
+        }
+
+        .modal-body {
+            padding: 20px 24px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body .form-group {
+            margin-bottom: 14px;
+        }
+
+        .modal-body .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: 4px;
+        }
+
+        .modal-body .form-group .label-hint {
+            font-weight: 400;
+            color: var(--gray-400);
+            font-size: 12px;
+        }
+
+        .modal-body .form-group input,
+        .modal-body .form-group select,
+        .modal-body .form-group textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1.5px solid var(--gray-200);
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: var(--font);
+            transition: var(--transition);
+            outline: none;
+            background: white;
+        }
+
+        .modal-body .form-group input:focus,
+        .modal-body .form-group select:focus,
+        .modal-body .form-group textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .modal-body .form-group textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+
+        .modal-body .form-group .template-fields {
+            background: var(--gray-50);
+            padding: 12px 16px;
+            border-radius: 6px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .modal-body .form-group .template-fields .tf-row {
+            margin-bottom: 10px;
+        }
+
+        .modal-body .form-group .template-fields .tf-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .modal-body .form-group .template-fields .tf-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--gray-600);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .modal-body .form-group .template-fields .tf-input {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid var(--gray-200);
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: var(--font);
+            outline: none;
+            background: white;
+        }
+
+        .modal-body .form-group .template-fields .tf-input:focus {
+            border-color: var(--primary);
+        }
+
+        .modal-body .form-row {
+            display: flex;
+            gap: 14px;
+        }
+
+        .modal-body .form-row .form-group {
+            flex: 1;
+        }
+
+        .modal-footer {
+            padding: 14px 24px;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .modal-footer .btn {
+            padding: 8px 24px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: 1px solid var(--gray-200);
+            background: white;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .modal-footer .btn:hover {
+            background: var(--gray-100);
+        }
+
+        .modal-footer .btn-primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .modal-footer .btn-primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .modal-footer .btn-danger {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+
+        .modal-footer .btn-danger:hover {
+            background: #b91c1c;
+            border-color: #b91c1c;
+        }
+
+        /* ========== Toast提示 ========== */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            padding: 10px 20px;
+            border-radius: 8px;
+            background: var(--gray-900);
+            color: white;
+            font-size: 14px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.3s ease;
+            max-width: 360px;
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+        .toast.error {
+            background: var(--danger);
+        }
+        .toast.warning {
+            background: var(--warning);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ========== 回收站视图 ========== */
+        .recycle-item {
+            background: white;
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .recycle-item .info {
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        .recycle-item .info .title {
+            font-weight: 500;
+            color: var(--gray-900);
+        }
+
+        .recycle-item .info .type {
+            font-size: 12px;
+            background: var(--gray-100);
+            padding: 0 8px;
+            border-radius: 4px;
+            margin-left: 6px;
+        }
+
+        .recycle-item .actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .recycle-item .actions button {
+            padding: 4px 12px;
+            font-size: 12px;
+            border: 1px solid var(--gray-200);
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .recycle-item .actions button:hover {
+            background: var(--gray-100);
+        }
+
+        .recycle-item .actions button.restore {
+            color: var(--primary);
+            border-color: var(--primary-light);
+        }
+
+        .recycle-item .actions button.restore:hover {
+            background: var(--primary-bg);
+        }
+
+        .recycle-item .actions button.permanent {
+            color: var(--danger);
+            border-color: #fca5a5);
+        }
+
+        .recycle-item .actions button.permanent:hover {
+            background: #fee2e2;
+        }
+
+        /* ========== 响应式 ========== */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+                min-width: 200px;
+            }
+            .stats-bar .stat-item .label {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            .app-header {
+                flex-wrap: wrap;
+                height: auto;
+                padding: 10px 16px;
+                gap: 8px;
+            }
+            .header-search {
+                max-width: 100%;
+                flex: 1 1 100%;
+                order: 3;
+            }
+            .stats-bar {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .stats-bar .stat-item {
+                padding: 0 4px;
+            }
+            .content-toolbar {
+                padding: 8px 12px;
+            }
+            .content-list {
+                padding: 12px;
+            }
+            .modal {
+                max-width: 100%;
+                width: 100%;
+                max-height: 100vh;
+                border-radius: 0;
+            }
+            .modal-body {
+                padding: 16px;
+            }
+            .modal-header {
+                padding: 12px 16px;
+            }
+            .modal-footer {
+                padding: 12px 16px;
+            }
+            .tab-bar {
+                padding: 0 12px;
+                overflow-x: auto;
+            }
+            .tab-bar .tab {
+                padding: 8px 12px;
+                font-size: 12px;
+                white-space: nowrap;
+            }
+        }
+
+        /* ========== 拖拽辅助 ========== */
+        .dragging {
+            opacity: 0.5;
+        }
+        .drag-over {
+            border: 2px dashed var(--primary);
+            background: var(--primary-bg);
+        }
+
+        /* ========== 艾宾浩斯队列特殊样式 ========== */
+        .queue-card {
+            border-left: 4px solid var(--warning);
+        }
+        .queue-card .queue-due {
+            font-size: 12px;
+            color: var(--warning);
+            font-weight: 500;
+        }
+        .queue-card .queue-due.overdue {
+            color: var(--danger);
+        }
+
+        /* ========== 版本历史 ========== */
+        .version-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .version-item {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--gray-100);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .version-item:hover {
+            background: var(--gray-50);
+        }
+        .version-item .time {
+            font-size: 12px;
+            color: var(--gray-400);
+        }
+        .version-item .preview {
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+        .version-item .btn-restore {
+            font-size: 12px;
+            padding: 2px 10px;
+            border: 1px solid var(--primary-light);
+            border-radius: 4px;
+            background: white;
+            color: var(--primary);
+            cursor: pointer;
+        }
+        .version-item .btn-restore:hover {
+            background: var(--primary-bg);
+        }
+
+        /* 自定义颜色标签选择器 */
+        .color-picker {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .color-picker .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2.5px solid transparent;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .color-picker .color-option:hover {
+            transform: scale(1.1);
+        }
+        .color-picker .color-option.selected {
+            border-color: var(--gray-900);
+            box-shadow: 0 0 0 2px white, 0 0 0 4px var(--gray-900);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== 顶部导航 ===== -->
+    <header class="app-header">
+        <div class="logo">
+            <span>📚</span> 公考备考工具箱
+        </div>
+        <div class="header-search">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="globalSearch" placeholder="搜索笔记、错题、规范词（支持拼音首字母）..." />
+        </div>
+        <div class="stats-bar" id="statsBar">
+            <span class="stat-item" data-filter="notes" title="总笔记数">
+                📝 <span class="num primary" id="statNotes">0</span>
+            </span>
+            <span class="stat-item" data-filter="errors" title="总错题数">
+                ❌ <span class="num danger" id="statErrors">0</span>
+            </span>
+            <span class="stat-item" data-filter="words" title="总规范词数">
+                📖 <span class="num primary" id="statWords">0</span>
+            </span>
+            <span class="stat-item" data-filter="queue" title="今日待复习">
+                🔄 <span class="num warning" id="statQueue">0</span>
+            </span>
+            <span class="stat-item" data-filter="unmastered" title="未掌握错题">
+                ⚠️ <span class="num danger" id="statUnmastered">0</span>
+            </span>
+        </div>
+        <div class="header-actions">
+            <button class="btn" onclick="showRecycleBin()">🗑️ 回收站</button>
+            <button class="btn" onclick="exportData()">📤 导出</button>
+            <button class="btn btn-primary" onclick="importData()">📥 导入</button>
+        </div>
+    </header>
+
+    <!-- ===== 主体 ===== -->
+    <div class="app-body">
+
+        <!-- 左侧大纲树 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3>📂 大纲目录</h3>
+                <button class="btn-sm" onclick="expandAll()">全部展开</button>
+                <button class="btn-sm" onclick="collapseAll()">全部收起</button>
+            </div>
+            <div class="tree-container" id="treeContainer">
+                <!-- 由JS动态渲染 -->
+            </div>
+        </aside>
+
+        <!-- 右侧主内容 -->
+        <main class="main-content">
+            <!-- 标签页 -->
+            <div class="tab-bar" id="tabBar">
+                <button class="tab active" data-tab="notes">📝 笔记 <span class="badge" id="badgeNotes">0</span></button>
+                <button class="tab" data-tab="errors">❌ 错题 <span class="badge danger" id="badgeErrors">0</span></button>
+                <button class="tab" data-tab="words">📖 规范词 <span class="badge" id="badgeWords">0</span></button>
+                <button class="tab" data-tab="starred">⭐ 星标 <span class="badge" id="badgeStarred">0</span></button>
+                <button class="tab" data-tab="queue">🔄 待复习 <span class="badge danger" id="badgeQueue">0</span></button>
+                <div class="spacer"></div>
+                <button class="btn-new" id="btnNewMain" onclick="handleNew()">＋ 新建</button>
+            </div>
+
+            <!-- 工具栏 -->
+            <div class="content-toolbar" id="toolbar">
+                <div class="toolbar-left">
+                    <select id="sortSelect" onchange="renderCurrentView()">
+                        <option value="updated">按更新时间</option>
+                        <option value="created">按创建时间</option>
+                        <option value="title">按标题 A-Z</option>
+                        <option value="pinned">按置顶优先</option>
+                        <option value="queue">按遗忘曲线紧急度</option>
+                    </select>
+                    <select id="filterColor" onchange="renderCurrentView()">
+                        <option value="">全部颜色</option>
+                        <option value="red">🔴 红色</option>
+                        <option value="orange">🟠 橙色</option>
+                        <option value="yellow">🟡 黄色</option>
+                        <option value="green">🟢 绿色</option>
+                        <option value="blue">🔵 蓝色</option>
+                        <option value="purple">🟣 紫色</option>
+                    </select>
+                    <select id="filterErrorReason" onchange="renderCurrentView()" style="display:none;">
+                        <option value="">全部错因</option>
+                        <option value="看错主体">看错主体</option>
+                        <option value="看错时间">看错时间</option>
+                        <option value="计算失误">计算失误</option>
+                        <option value="知识点盲区">知识点盲区</option>
+                        <option value="掉入陷阱">掉入陷阱</option>
+                        <option value="其他">其他</option>
+                    </select>
+                    <button class="btn-sm" id="btnBatchMode" onclick="toggleBatchMode()">☑️ 批量操作</button>
+                    <div id="batchActions" style="display:none;display:inline-flex;gap:6px;align-items:center;">
+                        <button class="btn-sm" onclick="batchAddTag()">+标签</button>
+                        <button class="btn-sm" onclick="batchRemoveTag()">-标签</button>
+                        <button class="btn-sm" onclick="batchSetColor()">🎨 颜色</button>
+                        <button class="btn-sm" onclick="batchAddQueue()">📋 加入队列</button>
+                        <button class="btn-sm danger" onclick="batchDelete()">🗑️ 删除</button>
+                        <button class="btn-sm" onclick="toggleBatchMode()">取消</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 内容列表 -->
+            <div class="content-list" id="contentList">
+                <!-- 由JS动态渲染 -->
+            </div>
+        </main>
+    </div>
+
+    <!-- ===== Toast容器 ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ===== 弹窗容器 ===== -->
+    <div class="modal-overlay hidden" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">标题</h3>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- 由JS动态渲染 -->
+            </div>
+            <div class="modal-footer" id="modalFooter">
+                <!-- 由JS动态渲染 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================================================================
+        //  ================ 数据层 =======================================
+        // ================================================================
+
+        // 默认大纲树结构（公考章节骨架）
+        const DEFAULT_TREE = [
+            { id: 'node_row', parentId: null, name: '行测', sortOrder: 0 },
+            { id: 'node_yy', parentId: 'node_row', name: '言语理解', sortOrder: 0 },
+            { id: 'node_yy_lj', parentId: 'node_yy', name: '逻辑填空', sortOrder: 0 },
+            { id: 'node_yy_pd', parentId: 'node_yy', name: '片段阅读', sortOrder: 1 },
+            { id: 'node_yy_px', parentId: 'node_yy', name: '语句排序', sortOrder: 2 },
+            { id: 'node_yy_tk', parentId: 'node_yy', name: '语句填空', sortOrder: 3 },
+            { id: 'node_cs', parentId: 'node_row', name: '常识判断', sortOrder: 1 },
+            { id: 'node_cs_sz', parentId: 'node_cs', name: '时政', sortOrder: 0 },
+            { id: 'node_cs_fl', parentId: 'node_cs', name: '法律', sortOrder: 1 },
+            { id: 'node_cs_rw', parentId: 'node_cs', name: '人文历史', sortOrder: 2 },
+            { id: 'node_cs_kj', parentId: 'node_cs', name: '科技地理', sortOrder: 3 },
+            { id: 'node_sl', parentId: 'node_row', name: '数量关系', sortOrder: 2 },
+            { id: 'node_sl_gc', parentId: 'node_sl', name: '工程问题', sortOrder: 0 },
+            { id: 'node_sl_xc', parentId: 'node_sl', name: '行程问题', sortOrder: 1 },
+            { id: 'node_sl_lr', parentId: 'node_sl', name: '利润问题', sortOrder: 2 },
+            { id: 'node_sl_rc', parentId: 'node_sl', name: '容斥问题', sortOrder: 3 },
+            { id: 'node_sl_pl', parentId: 'node_sl', name: '排列组合', sortOrder: 4 },
+            { id: 'node_sl_jh', parentId: 'node_sl', name: '几何问题', sortOrder: 5 },
+            { id: 'node_sl_qt', parentId: 'node_sl', name: '其他高频', sortOrder: 6 },
+            { id: 'node_pd', parentId: 'node_row', name: '判断推理', sortOrder: 3 },
+            { id: 'node_pd_tx', parentId: 'node_pd', name: '图形推理', sortOrder: 0 },
+            { id: 'node_pd_dy', parentId: 'node_pd', name: '定义判断', sortOrder: 1 },
+            { id: 'node_pd_lb', parentId: 'node_pd', name: '类比推理', sortOrder: 2 },
+            { id: 'node_pd_lj', parentId: 'node_pd', name: '逻辑判断', sortOrder: 3 },
+            { id: 'node_zl', parentId: 'node_row', name: '资料分析', sortOrder: 4 },
+            { id: 'node_zl_ss', parentId: 'node_zl', name: '速算技巧', sortOrder: 0 },
+            { id: 'node_zl_tx', parentId: 'node_zl', name: '题型专项', sortOrder: 1 },
+            { id: 'node_shen', parentId: null, name: '申论', sortOrder: 1 },
+            { id: 'node_shen_dy', parentId: 'node_shen', name: '单一题', sortOrder: 0 },
+            { id: 'node_shen_dy_wt', parentId: 'node_shen_dy', name: '问题/原因', sortOrder: 0 },
+            { id: 'node_shen_dy_yx', parentId: 'node_shen_dy', name: '影响/对策', sortOrder: 1 },
+            { id: 'node_shen_zh', parentId: 'node_shen', name: '综合题', sortOrder: 1 },
+            { id: 'node_shen_zh_ci', parentId: 'node_shen_zh', name: '词句理解', sortOrder: 0 },
+            { id: 'node_shen_zh_gd', parentId: 'node_shen_zh', name: '观点/现象分析', sortOrder: 1 },
+            { id: 'node_shen_gw', parentId: 'node_shen', name: '公文题', sortOrder: 2 },
+            { id: 'node_shen_gw_fa', parentId: 'node_shen_gw', name: '方案类', sortOrder: 0 },
+            { id: 'node_shen_gw_xc', parentId: 'node_shen_gw', name: '宣传类', sortOrder: 1 },
+            { id: 'node_shen_gw_zj', parentId: 'node_shen_gw', name: '总结类', sortOrder: 2 },
+            { id: 'node_shen_dzw', parentId: 'node_shen', name: '大作文', sortOrder: 3 },
+            { id: 'node_shen_sc', parentId: 'node_shen', name: '素材积累', sortOrder: 4 },
+            { id: 'node_shen_sc_zc', parentId: 'node_shen_sc', name: '政策理论', sortOrder: 0 },
+            { id: 'node_shen_sc_al', parentId: 'node_shen_sc', name: '案例人物', sortOrder: 1 },
+            { id: 'node_shen_sc_sj', parentId: 'node_shen_sc', name: '数据', sortOrder: 2 },
+        ];
+
+        // 32个模板定义（按公考章节骨架）
+        const TEMPLATES = [{
+            id: 'tpl_cs_sz',
+            name: '常识判断-时政',
+            nodeId: 'node_cs_sz',
+            fields: ['热点事件', '发生时间', '考点关键词', '规范表述', '可能的出题角度', '备注']
+        }, {
+            id: 'tpl_cs_fl',
+            name: '常识判断-法律',
+            nodeId: 'node_cs_fl',
+            fields: ['法律名称', '颁布/施行时间', '常考数字（年龄/期限等）', '易混淆点', '备注']
+        }, {
+            id: 'tpl_cs_rw',
+            name: '常识判断-人文历史',
+            nodeId: 'node_cs_rw',
+            fields: ['人物/事件', '朝代/年份', '核心贡献/意义', '常考诗句/名言', '易混淆人物', '备注']
+        }, {
+            id: 'tpl_cs_kj',
+            name: '常识判断-科技地理',
+            nodeId: 'node_cs_kj',
+            fields: ['科技成就/地理名词', '时间/地点', '科学原理', '常考数据', '与公考关联点', '备注']
+        }, {
+            id: 'tpl_yy_lj',
+            name: '言语理解-逻辑填空',
+            nodeId: 'node_yy_lj',
+            fields: ['成语/实词', '释字', '释义', '褒贬色彩', '常用搭配', '易混淆词', '题干对应提示词', '备注']
+        }, {
+            id: 'tpl_yy_pd',
+            name: '言语理解-片段阅读',
+            nodeId: 'node_yy_pd',
+            fields: ['文段主题', '主旨句', '行文脉络（总分/并列/转折等）', '正确答案特征', '常见干扰项', '备注']
+        }, {
+            id: 'tpl_yy_px',
+            name: '言语理解-语句排序',
+            nodeId: 'node_yy_px',
+            fields: ['首句特征', '尾句特征', '关联词提示', '时间/空间顺序', '验证逻辑', '备注']
+        }, {
+            id: 'tpl_yy_tk',
+            name: '言语理解-语句填空',
+            nodeId: 'node_yy_tk',
+            fields: ['上下文逻辑', '横线位置（首/中/尾）', '关键词提示', '正确选项特征', '备注']
+        }, {
+            id: 'tpl_sl_gc',
+            name: '数量关系-工程问题',
+            nodeId: 'node_sl_gc',
+            fields: ['题型识别', '核心公式', '赋值技巧', '方程列法', '常见陷阱', '备注']
+        }, {
+            id: 'tpl_sl_xc',
+            name: '数量关系-行程问题',
+            nodeId: 'node_sl_xc',
+            fields: ['题型识别（相遇/追及/流水）', '核心公式', '画图技巧', '比例法', '常见陷阱', '备注']
+        }, {
+            id: 'tpl_sl_lr',
+            name: '数量关系-利润问题',
+            nodeId: 'node_sl_lr',
+            fields: ['题型识别', '核心公式（售价/成本/利润）', '赋值技巧', '方程列法', '常见陷阱', '备注']
+        }, {
+            id: 'tpl_sl_rc',
+            name: '数量关系-容斥问题',
+            nodeId: 'node_sl_rc',
+            fields: ['题型识别（二集合/三集合）', '核心公式', '画图法', '公式法选择', '常见陷阱', '备注']
+        }, {
+            id: 'tpl_sl_pl',
+            name: '数量关系-排列组合',
+            nodeId: 'node_sl_pl',
+            fields: ['题型识别（排列/组合）', '分类/分步判断', '捆绑/插空/插板法', '常见陷阱', '备注']
+        }, {
+            id: 'tpl_sl_jh',
+            name: '数量关系-几何问题',
+            nodeId: 'node_sl_jh',
+            fields: ['图形识别', '核心公式（面积/体积/周长）', '常用模型', '估算法', '常见陷阱', '备注']
+        }, {
+            id: 'tpl_sl_qt',
+            name: '数量关系-其他高频',
+            nodeId: 'node_sl_qt',
+            fields: ['题型识别（浓度/年龄/钟表/牛吃草等）', '核心公式', '速解技巧', '常见陷阱', '备注']
+        }, {
+            id: 'tpl_pd_tx',
+            name: '判断推理-图形推理',
+            nodeId: 'node_pd_tx',
+            fields: ['图形特征', '考点方向（位置/样式/属性/数量/空间）', '秒杀技巧', '常见复合考点', '备注']
+        }, {
+            id: 'tpl_pd_dy',
+            name: '判断推理-定义判断',
+            nodeId: 'node_pd_dy',
+            fields: ['定义名称', '核心要件（主体/客体/目的/方式/结果）', '关键词提取', '干扰项特征', '备注']
+        }, {
+            id: 'tpl_pd_lb',
+            name: '判断推理-类比推理',
+            nodeId: 'node_pd_lb',
+            fields: ['题干关系（外延/内涵/语义/语法）', '二级辨析', '易混淆关系', '秒杀技巧', '备注']
+        }, {
+            id: 'tpl_pd_lj',
+            name: '判断推理-逻辑判断',
+            nodeId: 'node_pd_lj',
+            fields: ['题型识别（加强/削弱/前提/结论/分析）', '论证结构（论据→论点）', '干扰项特征', '秒杀技巧', '备注']
+        }, {
+            id: 'tpl_zl_ss',
+            name: '资料分析-速算技巧',
+            nodeId: 'node_zl_ss',
+            fields: ['公式名称', '公式', '适用条件', '截位技巧', '比较技巧', '常见陷阱', '备注']
+        }, {
+            id: 'tpl_zl_tx',
+            name: '资料分析-题型专项',
+            nodeId: 'node_zl_tx',
+            fields: ['题型识别（基期/现期/增长率/增长量/比重/平均数/倍数）', '公式选择', '速算策略', '常见陷阱', '备注']
+        }, {
+            id: 'tpl_shen_dy_wt',
+            name: '申论-单一题（问题/原因）',
+            nodeId: 'node_shen_dy_wt',
+            fields: ['题干要求', '材料定位', '关键词提取', '规范表述', '采分点预估', '漏点反思', '备注']
+        }, {
+            id: 'tpl_shen_dy_yx',
+            name: '申论-单一题（影响/对策）',
+            nodeId: 'node_shen_dy_yx',
+            fields: ['题干要求', '材料定位', '关键词提取', '规范表述', '采分点预估', '漏点反思', '备注']
+        }, {
+            id: 'tpl_shen_zh_ci',
+            name: '申论-综合题（词句理解）',
+            nodeId: 'node_shen_zh_ci',
+            fields: ['词语/句子', '字面含义', '深层含义（引申义）', '材料中对应表现', '规范表述', '采分点预估', '备注']
+        }, {
+            id: 'tpl_shen_zh_gd',
+            name: '申论-综合题（观点/现象分析）',
+            nodeId: 'node_shen_zh_gd',
+            fields: ['观点/现象', '表态（正确/错误/片面/辩证）', '理由分析', '对策/结论', '规范表述', '备注']
+        }, {
+            id: 'tpl_shen_gw_fa',
+            name: '申论-公文题（方案类）',
+            nodeId: 'node_shen_gw_fa',
+            fields: ['文种（方案/建议/指导意见）', '格式要素（标题/称谓/正文/落款）', '正文结构', '规范表述', '格式易漏点', '备注']
+        }, {
+            id: 'tpl_shen_gw_xc',
+            name: '申论-公文题（宣传类）',
+            nodeId: 'node_shen_gw_xc',
+            fields: ['文种（宣传稿/倡议书/公开信）', '格式要素', '正文结构（号召/鼓动）', '规范表述', '格式易漏点', '备注']
+        }, {
+            id: 'tpl_shen_gw_zj',
+            name: '申论-公文题（总结类）',
+            nodeId: 'node_shen_gw_zj',
+            fields: ['文种（报告/简报/汇报）', '格式要素', '正文结构（情况+成效+问题+建议）', '规范表述', '格式易漏点', '备注']
+        }, {
+            id: 'tpl_shen_dzw',
+            name: '申论-大作文',
+            nodeId: 'node_shen_dzw',
+            fields: ['主题', '总论点', '分论点（3个）', '开头金句', '结尾升华句', '可用论据素材', '备注']
+        }, {
+            id: 'tpl_shen_sc_zc',
+            name: '申论-素材积累（政策理论）',
+            nodeId: 'node_shen_sc_zc',
+            fields: ['政策名称', '核心表述', '适用主题', '权威出处', '记忆关键词', '备注']
+        }, {
+            id: 'tpl_shen_sc_al',
+            name: '申论-素材积累（案例人物）',
+            nodeId: 'node_shen_sc_al',
+            fields: ['案例/人物', '核心事迹', '适用主题', '一句话概括', '加分角度', '备注']
+        }, {
+            id: 'tpl_shen_sc_sj',
+            name: '申论-素材积累（数据）',
+            nodeId: 'node_shen_sc_sj',
+            fields: ['数据', '反映问题/趋势', '适用主题', '权威出处', '记忆技巧', '备注']
+        }];
+
+        // 预置颜色标签
+        const COLORS = [
+            { value: 'red', label: '🔴 红色' },
+            { value: 'orange', label: '🟠 橙色' },
+            { value: 'yellow', label: '🟡 黄色' },
+            { value: 'green', label: '🟢 绿色' },
+            { value: 'blue', label: '🔵 蓝色' },
+            { value: 'purple', label: '🟣 紫色' }
+        ];
+
+        // ========== 数据管理 ==========
+        let appData = {
+            nodes: [],
+            notes: [],
+            errors: [],
+            words: [],
+            recycleBin: [],
+            queue: [], // { id, type: 'note'|'error', dueDate, reviewCount, difficulty }
+            starred: [], // id列表
+            settings: {
+                colorMeanings: {
+                    red: '重点必背',
+                    orange: '易错提醒',
+                    yellow: '待理解',
+                    green: '已掌握',
+                    blue: '拓展补充',
+                    purple: '其他'
+                },
+                examDate: null
+            }
+        };
+
+        let currentTab = 'notes';
+        let selectedNodeId = null;
+        let batchMode = false;
+        let batchSelected = new Set();
+        let editingId = null;
+        let editingType = null;
+
+        // ========== 工具函数 ==========
+        function genId() {
+            return Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 5);
+        }
+
+        function formatDate(ts) {
+            const d = new Date(ts);
+            return d.toLocaleDateString('zh-CN') + ' ' + d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function getToday() {
+            return new Date().toDateString();
+        }
+
+        function daysBetween(d1, d2) {
+            const t1 = new Date(d1).getTime();
+            const t2 = new Date(d2).getTime();
+            return Math.ceil((t2 - t1) / (1000 * 60 * 60 * 24));
+        }
+
+        function getNodeName(id) {
+            const n = appData.nodes.find(x => x.id === id);
+            return n ? n.name : '未分类';
+        }
+
+        function getNodePath(id) {
+            const path = [];
+            let current = appData.nodes.find(x => x.id === id);
+            while (current) {
+                path.unshift(current.name);
+                current = appData.nodes.find(x => x.id === current.parentId);
+            }
+            return path.join(' > ');
+        }
+
+        function getTemplateById(id) {
+            return TEMPLATES.find(t => t.id === id);
+        }
+
+        function getTemplateByNodeId(nodeId) {
+            return TEMPLATES.find(t => t.nodeId === nodeId);
+        }
+
+        function getChildNodes(parentId) {
+            return appData.nodes.filter(n => n.parentId === parentId).sort((a, b) => a.sortOrder - b.sortOrder);
+        }
+
+        function getAllDescendantIds(nodeId) {
+            let ids = [nodeId];
+            const children = getChildNodes(nodeId);
+            for (const child of children) {
+                ids = ids.concat(getAllDescendantIds(child.id));
+            }
+            return ids;
+        }
+
+        // ========== Toast ==========
+        function showToast(msg, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const el = document.createElement('div');
+            el.className = 'toast ' + type;
+            el.textContent = msg;
+            container.appendChild(el);
+            setTimeout(() => {
+                el.style.opacity = '0';
+                el.style.transition = 'opacity 0.3s';
+                setTimeout(() => el.remove(), 300);
+            }, 2500);
+        }
+
+        // ========== 数据持久化 ==========
+        function saveData() {
+            try {
+                localStorage.setItem('gkToolsData', JSON.stringify(appData));
+            } catch (e) {
+                console.error('保存数据失败:', e);
+            }
+        }
+
+        function loadData() {
+            try {
+                const raw = localStorage.getItem('gkToolsData');
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    // 合并默认值
+                    appData = {
+                        nodes: parsed.nodes || [],
+                        notes: parsed.notes || [],
+                        errors: parsed.errors || [],
+                        words: parsed.words || [],
+                        recycleBin: parsed.recycleBin || [],
+                        queue: parsed.queue || [],
+                        starred: parsed.starred || [],
+                        settings: {
+                            colorMeanings: parsed.settings?.colorMeanings || {
+                                red: '重点必背',
+                                orange: '易错提醒',
+                                yellow: '待理解',
+                                green: '已掌握',
+                                blue: '拓展补充',
+                                purple: '其他'
+                            },
+                            examDate: parsed.settings?.examDate || null
+                        }
+                    };
+                    return true;
+                }
+            } catch (e) {
+                console.error('加载数据失败:', e);
+            }
+            return false;
+        }
+
+        function initDefaultData() {
+            appData.nodes = JSON.parse(JSON.stringify(DEFAULT_TREE));
+            appData.notes = [];
+            appData.errors = [];
+            appData.words = [];
+            appData.recycleBin = [];
+            appData.queue = [];
+            appData.starred = [];
+            appData.settings = {
+                colorMeanings: {
+                    red: '重点必背',
+                    orange: '易错提醒',
+                    yellow: '待理解',
+                    green: '已掌握',
+                    blue: '拓展补充',
+                    purple: '其他'
+                },
+                examDate: null
+            };
+            saveData();
+        }
+
+        // ========== 初始化 ==========
+        function init() {
+            if (!loadData()) {
+                initDefaultData();
+            }
+            // 确保根节点存在
+            if (appData.nodes.length === 0) {
+                initDefaultData();
+            }
+            selectedNodeId = appData.nodes.find(n => n.parentId === null)?.id || appData.nodes[0]?.id || null;
+            renderAll();
+            // 搜索事件
+            document.getElementById('globalSearch').addEventListener('input', function() {
+                if (this.value.trim()) {
+                    performSearch(this.value.trim());
+                } else {
+                    renderCurrentView();
+                }
+            });
+            // 标签页切换
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    currentTab = this.dataset.tab;
+                    // 显示/隐藏错因筛选
+                    const reasonFilter = document.getElementById('filterErrorReason');
+                    reasonFilter.style.display = (currentTab === 'errors') ? 'inline-block' : 'none';
+                    batchMode = false;
+                    batchSelected.clear();
+                    document.getElementById('btnBatchMode').textContent = '☑️ 批量操作';
+                    document.getElementById('batchActions').style.display = 'none';
+                    renderCurrentView();
+                });
+            });
+            // 统计点击跳转
+            document.querySelectorAll('.stat-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const filter = this.dataset.filter;
+                    if (filter === 'notes') switchTab('notes');
+                    else if (filter === 'errors') switchTab('errors');
+                    else if (filter === 'words') switchTab('words');
+                    else if (filter === 'queue') switchTab('queue');
+                    else if (filter === 'unmastered') {
+                        switchTab('errors');
+                        // 稍后过滤未掌握
+                        setTimeout(() => {
+                            document.getElementById('filterErrorReason').value = '';
+                            renderCurrentView();
+                        }, 50);
+                    }
+                });
+            });
+            // 快捷键
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    if (!document.getElementById('modalOverlay').classList.contains('hidden')) {
+                        closeModal();
+                    }
+                }
+                if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                    e.preventDefault();
+                    if (selectedNodeId) handleNew();
+                }
+            });
+            renderAll();
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.toggle('active', t.dataset.tab === tab);
+            });
+            currentTab = tab;
+            const reasonFilter = document.getElementById('filterErrorReason');
+            reasonFilter.style.display = (tab === 'errors') ? 'inline-block' : 'none';
+            renderCurrentView();
+        }
+
+        // ========== 渲染引擎 ==========
+        function renderAll() {
+            renderTree();
+            updateStats();
+            renderCurrentView();
+        }
+
+        function renderTree() {
+            const container = document.getElementById('treeContainer');
+            container.innerHTML = buildTreeHTML(null, 0);
+            // 展开根节点
+            document.querySelectorAll('.tree-node').forEach(el => {
+                const id = el.dataset.nodeId;
+                if (id) {
+                    const node = appData.nodes.find(n => n.id === id);
+                    if (node && node.parentId === null) {
+                        const children = el.querySelector('.node-children');
+                        if (children) children.classList.remove('collapsed');
+                    }
+                }
+            });
+            // 高亮选中的节点
+            if (selectedNodeId) {
+                document.querySelectorAll('.node-label').forEach(el => {
+                    el.classList.toggle('active', el.dataset.nodeId === selectedNodeId);
+                });
+            }
+        }
+
+        function buildTreeHTML(parentId, depth) {
+            const children = getChildNodes(parentId);
+            if (children.length === 0) return '';
+            let html = '';
+            for (const child of children) {
+                const noteCount = appData.notes.filter(n => n.nodeId === child.id).length;
+                const errorCount = appData.errors.filter(e => e.nodeId === child.id).length;
+                const total = noteCount + errorCount;
+                const hasChildren = getChildNodes(child.id).length > 0;
+                html += `<div class="tree-node" data-node-id="${child.id}">`;
+                html += `<div class="node-label" data-node-id="${child.id}" onclick="selectNode('${child.id}')">`;
+                if (hasChildren) {
+                    html += `<span class="toggle" onclick="event.stopPropagation();toggleNode('${child.id}')">▾</span>`;
+                } else {
+                    html += `<span class="toggle" style="opacity:0.3;">·</span>`;
+                }
+                html += `<span class="node-name">${child.name}</span>`;
+                if (total > 0) {
+                    html += `<span class="node-count has-notes">${total}</span>`;
+                } else {
+                    html += `<span class="node-count">0</span>`;
+                }
+                html += `</div>`;
+                const childHtml = buildTreeHTML(child.id, depth + 1);
+                if (childHtml) {
+                    html += `<div class="node-children collapsed" id="children_${child.id}">${childHtml}</div>`;
+                }
+                html += `</div>`;
+            }
+            return html;
+        }
+
+        function toggleNode(id) {
+            const children = document.getElementById('children_' + id);
+            if (children) {
+                children.classList.toggle('collapsed');
+                const toggle = document.querySelector(`.tree-node[data-node-id="${id}"] .toggle`);
+                if (toggle) {
+                    toggle.textContent = children.classList.contains('collapsed') ? '▸' : '▾';
+                }
+            }
+        }
+
+        function selectNode(id) {
+            selectedNodeId = id;
+            document.querySelectorAll('.node-label').forEach(el => {
+                el.classList.toggle('active', el.dataset.nodeId === id);
+            });
+            renderCurrentView();
+        }
+
+        function expandAll() {
+            document.querySelectorAll('.node-children').forEach(el => {
+                el.classList.remove('collapsed');
+            });
+            document.querySelectorAll('.toggle').forEach(el => {
+                el.textContent = '▾';
+            });
+        }
+
+        function collapseAll() {
+            document.querySelectorAll('.node-children').forEach(el => {
+                el.classList.add('collapsed');
+            });
+            document.querySelectorAll('.toggle').forEach(el => {
+                el.textContent = '▸';
+            });
+        }
+
+        // ========== 统计看板 ==========
+        function updateStats() {
+            const notes = appData.notes.length;
+            const errors = appData.errors.length;
+            const words = appData.words.length;
+            const unmastered = appData.errors.filter(e => !e.mastered).length;
+            const queueCount = appData.queue.filter(q => {
+                const due = new Date(q.dueDate);
+                return due <= new Date();
+            }).length;
+
+            document.getElementById('statNotes').textContent = notes;
+            document.getElementById('statErrors').textContent = errors;
+            document.getElementById('statWords').textContent = words;
+            document.getElementById('statQueue').textContent = queueCount;
+            document.getElementById('statUnmastered').textContent = unmastered;
+
+            document.getElementById('badgeNotes').textContent = notes;
+            document.getElementById('badgeErrors').textContent = errors;
+            document.getElementById('badgeWords').textContent = words;
+            document.getElementById('badgeStarred').textContent = appData.starred.length;
+            document.getElementById('badgeQueue').textContent = queueCount;
+        }
+
+        // ========== 渲染当前视图 ==========
+        function renderCurrentView() {
+            const container = document.getElementById('contentList');
+            const sort = document.getElementById('sortSelect').value;
+            const colorFilter = document.getElementById('filterColor').value;
+            const reasonFilter = document.getElementById('filterErrorReason').value;
+
+            let items = [];
+            let title = '';
+
+            if (currentTab === 'notes') {
+                title = '📝 笔记';
+                items = getNotesForCurrentNode(sort, colorFilter);
+                renderNotes(container, items);
+            } else if (currentTab === 'errors') {
+                title = '❌ 错题';
+                items = getErrorsForCurrentNode(sort, colorFilter, reasonFilter);
+                renderErrors(container, items);
+            } else if (currentTab === 'words') {
+                title = '📖 规范词';
+                items = getWordsForCurrentNode(sort);
+                renderWords(container, items);
+            } else if (currentTab === 'starred') {
+                title = '⭐ 星标';
+                items = getStarredItems(sort);
+                renderStarred(container, items);
+            } else if (currentTab === 'queue') {
+                title = '🔄 待复习';
+                items = getQueueItems(sort);
+                renderQueue(container, items);
+            }
+
+            updateStats();
+        }
+
+        // ========== 获取数据 ==========
+        function getNotesForCurrentNode(sort, colorFilter) {
+            let nodeIds = [selectedNodeId];
+            if (selectedNodeId) {
+                nodeIds = getAllDescendantIds(selectedNodeId);
+            }
+            let items = appData.notes.filter(n => nodeIds.includes(n.nodeId));
+            if (colorFilter) {
+                items = items.filter(n => n.color === colorFilter);
+            }
+            return sortItems(items, sort, 'note');
+        }
+
+        function getErrorsForCurrentNode(sort, colorFilter, reasonFilter) {
+            let nodeIds = [selectedNodeId];
+            if (selectedNodeId) {
+                nodeIds = getAllDescendantIds(selectedNodeId);
+            }
+            let items = appData.errors.filter(e => nodeIds.includes(e.nodeId));
+            if (colorFilter) {
+                items = items.filter(e => e.color === colorFilter);
+            }
+            if (reasonFilter) {
+                items = items.filter(e => e.reason === reasonFilter);
+            }
+            return sortItems(items, sort, 'error');
+        }
+
+        function getWordsForCurrentNode(sort) {
+            // 规范词按主题筛选，不按节点
+            let items = appData.words;
+            if (selectedNodeId) {
+                // 如果选中申论相关节点，可以按主题筛选
+                const node = appData.nodes.find(n => n.id === selectedNodeId);
+                if (node) {
+                    const themeMap = {
+                        'node_shen': null,
+                        'node_shen_sc': null,
+                        'node_shen_sc_zc': '政策理论',
+                        'node_shen_sc_al': '案例人物',
+                        'node_shen_sc_sj': '数据',
+                        'node_shen_dzw': null,
+                        'node_shen_gw': null,
+                        'node_shen_zh': null,
+                        'node_shen_dy': null,
+                    };
+                    // 简单映射：如果节点名包含主题关键词
+                    for (const item of items) {
+                        // 不做强制过滤，显示全部
+                    }
+                }
+            }
+            return sortItems(items, sort, 'word');
+        }
+
+        function getStarredItems(sort) {
+            const starredIds = appData.starred;
+            const notes = appData.notes.filter(n => starredIds.includes(n.id)).map(n => ({ ...n, _type: 'note' }));
+            const errors = appData.errors.filter(e => starredIds.includes(e.id)).map(e => ({ ...e, _type: 'error' }));
+            const words = appData.words.filter(w => starredIds.includes(w.id)).map(w => ({ ...w, _type: 'word' }));
+            let all = [...notes, ...errors, ...words];
+            return sortItems(all, sort, 'starred');
+        }
+
+        function getQueueItems(sort) {
+            const now = new Date();
+            const dueItems = appData.queue.filter(q => new Date(q.dueDate) <= now);
+            // 获取对应的笔记或错题
+            const result = [];
+            for (const q of dueItems) {
+                if (q.type === 'note') {
+                    const note = appData.notes.find(n => n.id === q.id);
+                    if (note) result.push({ ...note, _type: 'note', _queue: q });
+                } else if (q.type === 'error') {
+                    const error = appData.errors.find(e => e.id === q.id);
+                    if (error) result.push({ ...error, _type: 'error', _queue: q });
+                }
+            }
+            // 按紧急度排序（dueDate越近越靠前）
+            return result.sort((a, b) => new Date(a._queue.dueDate) - new Date(b._queue.dueDate));
+        }
+
+        // ========== 排序 ==========
+        function sortItems(items, sort, type) {
+            const pinned = items.filter(i => i.isPinned);
+            const unpinned = items.filter(i => !i.isPinned);
+
+            let sortedUnpinned = [...unpinned];
+            if (sort === 'updated') {
+                sortedUnpinned.sort((a, b) => (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt));
+            } else if (sort === 'created') {
+                sortedUnpinned.sort((a, b) => a.createdAt - b.createdAt);
+            } else if (sort === 'title') {
+                sortedUnpinned.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+            } else if (sort === 'queue') {
+                // 按遗忘曲线紧急度：在队列中的排前面
+                sortedUnpinned.sort((a, b) => {
+                    const qa = appData.queue.find(q => q.id === a.id && q.type === (a._type || type));
+                    const qb = appData.queue.find(q => q.id === b.id && q.type === (b._type || type));
+                    if (qa && qb) return new Date(qa.dueDate) - new Date(qb.dueDate);
+                    if (qa) return -1;
+                    if (qb) return 1;
+                    return (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt);
+                });
+            } else {
+                // 默认按更新时间
+                sortedUnpinned.sort((a, b) => (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt));
+            }
+
+            // 置顶的始终在最前
+            const pinnedSorted = [...pinned];
+            if (sort === 'title') {
+                pinnedSorted.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+            }
+            return [...pinnedSorted, ...sortedUnpinned];
+        }
+
+        // ========== 渲染卡片 ==========
+        function renderNotes(container, items) {
+            if (items.length === 0) {
+                container.innerHTML = `<div class="empty-state"><div class="icon">📝</div><p>暂无笔记，点击右上角「新建」添加</p></div>`;
+                return;
+            }
+            let html = '';
+            for (const item of items) {
+                html += renderNoteCard(item);
+            }
+            container.innerHTML = html;
+        }
+
+        function renderNoteCard(item) {
+            const isStarred = appData.starred.includes(item.id);
+            const isInQueue = appData.queue.some(q => q.id === item.id && q.type === 'note');
+            const colorBar = item.color ? `<div class="color-bar" style="background:var(--color-${item.color})"></div>` :
+                `<div class="color-bar" style="background:transparent"></div>`;
+            const pinnedIcon = item.isPinned ? '📌 ' : '';
+            const template = getTemplateById(item.templateId);
+            const fields = template ? template.fields : [];
+
+            // 解析内容
+            let contentHtml = '';
+            try {
+                const data = JSON.parse(item.content || '{}');
+                for (const field of fields) {
+                    if (field === '备注') continue;
+                    const val = data[field];
+                    if (val && val.trim()) {
+                        contentHtml +=
+                            `<div><span class="field-label">${field}：</span>${escapeHtml(val)}</div>`;
+                    }
+                }
+                // 备注单独显示
+                if (data['备注'] && data['备注'].trim()) {
+                    contentHtml += `<div style="margin-top:4px;color:var(--gray-500);font-size:12px;">📌 ${escapeHtml(data['备注'])}</div>`;
+                }
+            } catch (e) {
+                contentHtml = `<div>${escapeHtml(item.content || '')}</div>`;
+            }
+
+            const tagsHtml = (item.tags || []).map(t => `<span class="tag">#${escapeHtml(t)}</span>`).join('');
+
+            return `
+                <div class="card" data-id="${item.id}" data-type="note">
+                    <div class="card-header">
+                        ${colorBar}
+                        <div class="card-title">${pinnedIcon}${escapeHtml(item.title || '无标题')}</div>
+                        <div class="card-actions">
+                            <button onclick="toggleStar('${item.id}','note')" title="星标">${isStarred ? '⭐' : '☆'}</button>
+                            <button onclick="togglePin('${item.id}','note')" title="置顶">${item.isPinned ? '📌' : '📍'}</button>
+                            <button onclick="editItem('${item.id}','note')" title="编辑">✏️</button>
+                            <button onclick="deleteItem('${item.id}','note')" title="删除">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="card-body">${contentHtml}</div>
+                    <div class="card-footer">
+                        <div class="tags">${tagsHtml}</div>
+                        ${isInQueue ? '<span style="color:var(--warning);font-size:12px;">🔄 队列中</span>' : ''}
+                        <button class="btn-sm" onclick="addToQueue('${item.id}','note')">加入队列</button>
+                        <button class="btn-sm" onclick="viewHistory('${item.id}','note')">🕐 历史</button>
+                        <span class="meta">${formatDate(item.updatedAt || item.createdAt)} · ${getNodePath(item.nodeId)}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderErrors(container, items) {
+            if (items.length === 0) {
+                container.innerHTML =
+                    `<div class="empty-state"><div class="icon">❌</div><p>暂无错题，点击右上角「新建」添加</p></div>`;
+                return;
+            }
+            let html = '';
+            for (const item of items) {
+                html += renderErrorCard(item);
+            }
+            container.innerHTML = html;
+        }
+
+        function renderErrorCard(item) {
+            const isStarred = appData.starred.includes(item.id);
+            const isInQueue = appData.queue.some(q => q.id === item.id && q.type === 'error');
+            const colorBar = item.color ? `<div class="color-bar" style="background:var(--color-${item.color})"></div>` :
+                `<div class="color-bar" style="background:transparent"></div>`;
+            const pinnedIcon = item.isPinned ? '📌 ' : '';
+            const masteredLabel = item.mastered ? ' ✅ 已掌握' : ' ⚠️ 未掌握';
+
+            return `
+                <div class="card error-card" data-id="${item.id}" data-type="error">
+                    <div class="card-header">
+                        ${colorBar}
+                        <div class="card-title">${pinnedIcon}${escapeHtml(item.title || '错题')}${masteredLabel}</div>
+                        <div class="card-actions">
+                            <button onclick="toggleStar('${item.id}','error')" title="星标">${isStarred ? '⭐' : '☆'}</button>
+                            <button onclick="togglePin('${item.id}','error')" title="置顶">${item.isPinned ? '📌' : '📍'}</button>
+                            <button onclick="editItem('${item.id}','error')" title="编辑">✏️</button>
+                            <button onclick="deleteItem('${item.id}','error')" title="删除">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div><span class="field-label">题干：</span>${escapeHtml(item.question || '')}</div>
+                        <div><span class="error-reason">❌ ${escapeHtml(item.reason || '未分类')}</span></div>
+                        <div class="error-solution"><span class="field-label">✅ 正确思路：</span>${escapeHtml(item.solution || '')}</div>
+                        ${item.reviewCount !== undefined ? `<div style="font-size:12px;color:var(--gray-400);margin-top:4px;">已复习 ${item.reviewCount || 0} 次</div>` : ''}
+                    </div>
+                    <div class="card-footer">
+                        ${isInQueue ? '<span style="color:var(--warning);font-size:12px;">🔄 队列中</span>' : ''}
+                        <button class="btn-sm" onclick="addToQueue('${item.id}','error')">加入队列</button>
+                        <button class="btn-sm" onclick="viewHistory('${item.id}','error')">🕐 历史</button>
+                        ${item.mastered ? `<button class="btn-sm" onclick="unmasterError('${item.id}')">↩️ 重新考核</button>` : `<button class="btn-sm" onclick="markMastered('${item.id}')">✅ 标记已掌握</button>`}
+                        <span class="meta">${formatDate(item.updatedAt || item.createdAt)} · ${getNodePath(item.nodeId)}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderWords(container, items) {
+            if (items.length === 0) {
+                container.innerHTML =
+                    `<div class="empty-state"><div class="icon">📖</div><p>暂无规范词，点击右上角「新建」添加</p></div>`;
+                return;
+            }
+            let html = '';
+            for (const item of items) {
+                html += renderWordCard(item);
+            }
+            container.innerHTML = html;
+        }
+
+        function renderWordCard(item) {
+            const isStarred = appData.starred.includes(item.id);
+            return `
+                <div class="card word-card" data-id="${item.id}" data-type="word">
+                    <div class="card-header">
+                        <div class="color-bar" style="background:var(--primary)"></div>
+                        <div class="card-title">📖 ${escapeHtml(item.title || '规范词')}</div>
+                        <div class="card-actions">
+                            <button onclick="toggleStar('${item.id}','word')" title="星标">${isStarred ? '⭐' : '☆'}</button>
+                            <button onclick="editItem('${item.id}','word')" title="编辑">✏️</button>
+                            <button onclick="deleteItem('${item.id}','word')" title="删除">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="word-pair">
+                            <span class="from">${escapeHtml(item.from || '')}</span>
+                            <span class="arrow">→</span>
+                            <span class="to">${escapeHtml(item.to || '')}</span>
+                            <span style="font-size:12px;color:var(--gray-400);margin-left:8px;">#${escapeHtml(item.theme || '未分类')}</span>
+                        </div>
+                        ${item.note ? `<div style="margin-top:6px;font-size:12px;color:var(--gray-500);">${escapeHtml(item.note)}</div>` : ''}
+                    </div>
+                    <div class="card-footer">
+                        <span class="meta">${formatDate(item.updatedAt || item.createdAt)}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderStarred(container, items) {
+            if (items.length === 0) {
+                container.innerHTML =
+                    `<div class="empty-state"><div class="icon">⭐</div><p>暂无星标内容，点击卡片上的⭐标记</p></div>`;
+                return;
+            }
+            let html = '';
+            for (const item of items) {
+                if (item._type === 'note') html += renderNoteCard(item);
+                else if (item._type === 'error') html += renderErrorCard(item);
+                else if (item._type === 'word') html += renderWordCard(item);
+            }
+            container.innerHTML = html;
+        }
+
+        function renderQueue(container, items) {
+            if (items.length === 0) {
+                container.innerHTML =
+                    `<div class="empty-state"><div class="icon">🔄</div><p>🎉 今日没有待复习的内容</p></div>`;
+                return;
+            }
+            let html = '';
+            for (const item of items) {
+                const dueDate = item._queue?.dueDate;
+                const isOverdue = dueDate ? new Date(dueDate) < new Date() : false;
+                html += `
+                    <div class="card queue-card" data-id="${item.id}" data-type="${item._type}">
+                        <div class="card-header">
+                            <div class="card-title">${item._type === 'note' ? '📝' : '❌'} ${escapeHtml(item.title || '无标题')}</div>
+                            <div class="card-actions">
+                                <button onclick="markQueueDone('${item.id}','${item._type}')" style="background:var(--success);color:white;padding:2px 12px;border-radius:4px;border:none;cursor:pointer;">✅ 记住了</button>
+                                <button onclick="markQueueFail('${item.id}','${item._type}')" style="background:var(--danger);color:white;padding:2px 12px;border-radius:4px;border:none;cursor:pointer;">❌ 没记住</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div style="font-size:13px;color:var(--gray-600);">${escapeHtml(item.content || item.question || '')}</div>
+                            <div style="margin-top:6px;font-size:12px;color:var(--gray-400);">
+                                应复习日期：${dueDate ? new Date(dueDate).toLocaleDateString('zh-CN') : '未知'}
+                                ${isOverdue ? ' ⚠️ 已逾期' : ''}
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn-sm" onclick="revealAnswer('${item.id}','${item._type}')" style="background:var(--primary);color:white;border-color:var(--primary);">👁️ 显示答案</button>
+                            <span class="meta">${getNodePath(item.nodeId)}</span>
+                        </div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        // ========== 显示答案（艾宾浩斯点击才显示） ==========
+        function revealAnswer(id, type) {
+            let content = '';
+            if (type === 'note') {
+                const item = appData.notes.find(n => n.id === id);
+                if (item) {
+                    try {
+                        const data = JSON.parse(item.content || '{}');
+                        content = Object.entries(data).map(([k, v]) => `${k}：${v}`).join('\n');
+                    } catch (e) {
+                        content = item.content || '';
+                    }
+                }
+            } else if (type === 'error') {
+                const item = appData.errors.find(e => e.id === id);
+                if (item) {
+                    content = `正确思路：${item.solution || ''}`;
+                }
+            }
+            if (content) {
+                showToast('📖 ' + content.substring(0, 100) + (content.length > 100 ? '...' : ''), 'info');
+            } else {
+                showToast('未找到内容', 'error');
+            }
+        }
+
+        // ========== 新建 ==========
+        function handleNew() {
+            if (!selectedNodeId) {
+                showToast('请先在左侧选择一个章节', 'warning');
+                return;
+            }
+            if (currentTab === 'notes') {
+                showNewNoteModal();
+            } else if (currentTab === 'errors') {
+                showNewErrorModal();
+            } else if (currentTab === 'words') {
+                showNewWordModal();
+            } else {
+                // 在其他标签页默认新建笔记
+                showNewNoteModal();
+            }
+        }
+
+        // ========== 新建笔记 ==========
+        function showNewNoteModal() {
+            const node = appData.nodes.find(n => n.id === selectedNodeId);
+            const templates = TEMPLATES.filter(t => t.nodeId === selectedNodeId);
+            const allTemplates = TEMPLATES;
+
+            let templateOptions = '';
+            for (const t of allTemplates) {
+                const selected = t.nodeId === selectedNodeId ? 'selected' : '';
+                templateOptions += `<option value="${t.id}" ${selected}>${t.name}</option>`;
+            }
+
+            const html = `
+                <div class="form-group">
+                    <label>归属节点</label>
+                    <input type="text" value="${node ? node.name : '未选择'}" disabled style="background:var(--gray-100);">
+                </div>
+                <div class="form-group">
+                    <label>选择模板</label>
+                    <select id="noteTemplateSelect" onchange="updateNoteTemplateFields()">
+                        ${templateOptions}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>标题 <span class="label-hint">（必填）</span></label>
+                    <input type="text" id="noteTitle" placeholder="输入笔记标题" />
+                </div>
+                <div class="form-group">
+                    <label>内容</label>
+                    <div class="template-fields" id="noteTemplateFields">
+                        <!-- 由JS动态渲染 -->
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>标签 <span class="label-hint">（用逗号分隔）</span></label>
+                    <input type="text" id="noteTags" placeholder="如：主旨,行文脉络,总分结构" />
+                </div>
+                <div class="form-group">
+                    <label>颜色标签</label>
+                    <div class="color-picker" id="noteColorPicker">
+                        ${COLORS.map(c => `<div class="color-option" style="background:var(--color-${c.value})" data-color="${c.value}" onclick="selectColor('note','${c.value}')"></div>`).join('')}
+                    </div>
+                </div>
+            `;
+
+            showModal('新建笔记', html, [
+                { text: '取消', class: '', action: 'close' },
+                { text: '保存', class: 'btn-primary', action: 'saveNote' }
+            ]);
+
+            // 初始化模板字段
+            const defaultTemplate = allTemplates.find(t => t.nodeId === selectedNodeId) || allTemplates[0];
+            if (defaultTemplate) {
+                document.getElementById('noteTemplateSelect').value = defaultTemplate.id;
+                updateNoteTemplateFields();
+            }
+        }
+
+        function updateNoteTemplateFields() {
+            const select = document.getElementById('noteTemplateSelect');
+            const container = document.getElementById('noteTemplateFields');
+            const templateId = select.value;
+            const template = getTemplateById(templateId);
+            if (!template) {
+                container.innerHTML = '';
+                return;
+            }
+            let html = '';
+            for (const field of template.fields) {
+                html += `
+                    <div class="tf-row">
+                        <span class="tf-label">${field}</span>
+                        ${field === '备注' ? 
+                            `<textarea class="tf-input" data-field="${field}" rows="2" placeholder="可选填"></textarea>` :
+                            `<input class="tf-input" data-field="${field}" placeholder="请输入${field}" />`
+                        }
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        function selectColor(type, color) {
+            const container = document.getElementById(type + 'ColorPicker');
+            if (!container) return;
+            container.querySelectorAll('.color-option').forEach(el => {
+                el.classList.toggle('selected', el.dataset.color === color);
+            });
+            // 存储选中
+            container.dataset.selected = color;
+        }
+
+        function saveNote() {
+            const title = document.getElementById('noteTitle').value.trim();
+            if (!title) {
+                showToast('请输入标题', 'warning');
+                return;
+            }
+            const templateId = document.getElementById('noteTemplateSelect').value;
+            const template = getTemplateById(templateId);
+            const content = {};
+            const fields = document.querySelectorAll('#noteTemplateFields .tf-input');
+            for (const el of fields) {
+                content[el.dataset.field] = el.value.trim();
+            }
+            const tags = document.getElementById('noteTags').value.split(',').map(s => s.trim()).filter(Boolean);
+            const colorPicker = document.getElementById('noteColorPicker');
+            const color = colorPicker ? colorPicker.dataset.selected || '' : '';
+
+            const note = {
+                id: genId(),
+                nodeId: selectedNodeId,
+                title: title,
+                content: JSON.stringify(content),
+                templateId: templateId,
+                tags: tags,
+                color: color,
+                isPinned: false,
+                isStarred: false,
+                isInQueue: false,
+                createdAt: Date.now(),
+                updatedAt: Date.now(),
+                history: []
+            };
+
+            appData.notes.push(note);
+            saveData();
+            closeModal();
+            showToast('✅ 笔记已保存');
+            renderAll();
+        }
+
+        // ========== 新建错题 ==========
+        function showNewErrorModal() {
+            const node = appData.nodes.find(n => n.id === selectedNodeId);
+            const html = `
+                <div class="form-group">
+                    <label>归属节点</label>
+                    <input type="text" value="${node ? node.name : '未选择'}" disabled style="background:var(--gray-100);">
+                </div>
+                <div class="form-group">
+                    <label>题干 <span class="label-hint">（必填）</span></label>
+                    <textarea id="errorQuestion" rows="3" placeholder="输入错题题干"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>错误原因</label>
+                    <select id="errorReason">
+                        <option value="看错主体">看错主体</option>
+                        <option value="看错时间">看错时间</option>
+                        <option value="计算失误">计算失误</option>
+                        <option value="知识点盲区">知识点盲区</option>
+                        <option value="掉入陷阱">掉入陷阱</option>
+                        <option value="其他">其他</option>
+                    </select>
+                    <input type="text" id="errorReasonCustom" placeholder="或自定义原因" style="margin-top:4px;" />
+                </div>
+                <div class="form-group">
+                    <label>正确思路 <span class="label-hint">（必填，用自己的话复述）</span></label>
+                    <textarea id="errorSolution" rows="4" placeholder="请用自己的话写下正确的解题思路，禁止粘贴"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>标签 <span class="label-hint">（用逗号分隔）</span></label>
+                    <input type="text" id="errorTags" placeholder="如：基期比重,速算" />
+                </div>
+                <div class="form-group">
+                    <label>颜色标签</label>
+                    <div class="color-picker" id="errorColorPicker">
+                        ${COLORS.map(c => `<div class="color-option" style="background:var(--color-${c.value})" data-color="${c.value}" onclick="selectColor('error','${c.value}')"></div>`).join('')}
+                    </div>
+                </div>
+            `;
+
+            showModal('新建错题', html, [
+                { text: '取消', class: '', action: 'close' },
+                { text: '保存', class: 'btn-primary', action: 'saveError' }
+            ]);
+        }
+
+        function saveError() {
+            const question = document.getElementById('errorQuestion').value.trim();
+            if (!question) {
+                showToast('请输入题干', 'warning');
+                return;
+            }
+            const reason = document.getElementById('errorReason').value;
+            const reasonCustom = document.getElementById('errorReasonCustom').value.trim();
+            const finalReason = reasonCustom || reason;
+            const solution = document.getElementById('errorSolution').value.trim();
+            if (!solution) {
+                showToast('请输入正确思路', 'warning');
+                return;
+            }
+            const tags = document.getElementById('errorTags').value.split(',').map(s => s.trim()).filter(Boolean);
+            const colorPicker = document.getElementById('errorColorPicker');
+            const color = colorPicker ? colorPicker.dataset.selected || '' : '';
+
+            const error = {
+                id: genId(),
+                nodeId: selectedNodeId,
+                title: question.substring(0, 50) + (question.length > 50 ? '...' : ''),
+                question: question,
+                reason: finalReason,
+                solution: solution,
+                tags: tags,
+                color: color,
+                isPinned: false,
+                isStarred: false,
+                isInQueue: false,
+                mastered: false,
+                reviewCount: 0,
+                createdAt: Date.now(),
+                updatedAt: Date.now(),
+                history: []
+            };
+
+            appData.errors.push(error);
+            saveData();
+            closeModal();
+            showToast('✅ 错题已保存');
+            renderAll();
+        }
+
+        // ========== 新建规范词 ==========
+        function showNewWordModal() {
+            const themes = ['经济建设', '民生保障', '生态环保', '基层治理', '文化建设', '科技创新', '其他'];
+            const themeOptions = themes.map(t => `<option value="${t}">${t}</option>`).join('');
+
+            const html = `
+                <div class="form-group">
+                    <label>大白话表述 <span class="label-hint">（材料中的原话）</span></label>
+                    <textarea id="wordFrom" rows="2" placeholder="如：村里修了路、通了网、建了广场"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>申论规范词 <span class="label-hint">（必填）</span></label>
+                    <input type="text" id="wordTo" placeholder="如：完善基础设施建设" />
+                </div>
+                <div class="form-group">
+                    <label>主题分类</label>
+                    <select id="wordTheme">${themeOptions}</select>
+                </div>
+                <div class="form-group">
+                    <label>备注</label>
+                    <input type="text" id="wordNote" placeholder="可选填" />
+                </div>
+            `;
+
+            showModal('新建规范词', html, [
+                { text: '取消', class: '', action: 'close' },
+                { text: '保存', class: 'btn-primary', action: 'saveWord' }
+            ]);
+        }
+
+        function saveWord() {
+            const from = document.getElementById('wordFrom').value.trim();
+            const to = document.getElementById('wordTo').value.trim();
+            if (!to) {
+                showToast('请输入规范词', 'warning');
+                return;
+            }
+            const theme = document.getElementById('wordTheme').value;
+            const note = document.getElementById('wordNote').value.trim();
+
+            const word = {
+                id: genId(),
+                from: from,
+                to: to,
+                theme: theme,
+                note: note,
+                title: to,
+                createdAt: Date.now(),
+                updatedAt: Date.now()
+            };
+
+            appData.words.push(word);
+            saveData();
+            closeModal();
+            showToast('✅ 规范词已保存');
+            renderAll();
+        }
+
+        // ========== 编辑 ==========
+        function editItem(id, type) {
+            if (type === 'note') {
+                const item = appData.notes.find(n => n.id === id);
+                if (!item) return;
+                editingId = id;
+                editingType = 'note';
+                // 保存当前内容到历史
+                if (!item.history) item.history = [];
+                item.history.push({
+                    title: item.title,
+                    content: item.content,
+                    tags: [...(item.tags || [])],
+                    color: item.color,
+                    timestamp: Date.now()
+                });
+                if (item.history.length > 50) item.history.shift();
+
+                const template = getTemplateById(item.templateId);
+                let contentData = {};
+                try { contentData = JSON.parse(item.content || '{}'); } catch (e) {}
+
+                let templateOptions = '';
+                for (const t of TEMPLATES) {
+                    templateOptions += `<option value="${t.id}" ${t.id === item.templateId ? 'selected' : ''}>${t.name}</option>`;
+                }
+
+                let fieldsHtml = '';
+                if (template) {
+                    for (const field of template.fields) {
+                        const val = contentData[field] || '';
+                        fieldsHtml += `
+                            <div class="tf-row">
+                                <span class="tf-label">${field}</span>
+                                ${field === '备注' ? 
+                                    `<textarea class="tf-input" data-field="${field}" rows="2">${escapeHtml(val)}</textarea>` :
+                                    `<input class="tf-input" data-field="${field}" value="${escapeHtml(val)}" />`
+                                }
+                            </div>
+                        `;
+                    }
+                }
+
+                const html = `
+                    <div class="form-group">
+                        <label>标题</label>
+                        <input type="text" id="editNoteTitle" value="${escapeHtml(item.title)}" />
+                    </div>
+                    <div class="form-group">
+                        <label>模板</label>
+                        <select id="editNoteTemplate" onchange="updateEditNoteTemplateFields()">
+                            ${templateOptions}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>内容</label>
+                        <div class="template-fields" id="editNoteTemplateFields">
+                            ${fieldsHtml}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>标签</label>
+                        <input type="text" id="editNoteTags" value="${(item.tags || []).join(',')}" />
+                    </div>
+                    <div class="form-group">
+                        <label>颜色</label>
+                        <div class="color-picker" id="editNoteColorPicker">
+                            ${COLORS.map(c => `<div class="color-option ${c.value === item.color ? 'selected' : ''}" style="background:var(--color-${c.value})" data-color="${c.value}" onclick="selectColor('editNote','${c.value}')"></div>`).join('')}
+                        </div>
+                    </div>
+                `;
+
+                showModal('编辑笔记', html, [
+                    { text: '取消', class: '', action: 'close' },
+                    { text: '保存', class: 'btn-primary', action: 'saveEditNote' }
+                ]);
+
+            } else if (type === 'error') {
+                const item = appData.errors.find(e => e.id === id);
+                if (!item) return;
+                editingId = id;
+                editingType = 'error';
+                if (!item.history) item.history = [];
+                item.history.push({
+                    question: item.question,
+                    solution: item.solution,
+                    reason: item.reason,
+                    tags: [...(item.tags || [])],
+                    color: item.color,
+                    timestamp: Date.now()
+                });
+                if (item.history.length > 50) item.history.shift();
+
+                const html = `
+                    <div class="form-group">
+                        <label>题干</label>
+                        <textarea id="editErrorQuestion" rows="3">${escapeHtml(item.question)}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>错误原因</label>
+                        <select id="editErrorReason">
+                            <option value="看错主体" ${item.reason === '看错主体' ? 'selected' : ''}>看错主体</option>
+                            <option value="看错时间" ${item.reason === '看错时间' ? 'selected' : ''}>看错时间</option>
+                            <option value="计算失误" ${item.reason === '计算失误' ? 'selected' : ''}>计算失误</option>
+                            <option value="知识点盲区" ${item.reason === '知识点盲区' ? 'selected' : ''}>知识点盲区</option>
+                            <option value="掉入陷阱" ${item.reason === '掉入陷阱' ? 'selected' : ''}>掉入陷阱</option>
+                            <option value="其他" ${item.reason === '其他' ? 'selected' : ''}>其他</option>
+                        </select>
+                        <input type="text" id="editErrorReasonCustom" value="${!['看错主体','看错时间','计算失误','知识点盲区','掉入陷阱','其他'].includes(item.reason) ? item.reason : ''}" placeholder="或自定义原因" style="margin-top:4px;" />
+                    </div>
+                    <div class="form-group">
+                        <label>正确思路</label>
+                        <textarea id="editErrorSolution" rows="4">${escapeHtml(item.solution)}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>标签</label>
+                        <input type="text" id="editErrorTags" value="${(item.tags || []).join(',')}" />
+                    </div>
+                    <div class="form-group">
+                        <label>颜色</label>
+                        <div class="color-picker" id="editErrorColorPicker">
+                            ${COLORS.map(c => `<div class="color-option ${c.value === item.color ? 'selected' : ''}" style="background:var(--color-${c.value})" data-color="${c.value}" onclick="selectColor('editError','${c.value}')"></div>`).join('')}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>已掌握状态</label>
+                        <select id="editErrorMastered">
+                            <option value="false" ${!item.mastered ? 'selected' : ''}>未掌握</option>
+                            <option value="true" ${item.mastered ? 'selected' : ''}>已掌握</option>
+                        </select>
+                    </div>
+                `;
+
+                showModal('编辑错题', html, [
+                    { text: '取消', class: '', action: 'close' },
+                    { text: '保存', class: 'btn-primary', action: 'saveEditError' }
+                ]);
+
+            } else if (type === 'word') {
+                const item = appData.words.find(w => w.id === id);
+                if (!item) return;
+                editingId = id;
+                editingType = 'word';
+                const themes = ['经济建设', '民生保障', '生态环保', '基层治理', '文化建设', '科技创新', '其他'];
+                const themeOptions = themes.map(t =>
+                    `<option value="${t}" ${t === item.theme ? 'selected' : ''}>${t}</option>`).join('');
+
+                const html = `
+                    <div class="form-group">
+                        <label>大白话表述</label>
+                        <textarea id="editWordFrom" rows="2">${escapeHtml(item.from)}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>申论规范词</label>
+                        <input type="text" id="editWordTo" value="${escapeHtml(item.to)}" />
+                    </div>
+                    <div class="form-group">
+                        <label>主题分类</label>
+                        <select id="editWordTheme">${themeOptions}</select>
+                    </div>
+                    <div class="form-group">
+                        <label>备注</label>
+                        <input type="text" id="editWordNote" value="${escapeHtml(item.note)}" />
+                    </div>
+                `;
+
+                showModal('编辑规范词', html, [
+                    { text: '取消', class: '', action: 'close' },
+                    { text: '保存', class: 'btn-primary', action: 'saveEditWord' }
+                ]);
+            }
+        }
+
+        function updateEditNoteTemplateFields() {
+            const select = document.getElementById('editNoteTemplate');
+            const container = document.getElementById('editNoteTemplateFields');
+            const templateId = select.value;
+            const template = getTemplateById(templateId);
+            if (!template) {
+                container.innerHTML = '';
+                return;
+            }
+            // 尝试保留已有值
+            const existing = {};
+            container.querySelectorAll('.tf-input').forEach(el => {
+                existing[el.dataset.field] = el.value;
+            });
+            let html = '';
+            for (const field of template.fields) {
+                const val = existing[field] || '';
+                html += `
+                    <div class="tf-row">
+                        <span class="tf-label">${field}</span>
+                        ${field === '备注' ? 
+                            `<textarea class="tf-input" data-field="${field}" rows="2">${escapeHtml(val)}</textarea>` :
+                            `<input class="tf-input" data-field="${field}" value="${escapeHtml(val)}" />`
+                        }
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        function saveEditNote() {
+            const id = editingId;
+            const item = appData.notes.find(n => n.id === id);
+            if (!item) return;
+
+            const title = document.getElementById('editNoteTitle').value.trim();
+            if (!title) { showToast('请输入标题', 'warning'); return; }
+
+            const templateId = document.getElementById('editNoteTemplate').value;
+            const content = {};
+            document.querySelectorAll('#editNoteTemplateFields .tf-input').forEach(el => {
+                content[el.dataset.field] = el.value.trim();
+            });
+            const tags = document.getElementById('editNoteTags').value.split(',').map(s => s.trim()).filter(Boolean);
+            const colorPicker = document.getElementById('editNoteColorPicker');
+            const color = colorPicker ? colorPicker.dataset.selected || '' : '';
+
+            item.title = title;
+            item.content = JSON.stringify(content);
+            item.templateId = templateId;
+            item.tags = tags;
+            item.color = color;
+            item.updatedAt = Date.now();
+
+            saveData();
+            closeModal();
+            showToast('✅ 笔记已更新');
+            renderAll();
+        }
+
+        function saveEditError() {
+            const id = editingId;
+            const item = appData.errors.find(e => e.id === id);
+            if (!item) return;
+
+            const question = document.getElementById('editErrorQuestion').value.trim();
+            if (!question) { showToast('请输入题干', 'warning'); return; }
+            const reason = document.getElementById('editErrorReason').value;
+            const reasonCustom = document.getElementById('editErrorReasonCustom').value.trim();
+            const finalReason = reasonCustom || reason;
+            const solution = document.getElementById('editErrorSolution').value.trim();
+            if (!solution) { showToast('请输入正确思路', 'warning'); return; }
+            const tags = document.getElementById('editErrorTags').value.split(',').map(s => s.trim()).filter(Boolean);
+            const colorPicker = document.getElementById('editErrorColorPicker');
+            const color = colorPicker ? colorPicker.dataset.selected || '' : '';
+            const mastered = document.getElementById('editErrorMastered').value === 'true';
+
+            item.question = question;
+            item.title = question.substring(0, 50) + (question.length > 50 ? '...' : '');
+            item.reason = finalReason;
+            item.solution = solution;
+            item.tags = tags;
+            item.color = color;
+            item.mastered = mastered;
+            item.updatedAt = Date.now();
+
+            saveData();
+            closeModal();
+            showToast('✅ 错题已更新');
+            renderAll();
+        }
+
+        function saveEditWord() {
+            const id = editingId;
+            const item = appData.words.find(w => w.id === id);
+            if (!item) return;
+
+            const from = document.getElementById('editWordFrom').value.trim();
+            const to = document.getElementById('editWordTo').value.trim();
+            if (!to) { showToast('请输入规范词', 'warning'); return; }
+            const theme = document.getElementById('editWordTheme').value;
+            const note = document.getElementById('editWordNote').value.trim();
+
+            item.from = from;
+            item.to = to;
+            item.theme = theme;
+            item.note = note;
+            item.title = to;
+            item.updatedAt = Date.now();
+
+            saveData();
+            closeModal();
+            showToast('✅ 规范词已更新');
+            renderAll();
+        }
+
+        // ========== 删除（进回收站） ==========
+        function deleteItem(id, type) {
+            let item = null;
+            let name = '';
+            if (type === 'note') {
+                item = appData.notes.find(n => n.id === id);
+                name = item ? item.title : '笔记';
+            } else if (type === 'error') {
+                item = appData.errors.find(e => e.id === id);
+                name = item ? item.title : '错题';
+            } else if (type === 'word') {
+                item = appData.words.find(w => w.id === id);
+                name = item ? item.to : '规范词';
+            }
+            if (!item) return;
+
+            // 二次确认
+            if (!confirm(`确定要删除「${name}」吗？删除后将进入回收站，可恢复。`)) return;
+
+            // 移入回收站
+            const recycleItem = {
+                id: item.id,
+                type: type,
+                data: JSON.parse(JSON.stringify(item)),
+                deletedAt: Date.now()
+            };
+            appData.recycleBin.push(recycleItem);
+
+            // 从原数据中删除
+            if (type === 'note') {
+                appData.notes = appData.notes.filter(n => n.id !== id);
+            } else if (type === 'error') {
+                appData.errors = appData.errors.filter(e => e.id !== id);
+            } else if (type === 'word') {
+                appData.words = appData.words.filter(w => w.id !== id);
+            }
+            // 从星标中移除
+            appData.starred = appData.starred.filter(s => s !== id);
+            // 从队列中移除
+            appData.queue = appData.queue.filter(q => q.id !== id);
+
+            saveData();
+            showToast(`✅ 「${name}」已移入回收站`);
+            renderAll();
+        }
+
+        // ========== 回收站 ==========
+        function showRecycleBin() {
+            if (appData.recycleBin.length === 0) {
+                showToast('回收站为空', 'info');
+                return;
+            }
+
+            let html = `
+                <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+                    <span style="color:var(--gray-500);font-size:13px;">共 ${appData.recycleBin.length} 项</span>
+                    <button class="btn-sm danger" onclick="emptyRecycleBin()">🗑️ 清空回收站</button>
+                </div>
+            `;
+
+            for (const item of appData.recycleBin) {
+                const typeMap = { note: '📝笔记', error: '❌错题', word: '📖规范词' };
+                const name = item.data.title || item.data.to || '未命名';
+                html += `
+                    <div class="recycle-item">
+                        <div class="info">
+                            <span class="title">${escapeHtml(name)}</span>
+                            <span class="type">${typeMap[item.type] || item.type}</span>
+                            <span style="font-size:12px;color:var(--gray-400);margin-left:8px;">${formatDate(item.deletedAt)}</span>
+                        </div>
+                        <div class="actions">
+                            <button class="restore" onclick="restoreFromRecycle('${item.id}')">↩️ 恢复</button>
+                            <button class="permanent" onclick="permanentDelete('${item.id}')">🗑️ 彻底删除</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            showModal('🗑️ 回收站', html, [
+                { text: '关闭', class: '', action: 'close' }
+            ]);
+        }
+
+        function restoreFromRecycle(id) {
+            const idx = appData.recycleBin.findIndex(r => r.id === id);
+            if (idx === -1) return;
+            const item = appData.recycleBin[idx];
+            // 恢复数据
+            if (item.type === 'note') {
+                appData.notes.push(item.data);
+            } else if (item.type === 'error') {
+                appData.errors.push(item.data);
+            } else if (item.type === 'word') {
+                appData.words.push(item.data);
+            }
+            appData.recycleBin.splice(idx, 1);
+            saveData();
+            showToast('✅ 已恢复');
+            showRecycleBin();
+            renderAll();
+        }
+
+        function permanentDelete(id) {
+            if (!confirm('确定要彻底删除吗？此操作不可恢复！')) return;
+            const idx = appData.recycleBin.findIndex(r => r.id === id);
+            if (idx === -1) return;
+            appData.recycleBin.splice(idx, 1);
+            saveData();
+            showToast('已彻底删除');
+            showRecycleBin();
+            renderAll();
+        }
+
+        function emptyRecycleBin() {
+            if (!confirm('确定要清空回收站吗？此操作不可恢复！')) return;
+            appData.recycleBin = [];
+            saveData();
+            showToast('回收站已清空');
+            showRecycleBin();
+            renderAll();
+        }
+
+        // ========== 星标 ==========
+        function toggleStar(id, type) {
+            const idx = appData.starred.indexOf(id);
+            if (idx === -1) {
+                appData.starred.push(id);
+                showToast('⭐ 已星标');
+            } else {
+                appData.starred.splice(idx, 1);
+                showToast('取消星标');
+            }
+            saveData();
+            renderAll();
+        }
+
+        // ========== 置顶 ==========
+        function togglePin(id, type) {
+            let item = null;
+            if (type === 'note') {
+                item = appData.notes.find(n => n.id === id);
+            } else if (type === 'error') {
+                item = appData.errors.find(e => e.id === id);
+            }
+            if (!item) return;
+            item.isPinned = !item.isPinned;
+            saveData();
+            renderAll();
+        }
+
+        // ========== 艾宾浩斯队列 ==========
+        function addToQueue(id, type) {
+            // 检查是否已在队列中
+            if (appData.queue.some(q => q.id === id && q.type === type)) {
+                showToast('已在队列中', 'warning');
+                return;
+            }
+            const dueDate = new Date();
+            dueDate.setDate(dueDate.getDate() + 1); // 默认1天后
+            appData.queue.push({
+                id: id,
+                type: type,
+                dueDate: dueDate.toISOString(),
+                reviewCount: 0,
+                difficulty: 'medium'
+            });
+            saveData();
+            showToast('✅ 已加入记忆队列（1天后复习）');
+            renderAll();
+        }
+
+        function markQueueDone(id, type) {
+            const idx = appData.queue.findIndex(q => q.id === id && q.type === type);
+            if (idx === -1) return;
+            const q = appData.queue[idx];
+            q.reviewCount++;
+
+            // 根据复习次数决定下次间隔（1,3,7,15,30天）
+            const intervals = [1, 3, 7, 15, 30];
+            const nextInterval = intervals[Math.min(q.reviewCount, intervals.length - 1)];
+            const dueDate = new Date();
+            dueDate.setDate(dueDate.getDate() + nextInterval);
+            q.dueDate = dueDate.toISOString();
+
+            // 如果复习次数达到5次，从队列移除（已掌握）
+            if (q.reviewCount >= 5) {
+                appData.queue.splice(idx, 1);
+                showToast(`🎉 已复习${q.reviewCount}次，从队列中移除`);
+            } else {
+                showToast(`✅ 记住了！下次${nextInterval}天后复习`);
+            }
+            saveData();
+            renderAll();
+        }
+
+        function markQueueFail(id, type) {
+            const idx = appData.queue.findIndex(q => q.id === id && q.type === type);
+            if (idx === -1) return;
+            // 重置为1天后
+            const dueDate = new Date();
+            dueDate.setDate(dueDate.getDate() + 1);
+            appData.queue[idx].dueDate = dueDate.toISOString();
+            appData.queue[idx].reviewCount = 0;
+            saveData();
+            showToast('⏳ 已重置，1天后再次复习');
+            renderAll();
+        }
+
+        // ========== 错题掌握 ==========
+        function markMastered(id) {
+            const item = appData.errors.find(e => e.id === id);
+            if (!item) return;
+            item.mastered = true;
+            // 从队列中移除
+            appData.queue = appData.queue.filter(q => q.id !== id);
+            saveData();
+            showToast('✅ 已标记为掌握');
+            renderAll();
+        }
+
+        function unmasterError(id) {
+            const item = appData.errors.find(e => e.id === id);
+            if (!item) return;
+            item.mastered = false;
+            saveData();
+            showToast('↩️ 已重新纳入未掌握');
+            renderAll();
+        }
+
+        // ========== 版本历史 ==========
+        function viewHistory(id, type) {
+            let item = null;
+            let name = '';
+            if (type === 'note') {
+                item = appData.notes.find(n => n.id === id);
+                name = item ? item.title : '笔记';
+            } else if (type === 'error') {
+                item = appData.errors.find(e => e.id === id);
+                name = item ? item.title : '错题';
+            }
+            if (!item || !item.history || item.history.length === 0) {
+                showToast('暂无历史版本', 'info');
+                return;
+            }
+
+            let html = `<div style="font-size:13px;color:var(--gray-500);margin-bottom:12px;">「${name}」的历史版本（共${item.history.length}个）</div><div class="version-list">`;
+            const versions = [...item.history].reverse();
+            for (const v of versions) {
+                const preview = v.title || v.question || v.content || '无内容';
+                html += `
+                    <div class="version-item">
+                        <div>
+                            <div class="preview">${escapeHtml(preview.substring(0, 60))}${preview.length > 60 ? '...' : ''}</div>
+                            <div class="time">${formatDate(v.timestamp)}</div>
+                        </div>
+                        <button class="btn-restore" onclick="restoreVersion('${id}','${type}',${versions.indexOf(v)})">恢复此版本</button>
+                    </div>
+                `;
+            }
+            html += '</div>';
+
+            showModal('🕐 版本历史', html, [
+                { text: '关闭', class: '', action: 'close' }
+            ]);
+        }
+
+        function restoreVersion(id, type, index) {
+            let item = null;
+            if (type === 'note') {
+                item = appData.notes.find(n => n.id === id);
+            } else if (type === 'error') {
+                item = appData.errors.find(e => e.id === id);
+            }
+            if (!item || !item.history) return;
+
+            const versions = [...item.history].reverse();
+            const v = versions[index];
+            if (!v) return;
+
+            if (!confirm('确定要恢复到该版本吗？当前内容将被覆盖。')) return;
+
+            if (type === 'note') {
+                item.title = v.title || item.title;
+                item.content = v.content || item.content;
+                item.tags = v.tags || item.tags || [];
+                item.color = v.color || item.color;
+            } else if (type === 'error') {
+                item.question = v.question || item.question;
+                item.solution = v.solution || item.solution;
+                item.reason = v.reason || item.reason;
+                item.tags = v.tags || item.tags || [];
+                item.color = v.color || item.color;
+            }
+            item.updatedAt = Date.now();
+            saveData();
+            closeModal();
+            showToast('✅ 已恢复到所选版本');
+            renderAll();
+        }
+
+        // ========== 批量操作 ==========
+        function toggleBatchMode() {
+            batchMode = !batchMode;
+            batchSelected.clear();
+            document.getElementById('btnBatchMode').textContent = batchMode ? '☑️ 取消批量' : '☑️ 批量操作';
+            document.getElementById('batchActions').style.display = batchMode ? 'inline-flex' : 'none';
+            if (!batchMode) {
+                document.querySelectorAll('.card').forEach(el => {
+                    el.style.border = '';
+                });
+            }
+            renderCurrentView();
+        }
+
+        function toggleBatchSelect(id) {
+            if (!batchMode) return;
+            if (batchSelected.has(id)) {
+                batchSelected.delete(id);
+            } else {
+                batchSelected.add(id);
+            }
+            // 高亮选中的卡片
+            document.querySelectorAll('.card').forEach(el => {
+                if (el.dataset.id === id) {
+                    el.style.border = batchSelected.has(id) ? '2px solid var(--primary)' : '';
+                }
+            });
+        }
+
+        function batchAddTag() {
+            if (batchSelected.size === 0) { showToast('请先选择项目', 'warning'); return; }
+            const tag = prompt('请输入要添加的标签：');
+            if (!tag) return;
+            const trimmed = tag.trim();
+            if (!trimmed) return;
+            let count = 0;
+            // 处理笔记
+            for (const id of batchSelected) {
+                const note = appData.notes.find(n => n.id === id);
+                if (note) {
+                    if (!note.tags) note.tags = [];
+                    if (!note.tags.includes(trimmed)) { note.tags.push(trimmed);
+                        count++; }
+                }
+                const error = appData.errors.find(e => e.id === id);
+                if (error) {
+                    if (!error.tags) error.tags = [];
+                    if (!error.tags.includes(trimmed)) { error.tags.push(trimmed);
+                        count++; }
+                }
+            }
+            saveData();
+            showToast(`✅ 为 ${count} 项添加了标签「${trimmed}」`);
+            renderAll();
+        }
+
+        function batchRemoveTag() {
+            if (batchSelected.size === 0) { showToast('请先选择项目', 'warning'); return; }
+            const tag = prompt('请输入要移除的标签：');
+            if (!tag) return;
+            const trimmed = tag.trim();
+            if (!trimmed) return;
+            let count = 0;
+            for (const id of batchSelected) {
+                const note = appData.notes.find(n => n.id === id);
+                if (note && note.tags) {
+                    const idx = note.tags.indexOf(trimmed);
+                    if (idx !== -1) { note.tags.splice(idx, 1);
+                        count++; }
+                }
+                const error = appData.errors.find(e => e.id === id);
+                if (error && error.tags) {
+                    const idx = error.tags.indexOf(trimmed);
+                    if (idx !== -1) { error.tags.splice(idx, 1);
+                        count++; }
+                }
+            }
+            saveData();
+            showToast(`✅ 从 ${count} 项中移除了标签「${trimmed}」`);
+            renderAll();
+        }
+
+        function batchSetColor() {
+            if (batchSelected.size === 0) { showToast('请先选择项目', 'warning'); return; }
+            const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple'];
+            const colorMap = { red: '🔴 红色', orange: '🟠 橙色', yellow: '🟡 黄色', green: '🟢 绿色', blue: '🔵 蓝色',
+                purple: '🟣 紫色' };
+            const options = colors.map(c => `${c} - ${colorMap[c]}`).join('\n');
+            const choice = prompt(`请选择颜色（输入编号）：\n${colors.map((c, i) => `${i+1}. ${colorMap[c]}`).join('\n')}`);
+            if (!choice) return;
+            const idx = parseInt(choice) - 1;
+            if (idx < 0 || idx >= colors.length) { showToast('无效选择', 'error'); return; }
+            const color = colors[idx];
+            let count = 0;
+            for (const id of batchSelected) {
+                const note = appData.notes.find(n => n.id === id);
+                if (note) { note.color = color;
+                    count++; }
+                const error = appData.errors.find(e => e.id === id);
+                if (error) { error.color = color;
+                    count++; }
+            }
+            saveData();
+            showToast(`✅ 为 ${count} 项设置了颜色`);
+            renderAll();
+        }
+
+        function batchAddQueue() {
+            if (batchSelected.size === 0) { showToast('请先选择项目', 'warning'); return; }
+            let count = 0;
+            for (const id of batchSelected) {
+                if (appData.queue.some(q => q.id === id)) continue;
+                const note = appData.notes.find(n => n.id === id);
+                if (note) {
+                    const dueDate = new Date();
+                    dueDate.setDate(dueDate.getDate() + 1);
+                    appData.queue.push({ id: id, type: 'note', dueDate: dueDate.toISOString(), reviewCount: 0,
+                        difficulty: 'medium' });
+                    count++;
+                }
+                const error = appData.errors.find(e => e.id === id);
+                if (error) {
+                    const dueDate = new Date();
+                    dueDate.setDate(dueDate.getDate() + 1);
+                    appData.queue.push({ id: id, type: 'error', dueDate: dueDate.toISOString(), reviewCount: 0,
+                        difficulty: 'medium' });
+                    count++;
+                }
+            }
+            saveData();
+            showToast(`✅ 将 ${count} 项加入记忆队列`);
+            renderAll();
+        }
+
+        function batchDelete() {
+            if (batchSelected.size === 0) { showToast('请先选择项目', 'warning'); return; }
+            if (!confirm(`确定要将选中的 ${batchSelected.size} 项移入回收站吗？`)) return;
+            let count = 0;
+            for (const id of batchSelected) {
+                let item = appData.notes.find(n => n.id === id);
+                let type = 'note';
+                if (!item) {
+                    item = appData.errors.find(e => e.id === id);
+                    type = 'error';
+                }
+                if (!item) {
+                    item = appData.words.find(w => w.id === id);
+                    type = 'word';
+                }
+                if (item) {
+                    appData.recycleBin.push({
+                        id: item.id,
+                        type: type,
+                        data: JSON.parse(JSON.stringify(item)),
+                        deletedAt: Date.now()
+                    });
+                    if (type === 'note') appData.notes = appData.notes.filter(n => n.id !== id);
+                    else if (type === 'error') appData.errors = appData.errors.filter(e => e.id !== id);
+                    else if (type === 'word') appData.words = appData.words.filter(w => w.id !== id);
+                    appData.starred = appData.starred.filter(s => s !== id);
+                    appData.queue = appData.queue.filter(q => q.id !== id);
+                    count++;
+                }
+            }
+            saveData();
+            batchSelected.clear();
+            batchMode = false;
+            document.getElementById('btnBatchMode').textContent = '☑️ 批量操作';
+            document.getElementById('batchActions').style.display = 'none';
+            showToast(`✅ ${count} 项已移入回收站`);
+            renderAll();
+        }
+
+        // ========== 搜索 ==========
+        function performSearch(query) {
+            if (!query || query.length < 1) {
+                renderCurrentView();
+                return;
+            }
+            const q = query.toLowerCase().trim();
+            const results = [];
+
+            // 搜索笔记
+            for (const note of appData.notes) {
+                const match = note.title.toLowerCase().includes(q) ||
+                    (note.content || '').toLowerCase().includes(q) ||
+                    (note.tags || []).some(t => t.toLowerCase().includes(q));
+                if (match) {
+                    results.push({ ...note, _type: 'note', _score: 1 });
+                }
+            }
+
+            // 搜索错题
+            for (const error of appData.errors) {
+                const match = (error.question || '').toLowerCase().includes(q) ||
+                    (error.solution || '').toLowerCase().includes(q) ||
+                    (error.reason || '').toLowerCase().includes(q) ||
+                    (error.tags || []).some(t => t.toLowerCase().includes(q));
+                if (match) {
+                    results.push({ ...error, _type: 'error', _score: 1 });
+                }
+            }
+
+            // 搜索规范词
+            for (const word of appData.words) {
+                const match = (word.from || '').toLowerCase().includes(q) ||
+                    (word.to || '').toLowerCase().includes(q) ||
+                    (word.theme || '').toLowerCase().includes(q);
+                if (match) {
+                    results.push({ ...word, _type: 'word', _score: 1 });
+                }
+            }
+
+            // 按类型分组显示
+            const container = document.getElementById('contentList');
+            if (results.length === 0) {
+                container.innerHTML =
+                `<div class="empty-state"><div class="icon">🔍</div><p>未找到与「${escapeHtml(query)}」相关的内容</p></div>`;
+                return;
+            }
+
+            let html = `<div style="margin-bottom:12px;font-size:13px;color:var(--gray-500);">🔍 找到 ${results.length} 条结果</div>`;
+            const noteResults = results.filter(r => r._type === 'note');
+            const errorResults = results.filter(r => r._type === 'error');
+            const wordResults = results.filter(r => r._type === 'word');
+
+            if (noteResults.length > 0) {
+                html += `<div style="font-weight:600;font-size:14px;color:var(--gray-700);margin:8px 0 4px;">📝 笔记 (${noteResults.length})</div>`;
+                for (const r of noteResults) {
+                    html += renderNoteCard(r);
+                }
+            }
+            if (errorResults.length > 0) {
+                html += `<div style="font-weight:600;font-size:14px;color:var(--gray-700);margin:8px 0 4px;">❌ 错题 (${errorResults.length})</div>`;
+                for (const r of errorResults) {
+                    html += renderErrorCard(r);
+                }
+            }
+            if (wordResults.length > 0) {
+                html += `<div style="font-weight:600;font-size:14px;color:var(--gray-700);margin:8px 0 4px;">📖 规范词 (${wordResults.length})</div>`;
+                for (const r of wordResults) {
+                    html += renderWordCard(r);
+                }
+            }
+            container.innerHTML = html;
+
+            // 高亮关键词（简单实现：用黄色背景）
+            container.querySelectorAll('.card-body, .card-title').forEach(el => {
+                const text = el.textContent;
+                if (text.toLowerCase().includes(q)) {
+                    // 不破坏DOM结构，仅标记
+                }
+            });
+        }
+
+        // ========== 导入导出 ==========
+        function exportData() {
+            const json = JSON.stringify(appData, null, 2);
+            // 下载JSON
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `公考备考数据_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('✅ 数据已导出');
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    try {
+                        const data = JSON.parse(ev.target.result);
+                        if (confirm('导入将覆盖当前所有数据，确认继续吗？')) {
+                            appData = data;
+                            saveData();
+                            showToast('✅ 数据导入成功');
+                            renderAll();
+                        }
+                    } catch (err) {
+                        showToast('❌ 导入失败：文件格式错误', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        // ========== 弹窗管理 ==========
+        function showModal(title, bodyHtml, footerBtns) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalBody').innerHTML = bodyHtml;
+            let footerHtml = '';
+            for (const btn of footerBtns) {
+                footerHtml +=
+                    `<button class="btn ${btn.class}" onclick="${btn.action}()">${btn.text}</button>`;
+            }
+            document.getElementById('modalFooter').innerHTML = footerHtml;
+            document.getElementById('modalOverlay').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.add('hidden');
+            editingId = null;
+            editingType = null;
+        }
+
+        // 点击外部关闭
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // ========== 工具函数 ==========
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ========== 启动应用 ==========
+        document.addEventListener('DOMContentLoaded', init);
+
+        // 暴露全局函数供HTML调用
+        window.selectNode = selectNode;
+        window.toggleNode = toggleNode;
+        window.expandAll = expandAll;
+        window.collapseAll = collapseAll;
+        window.handleNew = handleNew;
+        window.showNewNoteModal = showNewNoteModal;
+        window.showNewErrorModal = showNewErrorModal;
+        window.showNewWordModal = showNewWordModal;
+        window.saveNote = saveNote;
+        window.saveError = saveError;
+        window.saveWord = saveWord;
+        window.updateNoteTemplateFields = updateNoteTemplateFields;
+        window.updateEditNoteTemplateFields = updateEditNoteTemplateFields;
+        window.selectColor = selectColor;
+        window.editItem = editItem;
+        window.saveEditNote = saveEditNote;
+        window.saveEditError = saveEditError;
+        window.saveEditWord = saveEditWord;
+        window.deleteItem = deleteItem;
+        window.showRecycleBin = showRecycleBin;
+        window.restoreFromRecycle = restoreFromRecycle;
+        window.permanentDelete = permanentDelete;
+        window.emptyRecycleBin = emptyRecycleBin;
+        window.toggleStar = toggleStar;
+        window.togglePin = togglePin;
+        window.addToQueue = addToQueue;
+        window.markQueueDone = markQueueDone;
+        window.markQueueFail = markQueueFail;
+        window.revealAnswer = revealAnswer;
+        window.markMastered = markMastered;
+        window.unmasterError = unmasterError;
+        window.viewHistory = viewHistory;
+        window.restoreVersion = restoreVersion;
+        window.toggleBatchMode = toggleBatchMode;
+        window.toggleBatchSelect = toggleBatchSelect;
+        window.batchAddTag = batchAddTag;
+        window.batchRemoveTag = batchRemoveTag;
+        window.batchSetColor = batchSetColor;
+        window.batchAddQueue = batchAddQueue;
+        window.batchDelete = batchDelete;
+        window.exportData = exportData;
+        window.importData = importData;
+        window.closeModal = closeModal;
+        window.renderCurrentView = renderCurrentView;
+        window.renderAll = renderAll;
+        window.showToast = showToast;
+
+        // 卡片点击批量选择
+        document.addEventListener('click', function(e) {
+            const card = e.target.closest('.card');
+            if (card && batchMode) {
+                const id = card.dataset.id;
+                if (id) {
+                    toggleBatchSelect(id);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
