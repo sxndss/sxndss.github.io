@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>小说创作工坊</title>
+    <style>
+        :root {
+            --bg: #f0f2f5;
+            --bg2: #ffffff;
+            --bg3: #e8eaed;
+            --bg4: #d5d8dd;
+            --text: #1a1a1a;
+            --text2: #444;
+            --text3: #777;
+            --accent: #4a6cf7;
+            --border: #d0d2d6;
+            --radius: 10px;
+            --shadow: 0 2px 10px rgba(0,0,0,0.06);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        html, body { width:100%; height:100%; overflow:hidden; background:var(--bg); color:var(--text); font-family:var(--font); font-size:16px; }
+        ::-webkit-scrollbar { width:3px; background:transparent; }
+        ::-webkit-scrollbar-thumb { background:var(--bg4); border-radius:3px; }
+
+        .app { display:flex; flex-direction:column; height:100%; max-width:480px; margin:0 auto; background:var(--bg2); position:relative; }
+        .header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px 8px; background:var(--bg2); border-bottom:1px solid var(--border); flex-shrink:0; min-height:52px; }
+        .header-title { font-size:18px; font-weight:700; color:var(--text); }
+        .header-actions { display:flex; gap:10px; align-items:center; }
+        .header-actions button { background:none; border:none; color:var(--text2); font-size:20px; padding:4px 6px; cursor:pointer; }
+
+        .tab-bar { display:flex; background:var(--bg2); border-top:1px solid var(--border); flex-shrink:0; padding-bottom:var(--safe-bottom); }
+        .tab-item { flex:1; text-align:center; padding:8px 0 6px; color:var(--text3); font-size:11px; cursor:pointer; border:none; background:none; }
+        .tab-item .tab-icon { font-size:22px; display:block; margin-bottom:2px; }
+        .tab-item.active { color:var(--accent); }
+
+        .page { flex:1; overflow-y:auto; padding:12px 16px 100px; display:none; -webkit-overflow-scrolling:touch; }
+        .page.active { display:block; }
+
+        .card { background:var(--bg2); border-radius:var(--radius); padding:14px 16px; margin-bottom:10px; border:1px solid var(--border); cursor:pointer; box-shadow:var(--shadow); }
+        .card-title { font-size:16px; font-weight:700; color:var(--text); }
+        .card-sub { font-size:13px; color:var(--text2); margin-top:4px; display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+        .card-sub .tag { background:var(--bg4); padding:2px 10px; border-radius:12px; font-size:11px; color:var(--text2); }
+        .card-sub .meta { color:var(--text3); font-size:12px; }
+        .card-actions { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
+        .card-actions button { background:var(--bg4); border:none; color:var(--text2); padding:4px 12px; border-radius:6px; font-size:12px; cursor:pointer; }
+        .card-actions .danger { color:#d32f2f; }
+        .card-actions .accent { color:var(--accent); }
+
+        .compact .card { padding:10px 14px; }
+        .compact .card-title { font-size:14px; font-weight:700; }
+
+        .empty { text-align:center; color:var(--text3); padding:40px 0; font-size:14px; }
+        .empty .big { font-size:48px; display:block; margin-bottom:12px; }
+
+        .input-group { margin-bottom:14px; }
+        .input-group label { display:block; font-size:13px; color:var(--text2); margin-bottom:4px; font-weight:500; }
+        .input-group input, .input-group textarea, .input-group select {
+            width:100%; padding:10px 14px; background:var(--bg3); border:1px solid var(--border); border-radius:8px;
+            color:var(--text); font-size:15px; font-family:var(--font); outline:none;
+        }
+        .input-group input:focus, .input-group textarea:focus { border-color:var(--accent); }
+        .input-group textarea { min-height:60px; resize:vertical; }
+
+        .btn { display:inline-block; padding:10px 20px; border:none; border-radius:8px; font-size:15px; font-weight:500; cursor:pointer; }
+        .btn:active { opacity:0.6; }
+        .btn-primary { background:var(--accent); color:#fff; }
+        .btn-danger { background:#d32f2f; color:#fff; }
+        .btn-secondary { background:var(--bg4); color:var(--text); }
+        .btn-sm { padding:6px 14px; font-size:13px; }
+        .btn-block { width:100%; text-align:center; }
+
+        .modal-overlay {
+            position:fixed; inset:0; background:rgba(0,0,0,0.35); z-index:1000;
+            display:none; align-items:flex-end; justify-content:center;
+        }
+        .modal-overlay.show { display:flex; }
+        .modal {
+            background:var(--bg2); border-radius:var(--radius) var(--radius) 0 0;
+            width:100%; max-width:480px; max-height:88vh;
+            padding:20px 20px 30px; overflow-y:auto;
+        }
+        .modal-title { font-size:18px; font-weight:600; margin-bottom:14px; }
+        .modal-close { float:right; background:none; border:none; color:var(--text3); font-size:24px; cursor:pointer; }
+
+        .editor-wrap { padding:0 4px; display:flex; flex-direction:column; flex:1; }
+        .editor-wrap .editor-textarea-wrap { flex:1; min-height:380px; }
+        .editor-wrap textarea {
+            width:100%; height:100%; min-height:380px; background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+            color:var(--text); font-size:16px; line-height:1.8; font-family:var(--font);
+            outline:none; resize:vertical; padding:14px 16px;
+        }
+        .editor-wrap textarea.indent-text { text-indent:2em; }
+        .editor-wrap .word-count { text-align:right; color:var(--text3); font-size:13px; padding:8px 0 4px; }
+
+        .setting-row { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border); }
+        .setting-row label { font-size:14px; color:var(--text); }
+        .setting-row input[type="range"] { width:140px; accent-color:var(--accent); }
+
+        .filter-tags { display:flex; flex-wrap:wrap; gap:6px; padding:8px 0 12px; }
+        .filter-tags .tag-btn { background:var(--bg4); border:none; color:var(--text2); padding:4px 14px; border-radius:16px; font-size:13px; cursor:pointer; }
+        .filter-tags .tag-btn.active { background:var(--accent); color:#fff; }
+
+        .search-box { display:flex; gap:8px; margin-bottom:12px; }
+        .search-box input { flex:1; padding:8px 14px; background:var(--bg3); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:14px; outline:none; }
+        .search-box input:focus { border-color:var(--accent); }
+        .search-box button { background:var(--accent); border:none; color:#fff; padding:8px 16px; border-radius:8px; font-size:14px; cursor:pointer; }
+
+        .toast { position:fixed; bottom:100px; left:50%; transform:translateX(-50%); background:var(--text); color:var(--bg2); padding:10px 24px; border-radius:8px; font-size:14px; z-index:2000; box-shadow:0 4px 20px rgba(0,0,0,0.15); opacity:0; transition:opacity 0.3s; pointer-events:none; max-width:90%; }
+        .toast.show { opacity:1; }
+
+        .recycle-tabs { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+        .recycle-tabs button { padding:6px 16px; border:none; border-radius:6px; background:var(--bg4); color:var(--text2); cursor:pointer; font-size:14px; }
+        .recycle-tabs button.active { background:var(--accent); color:#fff; }
+
+        .note-item { background:var(--bg3); border-radius:8px; padding:12px 14px; margin-bottom:8px; border-left:3px solid var(--accent); }
+        .note-item .note-title { font-weight:700; font-size:15px; }
+        .note-item .note-field { font-size:13px; color:var(--text2); margin-top:3px; }
+        .note-item .note-field strong { color:var(--text); }
+        .note-item .note-actions { margin-top:6px; display:flex; gap:6px; flex-wrap:wrap; }
+
+        .editor-page-content { display:flex; flex-direction:column; height:100%; }
+        .editor-page-content .editor-wrap { flex:1; display:flex; flex-direction:column; }
+        .editor-page-content .editor-textarea-wrap { flex:1; min-height:420px; }
+        .editor-page-content .editor-textarea-wrap textarea { height:100%; min-height:420px; }
+
+        .editor-top-bar {
+            display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; flex-shrink:0;
+            padding:6px 0; border-bottom:1px solid var(--border);
+        }
+        .editor-top-bar .btn { font-size:12px; padding:4px 10px; }
+        .editor-top-bar .btn-primary { background:var(--accent); color:#fff; }
+        .editor-top-bar .btn-secondary { background:var(--bg4); color:var(--text); }
+
+        .search-result-item { cursor:pointer; }
+        .search-result-item:hover { background:var(--bg4); }
+
+        .chapter-card .card-title { font-weight:700; }
+        .work-title-bold { font-weight:700; }
+
+        .writing-fixed-toolbar {
+            display:flex; gap:6px; flex-wrap:wrap; flex-shrink:0;
+            padding:4px 0 8px; border-bottom:1px solid var(--border); margin-bottom:8px;
+        }
+        .writing-fixed-toolbar .btn { font-size:12px; padding:4px 10px; }
+        .writing-fixed-toolbar .btn-secondary { background:var(--bg4); color:var(--text); }
+        .writing-fixed-toolbar .btn-primary { background:var(--accent); color:#fff; }
+
+        .chapter-title-bold { font-weight:700; font-size:17px; }
+    </style>
+</head>
+<body>
+<div class="app" id="app">
+    <div class="toast" id="toast"></div>
+
+    <div class="header">
+        <span class="header-title" id="headerTitle">📖 创作工坊</span>
+        <div class="header-actions">
+            <button id="headerSearchBtn">🔍</button>
+            <button id="headerMoreBtn">⋯</button>
+        </div>
+    </div>
+
+    <div class="page active" id="pageWorks"><div id="worksContainer"></div></div>
+    <div class="page" id="pageMaterials"><div id="materialsContainer"></div></div>
+    <div class="page" id="pageSettings"><div id="settingsContainer"></div></div>
+    <div class="page" id="pageEditor"><div id="editorContainer" class="editor-page-content"></div></div>
+    <div class="page" id="pageRecycle"><div id="recycleContainer"></div></div>
+
+    <div class="tab-bar">
+        <button class="tab-item active" data-page="pageWorks"><span class="tab-icon">📖</span>创作</button>
+        <button class="tab-item" data-page="pageMaterials"><span class="tab-icon">📚</span>素材</button>
+        <button class="tab-item" data-page="pageRecycle"><span class="tab-icon">🗑️</span>回收</button>
+        <button class="tab-item" data-page="pageSettings"><span class="tab-icon">⚙️</span>设置</button>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalContent">
+            <button class="modal-close" id="modalClose">✕</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ===== 数据层 =====
+const DB = {
+    get(key, def) { try { const d = localStorage.getItem('novel_'+key); return d ? JSON.parse(d) : def; } catch(e){ return def; } },
+    set(key, val) { localStorage.setItem('novel_'+key, JSON.stringify(val)); }
+};
+
+let data = {
+    works: [],
+    materials: [],
+    tags: [],
+    recycle: [],
+    settings: { fontSize: 16, lineHeight: 1.8, letterSpacing: 0, compactMode: false, indent: true }
+};
+
+// 全局筛选变量
+window._workFilter = 'all';
+window._materialFilter = 'all';
+
+function loadData() {
+    const d = DB.get('data', null);
+    if (d) { data = d; } else { initDemo(); saveData(); }
+    data.works.forEach(w => {
+        if (!w.outline) w.outline = '';
+        if (!w.summary) w.summary = '';
+        if (!w.timeline) w.timeline = [];
+        if (!w.chapters) w.chapters = [];
+        if (!w._notes) w._notes = { characters: [], world: [], ideas: [] };
+        w._notes.characters.forEach(c => { if (!c.relation) c.relation = ''; if (!c.events) c.events = ''; if (!c.remark) c.remark = ''; });
+        w._notes.world.forEach(c => { if (!c.setting) c.setting = ''; if (!c.remark) c.remark = ''; });
+    });
+    data.materials.forEach(m => {
+        if (!m.characters) m.characters = '';
+        if (!m.world) m.world = '';
+        if (!m.inspiration) m.inspiration = '';
+        if (!m.tags) m.tags = [];
+    });
+    if (!data.recycle) data.recycle = [];
+    if (!data.tags) data.tags = [];
+    if (!data.settings) data.settings = { fontSize:16, lineHeight:1.8, letterSpacing:0, compactMode:false, indent:true };
+}
+function saveData() { DB.set('data', data); }
+function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+
+function initDemo() {
+    data.works = [{
+        id: 'w1', title: '星穹之刃', tags: ['科幻', '星际'], status: 'writing',
+        createdAt: Date.now() - 86400000*3, updatedAt: Date.now() - 3600000,
+        summary: '星际科幻，关于选择与代价的故事',
+        outline: '## 故事核心\n在星际殖民时代，一群边缘人发现了远古文明的秘密。',
+        chapters: [
+            { id: 'c1', title: '第一章 垃圾星的拾荒者', content: '林骁在垃圾星上已经生活了十年。\n\n他熟练地从废弃的机甲残骸中拆下还能用的芯片。', tags: ['开场'], outline: '1. 林骁出场\n2. 捡到碎片', createdAt: Date.now()-86400000*2, updatedAt: Date.now()-3600000 },
+            { id: 'c2', title: '第二章 星际猎人', content: '三道影子从天而降。\n\n林骁还没来得及反应，就被一把能量枪抵住了后脑勺。', tags: ['冲突'], outline: '1. 猎人登场\n2. 林骁逃跑', createdAt: Date.now()-86400000, updatedAt: Date.now()-7200000 }
+        ],
+        timeline: [
+            { id: 't1', title: '捡到碎片', date: '2147年3月12日', desc: '在垃圾星G-7区域发现碎片', chapterId: 'c1' }
+        ],
+        _notes: {
+            characters: [{ id:'n1', name:'林骁', personality:'坚韧、固执', relation:'主角', events:'捡到碎片、被追杀', remark:'左臂有旧伤' }],
+            world: [{ id:'n2', name:'垃圾星G-7', setting:'废弃机甲堆积成山，资源匮乏', remark:'星际猎人的常驻区域' }],
+            ideas: [{ id:'n3', title:'星际文明冲突', content:'两个文明因为资源争夺而爆发战争，主角夹在中间' }]
+        }
+    }];
+    data.materials = [{
+        id: 'm1', title: '三体', author: '刘慈欣', tags: ['科幻', '硬科幻'],
+        characters: '罗辑：从玩世不恭到执剑人的转变',
+        world: '黑暗森林法则：宇宙中文明一旦暴露就会被消灭',
+        inspiration: '可以写一个关于"信息孤岛"的故事',
+        createdAt: Date.now()-86400000*30, updatedAt: Date.now()-86400000*10
+    }];
+    data.tags = ['科幻', '星际', '古风', '言情', '玄幻', '硬科幻'];
+    data.recycle = [];
+}
+
+// ===== Toast =====
+let toastTimer;
+function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 1800);
+}
+
+// ===== Modal =====
+function openModal(html) {
+    document.getElementById('modalBody').innerHTML = html;
+    document.getElementById('modalOverlay').classList.add('show');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('modalOverlay').addEventListener('click', (e) => { if(e.target === e.currentTarget) closeModal(); });
+
+// ===== 页面切换 =====
+let currentPage = 'pageWorks', currentWorkId = null, currentChapterId = null;
+document.querySelectorAll('.tab-item').forEach(btn => {
+    btn.addEventListener('click', function() {
+        switchPage(this.dataset.page);
+    });
+});
+function switchPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+    document.querySelector(`.tab-item[data-page="${pageId}"]`).classList.add('active');
+    currentPage = pageId;
+    document.getElementById('headerSearchBtn').style.display = (pageId === 'pageWorks' || pageId === 'pageMaterials') ? 'inline-block' : 'none';
+    const titles = { pageWorks:'📖 创作库', pageMaterials:'📚 素材库', pageSettings:'⚙️ 设置', pageRecycle:'🗑️ 回收站', pageEditor:'✍️ 写作' };
+    document.getElementById('headerTitle').textContent = titles[pageId] || '创作工坊';
+    if (pageId === 'pageWorks') renderWorks();
+    else if (pageId === 'pageMaterials') renderMaterials();
+    else if (pageId === 'pageSettings') renderSettings();
+    else if (pageId === 'pageRecycle') renderRecycle();
+}
+
+// ===== 渲染：作品列表 =====
+function renderWorks() {
+    console.log('renderWorks called, filter:', window._workFilter);
+    const container = document.getElementById('worksContainer');
+    const compact = data.settings.compactMode;
+    let html = `<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+        <button class="btn btn-primary btn-sm" onclick="openNewWorkModal()">➕ 新建作品</button>
+        <button class="btn btn-secondary btn-sm" onclick="openSearchModal('works')">🔍 搜索</button>
+        <button class="btn btn-secondary btn-sm" onclick="exportAllTXT()">📤 导出全部TXT</button>
+    </div>`;
+    const allTags = getAllWorkTags();
+    if (allTags.length) {
+        html += `<div class="filter-tags" id="workFilterTags">`;
+        html += `<button class="tag-btn ${window._workFilter === 'all' ? 'active' : ''}" data-tag="all" onclick="filterWorks('all')">全部</button>`;
+        allTags.forEach(t => {
+            html += `<button class="tag-btn ${window._workFilter === t ? 'active' : ''}" data-tag="${t}" onclick="filterWorks('${t}')">${t}</button>`;
+        });
+        html += `</div>`;
+    }
+    html += `<div class="${compact ? 'compact' : ''}" id="workList">`;
+    let works = data.works;
+    const filter = window._workFilter || 'all';
+    if (filter !== 'all') {
+        works = works.filter(w => w.tags && w.tags.includes(filter));
+        console.log('Filtered works by tag:', filter, 'result count:', works.length);
+    }
+    works = works.slice().sort((a, b) => b.updatedAt - a.updatedAt);
+    if (!works.length) {
+        html += `<div class="empty"><span class="big">📝</span>还没有作品</div>`;
+    } else {
+        works.forEach(w => {
+            const totalWords = w.chapters.reduce((s, c) => s + (c.content ? c.content.length : 0), 0);
+            const statusMap = { writing:'✍️ 写作中', draft:'📝 草稿', completed:'✅ 已完结' };
+            const tagHtml = (w.tags||[]).map(t => `<span class="tag">${t}</span>`).join('');
+            html += `<div class="card" onclick="openWork('${w.id}')">
+                <div class="card-title work-title-bold">${w.title}</div>
+                <div class="card-sub">${tagHtml}<span class="meta">${w.chapters.length}章 · ${totalWords}字 · ${statusMap[w.status]||'未分类'}</span></div>
+                <div class="card-actions">
+                    <button onclick="event.stopPropagation();openWork('${w.id}')">📖 打开</button>
+                    <button onclick="event.stopPropagation();openEditWorkModal('${w.id}')">✏️ 编辑</button>
+                    <button class="danger" onclick="event.stopPropagation();deleteWork('${w.id}')">🗑️</button>
+                </div>
+            </div>`;
+        });
+    }
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function getAllWorkTags() {
+    const set = new Set();
+    data.works.forEach(w => (w.tags||[]).forEach(t => set.add(t)));
+    return Array.from(set).sort();
+}
+
+// 标签筛选函数 - 直接修改全局变量并重新渲染
+function filterWorks(tag) {
+    console.log('filterWorks called with tag:', tag);
+    window._workFilter = tag;
+    renderWorks();
+    toast('已筛选: ' + (tag === 'all' ? '全部' : tag));
+}
+
+// ===== 作品操作 =====
+function openNewWorkModal() {
+    openModal(`
+        <div style="padding-top:6px;">
+            <div class="input-group"><label>作品名 *</label><input id="newWorkTitle" placeholder="输入作品名称"></div>
+            <div class="input-group"><label>标签（逗号分隔）</label><input id="newWorkTags" placeholder="科幻, 古风"></div>
+            <div class="input-group"><label>状态</label><select id="newWorkStatus"><option value="writing">写作中</option><option value="draft">草稿</option><option value="completed">已完结</option></select></div>
+            <div class="input-group"><label>一句话简介</label><input id="newWorkSummary" placeholder="故事的核心是什么？"></div>
+            <button class="btn btn-primary btn-block" onclick="createWork()">创建作品</button>
+        </div>
+    `);
+}
+function createWork() {
+    const title = document.getElementById('newWorkTitle').value.trim();
+    if (!title) { toast('请输入作品名'); return; }
+    const tags = document.getElementById('newWorkTags').value.split(',').map(s => s.trim()).filter(Boolean);
+    data.works.push({
+        id: genId(), title, tags, status: document.getElementById('newWorkStatus').value,
+        summary: document.getElementById('newWorkSummary').value.trim(),
+        createdAt: Date.now(), updatedAt: Date.now(),
+        chapters: [], outline: '', timeline: [], _notes: { characters: [], world: [], ideas: [] }
+    });
+    tags.forEach(t => { if (!data.tags.includes(t)) data.tags.push(t); });
+    saveData(); closeModal(); renderWorks(); toast('作品已创建');
+}
+
+function openEditWorkModal(workId) {
+    const w = data.works.find(d => d.id === workId);
+    if (!w) return;
+    openModal(`
+        <div style="padding-top:6px;">
+            <div class="input-group"><label>作品名</label><input id="editWorkTitle" value="${w.title}"></div>
+            <div class="input-group"><label>标签（逗号分隔）</label><input id="editWorkTags" value="${(w.tags||[]).join(', ')}"></div>
+            <div class="input-group"><label>状态</label><select id="editWorkStatus">
+                <option value="writing" ${w.status==='writing'?'selected':''}>写作中</option>
+                <option value="draft" ${w.status==='draft'?'selected':''}>草稿</option>
+                <option value="completed" ${w.status==='completed'?'selected':''}>已完结</option>
+            </select></div>
+            <div class="input-group"><label>一句话简介</label><input id="editWorkSummary" value="${w.summary || ''}"></div>
+            <button class="btn btn-primary btn-block" onclick="saveEditWork('${workId}')">保存修改</button>
+        </div>
+    `);
+}
+function saveEditWork(workId) {
+    const w = data.works.find(d => d.id === workId);
+    if (!w) return;
+    w.title = document.getElementById('editWorkTitle').value.trim() || w.title;
+    w.tags = document.getElementById('editWorkTags').value.split(',').map(s => s.trim()).filter(Boolean);
+    w.status = document.getElementById('editWorkStatus').value;
+    w.summary = document.getElementById('editWorkSummary').value.trim();
+    w.updatedAt = Date.now();
+    w.tags.forEach(t => { if (!data.tags.includes(t)) data.tags.push(t); });
+    saveData(); closeModal(); renderWorks(); toast('已保存');
+}
+
+function openWork(workId) {
+    currentWorkId = workId;
+    renderWorkDetail(workId);
+    switchPage('pageEditor');
+    const w = data.works.find(d => d.id === workId);
+    document.getElementById('headerTitle').textContent = '✍️ ' + (w ? w.title : '写作');
+    document.getElementById('headerSearchBtn').style.display = 'none';
+}
+
+// ===== 作品详情 =====
+function renderWorkDetail(workId) {
+    const w = data.works.find(d => d.id === workId);
+    if (!w) return;
+    const container = document.getElementById('editorContainer');
+    let html = `
+        <div class="editor-top-bar">
+            <button class="btn btn-secondary btn-sm" onclick="switchPage('pageWorks')">← 返回</button>
+            <button class="btn btn-primary btn-sm" onclick="openNewChapterModal('${workId}')">➕ 新章节</button>
+            <button class="btn btn-secondary btn-sm" onclick="openOutlineModal('${workId}')">📋 总纲</button>
+            <button class="btn btn-secondary btn-sm" onclick="openTimelineModal('${workId}')">⏳ 时间线</button>
+            <button class="btn btn-secondary btn-sm" onclick="openNoteBoardModal('${workId}')">📌 便签板</button>
+            <button class="btn btn-secondary btn-sm" onclick="exportWorkTXT('${workId}')">📤 导出TXT</button>
+        </div>
+        <div style="color:var(--text3);font-size:13px;margin-bottom:10px;">
+            总字数: ${w.chapters.reduce((s,c) => s + (c.content?c.content.length:0), 0)} 字 · 章节: ${w.chapters.length} 章
+            ${w.summary ? `· ${w.summary}` : ''}
+        </div>
+    `;
+    if (!w.chapters.length) {
+        html += `<div class="empty"><span class="big">📝</span>还没有章节</div>`;
+    } else {
+        w.chapters.forEach((c) => {
+            const wordCount = c.content ? c.content.length : 0;
+            const tagHtml = (c.tags||[]).map(t => `<span class="tag">${t}</span>`).join('');
+            html += `<div class="card chapter-card" onclick="openChapterEditor('${workId}','${c.id}')">
+                <div class="card-title">${c.title}</div>
+                <div class="card-sub">${tagHtml}<span class="meta">${wordCount}字 · ${new Date(c.updatedAt).toLocaleDateString()}</span></div>
+                <div class="card-actions">
+                    <button onclick="event.stopPropagation();openEditChapterModal('${workId}','${c.id}')">📝 编辑章节</button>
+                    <button onclick="event.stopPropagation();openChapterOutlineModal('${workId}','${c.id}')">📋 章纲</button>
+                    <button class="danger" onclick="event.stopPropagation();deleteChapter('${workId}','${c.id}')">🗑️</button>
+                </div>
+            </div>`;
+        });
+    }
+    container.innerHTML = html;
+}
+
+// ===== 新章节 =====
+function openNewChapterModal(workId) {
+    openModal(`
+        <div style="padding-top:6px;">
+            <div class="input-group"><label>章节标题 *</label><input id="newChapterTitle" placeholder="第X章 标题"></div>
+            <div class="input-group"><label>标签（逗号分隔）</label><input id="newChapterTags" placeholder="高潮, 对话"></div>
+            <div class="input-group"><label>章纲（可选）</label><textarea id="newChapterOutline" rows="3" placeholder="1. 场景一\n2. 场景二"></textarea></div>
+            <button class="btn btn-primary btn-block" onclick="createChapter('${workId}')">创建章节</button>
+        </div>
+    `);
+}
+function createChapter(workId) {
+    const title = document.getElementById('newChapterTitle').value.trim();
+    if (!title) { toast('请输入章节标题'); return; }
+    const w = data.works.find(d => d.id === workId);
+    if (!w) return;
+    const tags = document.getElementById('newChapterTags').value.split(',').map(s => s.trim()).filter(Boolean);
+    w.chapters.push({
+        id: genId(), title, content: '', tags, outline: document.getElementById('newChapterOutline').value.trim(),
+        createdAt: Date.now(), updatedAt: Date.now()
+    });
+    w.updatedAt = Date.now();
+    tags.forEach(t => { if (!data.tags.includes(t)) data.tags.push(t); });
+    saveData(); closeModal(); renderWorkDetail(workId); toast('章节已创建');
+}
+
+// ===== 编辑章节 =====
+function openEditChapterModal(workId, chapterId) {
+    const w = data.works.find(d => d.id === workId);
+    if (!w) return;
+    const c = w.chapters.find(ch => ch.id === chapterId);
+    if (!c) return;
+    openModal(`
+        <div style="padding-top:6px;">
+            <div class="input-group"><label>章节标题</label><input id="editChapterTitle" value="${c.title}"></div>
+            <div class="input-group"><label>标签（逗号分隔）</label><input id="editChapterTags" value="${(c.tags||[]).join(', ')}"></div>
+            <button class="btn btn-primary btn-block" onclick="saveEditChapter('${workId}','${chapterId}')">保存修改</button>
+        </div>
+    `);
+}
+function saveEditChapter(workId, chapterId) {
+    const w = data.works.find(d => d.id === workId);
+    if (!w) return;
+    const c = w.chapters.find(ch => ch.id === chapterId);
+    if (!c) return;
+    c.title = document.getElementById('editChapterTitle').value.trim() || c.title;
+    c.tags = document.getElementById('editChapterTags').value.split(',').map(s => s.trim()).filter(Boolean);
+    c.updatedAt = Date.now();
+    w.updatedAt = Date.now();
+    c.tags.forEach(t => { if (!data.tags.includes(t)) data.tags.push(t); });
+    saveData(); closeModal(); renderWorkDetail(workId); toast('已更新');
+}
+
+// ===== 章纲 =====
+function openChapterOutlineModal(workId, chapterId) {
+    const w = data.works.find(d => d.id === workId);
+    if (!w) return;
+    const c = w.chapters.find(ch => ch.id === chapterId);
+    if (!c) return;
+    openModal(`
+        <div style="padding-top:6px;">
+            <div class="input-group"><label>章纲（本章写作要点）</label><textarea id="editChapterOutline" rows="6">${c.outline || ''}</textarea></div>
+            <button class="btn btn-primary btn-block" onclick="saveChapterOutline('${workId}','${chapterId}')">保存章纲</button>
+        </div>
+    `);
+}
+function saveChapterOutline(workId, chapterId) {
+    const val = document.getElementById('editChapterOutline').value.trim();
+    const w = data.works.find(d => d.id === workId);
+    if (!w) return;
+    const c = w.chapters.find(ch => ch.id === chapterId);
+    if (!c) return;
+    c.outline = val;
+    c.updatedAt = Date.now();
+    w.updatedAt = Date.now();
+    saveData(); closeModal(); toast('章纲已保存');
+}
+
+// ===== 总纲 =====
+function openOutlineModal(workId) {
+    const w = data.works.find(d => d.id === workId);
+    if (!w) return;
+    openModal(`
+        <div style="padding-top:6px;">
+            <div class="input-group"><label>故事核心</label><input id="editSummaryCore" value="${w.summary || ''}" placeholder="一句话梗概"></div>
+            <div class="input-group"><label>主线脉络</label><textarea id="editSummaryOutline" rows="6">${w.outline || ''}</textarea></div>
+            <button class="btn btn-primary btn-block" onclick="saveOutline('${workId}')">保存总纲</button>
+        </div>
+    `);
+}
+function saveOutline(workId) {
+    const w = data.works.find(d => d.id === workId);
+    if (!w) return;
+    w.summary = document.getElementById('editSummaryCore').value.trim();
+    w.outline = document.getElementById('editSummaryOutline').value.trim();
+    w.updatedAt = Date.now();
+    saveData(); closeModal(); toast('总纲已保存');
+}
+
+// ===== 时间线 =====
+function openTimelineModal(workId) {
+    const w = data.works.find(d => d.id === workId);
+    if (!w) return;
+    let html = `<div style="padding-top:6px;">
+        <div style="display:flex;gap:8px;margin-bottom:8px;">
+            <input id="newTimelineTitle" placeholder="事件标题" style="flex:1;padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);">
+            <button class="btn btn-primary btn-sm" onclick="addTimeline('${workId}')">添加</button>
+        </div>
+        <div class="input-group"><label>关联章节</label><select id="newTimelineChapter"><option value="">无</option>
+            ${w.chapters.map(c => `<option value="${c.id}">${c.title}</option>`).join('')}
+        </select></div>
+        <div class="input-group"><label>日期</label><input id="newTimelineDate" placeholder="如：2147年3月"></div>
+        <div class="input-group"><label>描述</label><textarea id="newTimelineDesc" rows="2"></textarea></div>
+    `;
+    if (w.timeline.length) {
+        html += `<div style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px;">`;
+        w.timeline.forEach(t => {
+            const ch = t.chapterId ? (w.chapters.find(c => c.id === t.chapterId)?.title || '已删除') : '无';
+            html += `<div style="background:var(--bg3);border-radius:8px;padding:10px 14px;margin-bottom:8px;border-left:3px solid var(--accent);">
+                <div style="font-weight:700;">${t.title}</div>
+                <div style="font-size:13px;color:var(--text2);">${t.date || '无日期'} · 关联: ${ch}</div>
+                <div style="font-size:14px;color:var(--text2);margin-top:4px;">${t.desc || ''}</div>
+                <button class="btn btn-secondary btn-sm" onclick="deleteTimeline('${workId}','${t.id}')">🗑️</button>
+            </div>`;
+        });
+        html += `</div>`;
+    }
+    html += `<button class="btn btn-secondary btn-block" onclick="closeModal()">关闭</button></div>`;
+    openModal(html);
+}
+function addTimeline(workId) {
+    const w = data.works.find(d => d.id === workId);
+    if (!w) return;
+    const title = document.getElementById('newTimelineTitle').value.trim();
+    if (!title) { toast('请输入标题'); return; }
+    w.timeline.push({
+        id: genId(), title,
+        chapterId: document.getElementById('newTimelineChapter').value || '',
+        date: document.getElementById('newTimelineDate').value.trim(),
+        desc: document.getElementById('newTimelineDesc').value.trim()
+    });
+    w.updatedAt = Date.now();
+    saveData(); openTimelineModal(workId); toast('已添加');
+}
+function deleteTimeline(workId, tid) {
+    if (!confirm('删除此节点？')) return;
+    const w = data.works.find(d => d.id === workId);
+    if (!w) return;
+    w.timeline = w.timeline.filter(t => t.id !== tid);
+    w.updatedAt = Date.now();
+    saveData(); openTimelineModal(workId); toast('已删除');
+}
+
+// ===== 便签板 =====
+function openNoteBoardModal(workId) {
+    const w = data.works.find(d => d.id === workId);
+    if (!w) return;
+    if (!w._notes) w._notes = { characters: [], world: [], ideas: [] };
+    window._noteWorkId = workId;
+    window._noteType = 'characters';
+    let html = `<div style="padding-top:6px;">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+            <button class="btn btn-secondary btn-sm" onclick="switchNoteType('${workId}','characters')">👤 人物</button>
+            <button class="btn btn-secondary btn-sm" onclick="switchNoteType('${workId}','world')">🌍 世界观</button>
+            <button class="btn btn-secondary btn-sm" onclick="switchNoteType('${workId}','ideas')">💡 灵感</button>
+        </div>
+        <div id="noteBoardContent">${renderNoteItems(w._notes, 'characters', '人物档案')}</div>
+    </div>`;
+    openModal(html);
+}
+function switchNoteType(workId, type) {
+    window._noteWorkId = workId;
+    window._noteType = type;
+    const w = data.works.find(d => d.id === workId);
+    if (!w) return;
+    if (!w._notes) w._notes = { characters: [], world: [], ideas: [] };
+    const labels = { characters:'人物档案', world:'世界观规则', ideas:'灵感碎片' };
+    document.getElementById('noteBoardContent').innerHTML = renderNoteItems(w._notes, type, labels[type]);
+}
+function renderNoteItems(notes, type, label) {
+    const items = notes[type] || [];
+    let html = `<div style="font-weight:500;margin-bottom:8px;">${label}</div>`;
+    if (!items.length) {
+        html += `<div style="color:var(--text3);font-size:13px;padding:10px 0;">暂无</div>`;
+    } else {
+        items.forEach((item, idx) => {
+            if (type === 'characters') {
+                html += `<div class="note-item">
+                    <div class="note-title">${item.name || '未命名'}</div>
+                    <div class="note-field"><strong>性格：</strong>${item.personality || '-'}</div>
+                    <div class="note-field"><strong>关系：</strong>${item.relation || '-'}</div>
+                    <div class="note-field"><strong>事件：</strong>${item.events || '-'}</div>
+                    <div class="note-field"><strong>备注：</strong>${item.remark || '-'}</div>
+                    <div class="note-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="editCharacterItem(${idx})">✏️</button>
+                        <button class="btn btn-secondary btn-sm danger" onclick="deleteNoteItem(${idx})">🗑️</button>
+                    </div>
+                </div>`;
+            } else if (type === 'world') {
+                html += `<div class="note-item" style="border-left-color:#ff9800;">
+                    <div class="note-title">${item.name || '未命名'}</div>
+                    <div class="note-field"><strong>设定：</strong>${item.setting || '-'}</div>
+                    <div class="note-field"><strong>备注：</strong>${item.remark || '-'}</div>
+                    <div class="note-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="editWorldItem(${idx})">✏️</button>
+                        <button class="btn btn-secondary btn-sm danger" onclick="deleteNoteItem(${idx})">🗑️</button>
+                    </div>
+                </div>`;
+            } else {
+                html += `<div class="note-item" style="border-left-color:#9c27b0;">
+                    <div class="note-title">${item.title || '未命名'}</div>
+                    <div class="note-field">${item.content || ''}</div>
+                    <div class="note-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="editIdeaItem(${idx})">✏️</button>
+                        <button class="btn btn-secondary btn-sm danger" onclick="deleteNoteItem(${idx})">🗑️</button>
+                    </div>
+                </div>`;
+            }
+        });
+    }
+    if (type === 'characters') {
+        html += `<button class="btn btn-primary btn-sm" onclick="openAddCharacterModal()">➕ 添加人物</button>`;
+    } else if (type === 'world') {
+        html += `<button class="btn btn-primary btn-sm" onclick="openAddWorldModal()">➕ 添加世界观</button>`;
+    } else {
+        html += `<button class="btn btn-primary btn-sm" onclick="openAddIdeaModal()">➕ 添加灵感</button>`;
+    }
+    return html;
+}
+
+// ---- 人物 ----
+function openAddCharacterModal() {
+    openModal(`
+        <div style="padding-top:6px;">
+            <div style="font-size:17px;font-weight:600;margin-bottom:12px;">👤 添加人物</div>
+            <div class="input-group"><label>人物名称 *</label><input id="charName" placeholder="输入人物名称"></div>
+            <div class="input-group"><label>性格</label><input id="charPersonality" placeholder="如：坚韧、固执、温柔"></div>
+            <div class="input-group"><label>关系</label><input id="charRelation" placeholder="如：主角、反派、配角、师父"></div>
+            <div class="input-group"><label>相关事件</label><input id="charEvents" placeholder="如：捡到碎片、被追杀"></div>
+            <div class="input-group"><label>备注</label><input id="charRemark" placeholder="外貌特征、习惯、特殊能力等"></div>
+            <button class="btn btn-primary btn-block" onclick="addCharacterItem()">添加人物</button>
+            <button class="btn btn-secondary btn-block" style="margin-top:6px;" onclick="closeModal()">取消</button>
+        </div>
+    `);
+}
+function addCharacterItem() {
+    const w = data.works.find(d => d.id === window._noteWorkId);
+    if (!w) return;
+    const name = document.getElementById('charName').value.trim();
+    if (!name) { toast('请输入人物名称'); return; }
+    w._notes.characters.push({
+        id: genId(),
+        name: name,
+        personality: document.getElementById('charPersonality').value.trim(),
+        relation: document.getElementById('charRelation').value.trim(),
+        events: document.getElementById('charEvents').value.trim(),
+        remark: document.getElementById('charRemark').value.trim()
+    });
+    w.updatedAt = Date.now();
+    saveData();
+    closeModal();
+    openNoteBoardModal(window._noteWorkId);
+    toast('已添加');
+}
+function editCharacterItem(idx) {
+    const w = data.works.find(d => d.id === window._noteWorkId);
+    if (!w) return;
+    const item = w._notes.characters[idx];
+    if (!item) return;
+    openModal(`
+        <div style="padding-top:6px;">
+            <div style="font-size:17px;font-weight:600;margin-bottom:12px;">✏️ 编辑人物</div>
+            <div class="input-group"><label>人物名称</label><input id="editCharName" value="${item.name}"></div>
+            <div class="input-group"><label>性格</label><input id="editCharPersonality" value="${item.personality||''}"></div>
+            <div class="input-group"><label>关系</label><input id="editCharRelation" value="${item.relation||''}"></div>
+            <div class="input-group"><label>相关事件</label><input id="editCharEvents" value="${item.events||''}"></div>
+            <div class="input-group"><label>备注</label><input id="editCharRemark" value="${item.remark||''}"></div>
+            <button class="btn btn-primary btn-block" onclick="saveEditCharacter(${idx})">保存修改</button>
+        </div>
+    `);
+}
+function saveEditCharacter(idx) {
+    const w = data.works.find(d => d.id === window._noteWorkId);
+    if (!w) return;
+    const item = w._notes.characters[idx];
+    if (!item) return;
+    item.name = document.getElementById('editCharName').value.trim() || item.name;
+    item.personality = document.getElementById('editCharPersonality').value.trim();
+    item.relation = document.getElementById('editCharRelation').value.trim();
+    item.events = document.getElementById('editCharEvents').value.trim();
+    item.remark = document.getElementById('editCharRemark').value.trim();
+    w.updatedAt = Date.now();
+    saveData();
+    closeModal();
+    openNoteBoardModal(window._noteWorkId);
+    toast('已更新');
+}
+
+// ---- 世界观 ----
+function openAddWorldModal() {
+    openModal(`
+        <div style="padding-top:6px;">
+            <div style="font-size:17px;font-weight:600;margin-bottom:12px;">🌍 添加世界观</div>
+            <div class="input-group"><label>名称 *</label><input id="worldName" placeholder="如：垃圾星G-7、魔法学院"></div>
+            <div class="input-group"><label>设定</label><textarea id="worldSetting" rows="3" placeholder="规则、背景、地理环境等"></textarea></div>
+            <div class="input-group"><label>备注</label><input id="worldRemark" placeholder="额外说明"></div>
+            <button class="btn btn-primary btn-block" onclick="addWorldItem()">添加世界观</button>
+            <button class="btn btn-secondary btn-block" style="margin-top:6px;" onclick="closeModal()">取消</button>
+        </div>
+    `);
+}
+function addWorldItem() {
+    const w = data.works.find(d => d.id === window._noteWorkId);
+    if (!w) return;
+    const name = document.getElementById('worldName').value.trim();
+    if (!name) { toast('请输入名称'); return; }
+    w._notes.world.push({
+        id: genId(),
+        name: name,
+        setting: document.getElementById('worldSetting').value.trim(),
+        remark: document.getElementById('worldRemark').value.trim()
+    });
+    w.updatedAt = Date.now();
+    saveData();
+    closeModal();
+    openNoteBoardModal(window._noteWorkId);
+    toast('已添加');
+}
+function editWorldItem(idx) {
+    const w = data.works.find(d => d.id === window._noteWorkId);
+    if (!w) return;
+    const item = w._notes.world[idx];
+    if (!item) return;
+    openModal(`
+        <div style="padding-top:6px;">
+            <div style="font-size:17px;font-weight:600;margin-bottom:12px;">✏️ 编辑世界观</div>
+            <div class="input-group"><label>名称</label><input id="editWorldName" value="${item.name}"></div>
+            <div class="input-group"><label>设定</label><textarea id="editWorldSetting" rows="3">${item.setting||''}</textarea></div>
+            <div class="input-group"><label>备注</label><input id="editWorldRemark" value="${item.remark||''}"></div>
+            <button class="btn btn-primary btn-block" onclick="saveEditWorld(${idx})">保存修改</button>
+        </div>
+    `);
+}
+function saveEditWorld(idx) {
+    const w = data.works.find(d => d.id === window._noteWorkId);
+    if (!w) return;
+    const item = w._notes.world[idx];
+    if (!item) return;
+    item.name = document.getElementById('editWorldName').value.trim() || item.name;
+    item.setting = document.getElementById('editWorldSetting').value.trim();
+    item.remark = document.getElementById('editWorldRemark').value.trim();
+    w.updatedAt = Date.now();
+    saveData();
+    closeModal();
+    openNoteBoardModal(window._noteWorkId);
+    toast('已更新');
+}
+
+// ---- 灵感 ----
+function openAddIdeaModal() {
+    openModal(`
+        <div style="padding-top:6px;">
+            <div style="font-size:17px;font-weight:600;margin-bottom:12px;">💡 添加灵感</div>
+            <div class="input-group"><label>标题 *</label><input id="ideaTitle" placeholder="灵感标题"></div>
+            <div class="input-group"><label>内容</label><textarea id="ideaContent" rows="4" placeholder="详细记录你的灵感..."></textarea></div>
+            <button class="btn btn-primary btn-block" onclick="addIdeaItem()">添加灵感</button>
+            <button class="btn btn-secondary btn-block" style="margin-top:6px;" onclick="closeModal()">取消</button>
+        </div>
+    `);
+}
+function addIdeaItem() {
+    const w = data.works.find(d => d.id === window._noteWorkId);
+    if (!w) return;
+    const title = document.getElementById('ideaTitle').value.trim();
+    if (!title) { toast('请输入标题'); return; }
+    w._notes.ideas.push({
+        id: genId(),
+        title: title,
+        content: document.getElementById('ideaContent').value.trim()
+    });
+    w.updatedAt = Date.now();
+    saveData();
+    closeModal();
+    openNoteBoardModal(window._noteWorkId);
+    toast('已添加');
+}
+function editIdeaItem(idx) {
+    const w = data.works.find(d => d.id === window._noteWorkId);
+    if (!w) return;
+    const item = w._notes.ideas[idx];
+    if (!item) return;
+    openModal(`
+        <div style="padding-top:6px;">
+            <div style="font-size:17px;font-weight:600;margin-bottom:12px;">✏️ 编辑灵感</div>
+            <div class="input-group"><label>标题</label><input id="editIdeaTitle" value="${item.title}"></div>
+            <div class="input-group"><label>内容</label><textarea id="editIdeaContent" rows="4">${item.content||''}</textarea></div>
+            <button class="btn btn-primary btn-block" onclick="saveEditIdea(${idx})">保存修改</button>
+        </div>
+    `);
+}
+function saveEditIdea(idx) {
+    const w = data.works.find(d => d.id === window._noteWorkId);
+    if (!w) return;
+    const item = w._notes.ideas[idx];
+    if (!item) return;
+    item.title = document.getElementById('editIdeaTitle').value.trim() || item.title;
+    item.content = document.getElementById('editIdeaContent').value.trim();
+    w.updatedAt = Date.now();
+    saveData();
+    closeModal();
+    openNoteBoardModal(window._noteWorkId);
+    toast('已更新');
+}
+function deleteNoteItem(idx) {
+    if (!confirm('删除此条目？')) return;
+    const w = data.works.find(d => d.id === window._noteWorkId);
+    if (!w) return;
+    const type = window._noteType;
+    w._notes[type].splice(idx, 1);
+    w.updatedAt = Date.now();
+    saveData();
+    switchNoteType(window._noteWorkId, type);
+    toast('已删除');
+}
+
+// ===== 章节写作 =====
+function openChapterEditor(workId, chapterId) {
+    currentWorkId = workId;
+    currentChapterId = chapterId;
+    renderEditor(workId, chapterId);
+}
+
+function renderEditor(workId, chapterId) {
+    const w = data.works.find(d => d.id === workId);
+    if (!w) return;
+    const c = w.chapters.find(ch => ch.id === chapterId);
+    if (!c) return;
+    const container = document.getElementById('editorContainer');
+    const s = data.settings;
+    const style = `font-size:${s.fontSize}px;line-height:${s.lineHeight};letter-spacing:${s.letterSpacing}px;`;
+    const indentClass = s.indent ? 'indent-text' : '';
+    const wordCount = c.content ? c.content.length : 0;
+    const chapterOutline = c.outline || '';
+
+    let html = `
+        <div class="writing-fixed-toolbar">
+            <button class="btn btn-secondary btn-sm" onclick="renderWorkDetail('${workId}')">← 返回</button>
+            <span style="flex:1;font-weight:700;font-size:16px;padding:4px 0;">${c.title}</span>
+            <button class="btn btn-secondary btn-sm" onclick="saveChapterContent('${workId}','${chapterId}')">💾 保存</button>
+            <button class="btn btn-secondary btn-sm" onclick="openReaderMode('${workId}','${chapterId}')">📖 读者</button>
+        </div>
+        <div class="writing-fixed-toolbar" style="border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:6px;">
+            <button class="btn btn-secondary btn-sm" onclick="openOutlineModal('${workId}')">📋 总纲</button>
+            <button class="btn btn-secondary btn-sm" onclick="openTimelineModal('${workId}')">⏳ 时间线</button>
+            <button class="btn btn-secondary btn-sm" onclick="openNoteBoardModal('${workId}')">📌 便签板</button>
+            <button class="btn btn-secondary btn-sm" onclick="openChapterOutlineModal('${workId}','${chapterId}')">📋 章纲</button>
+        </div>
+        ${chapterOutline ? `<div style="background:var(--bg3);border-radius:6px;padding:8px 12px;margin-bottom:6px;font-size:13px;color:var(--text2);border-left:3px solid var(--accent);"><strong>📋 章纲：</strong>${chapterOutline}</div>` : ''}
+        <div class="editor-wrap" style="flex:1;display:flex;flex-direction:column;">
+            <div class="word-count" style="flex-shrink:0;">📝 ${wordCount} 字</div>
+            <div class="editor-textarea-wrap" style="flex:1;min-height:420px;">
+                <textarea id="chapterEditor" class="${indentClass}" style="${style}"
+                    oninput="onChapterInput('${workId}','${chapterId}')"
+                    placeholder="在这里开始写作...">${c.content || ''}</textarea>
+            </div>
+        </div>
+    `;
+    container.innerHTML = html;
+    setTimeout(() => {
+        const ta = document.getElementById('chapterEditor');
+        if (ta) { ta.focus(); ta.selectionStart = ta.value.length; }
+    }, 100);
+}
+
+function onChapterInput(workId, chapterId) {
+    const ta = document.getElementById('chapterEditor');
+    if (!ta) return;
+    const w = data.works.find(d => d.id === workId);
+    if (!w) return;
+    const c = w.chapters.find(ch => ch.id === chapterId);
+    if (!c) return;
+    c.content = ta.value;
+    c.updatedAt = Date.now();
+    w.updatedAt = Date.now();
+    clearTimeout(window._saveTimer);
+    window._saveTimer = setTimeout(() => saveData(), 500);
+    const wc = document.querySelector('.word-count');
+    if (wc) wc.textContent = `📝 ${c.content.length} 字`;
+}
+
+function saveChapterContent(workId, chapterId) {
+    const ta = document.getElementById('chapterEditor');
+    if (!ta) return;
+    const w = data.works.find(d => d.id === workId);
+    if (!w) return;
+    const c = w.chapters.find(ch => ch.id === chapterId);
+    if (!c) return;
+    c.content = ta.value;
+    c.updatedAt = Date.now();
+    w.updatedAt = Date.now();
+    saveData();
+    toast('已保存');
+}
+
+// ===== 读者模式 =====
+function openReaderMode(workId, chapterId) {
+    const w = data.works.find(d => d.id === workId);
+    if (!w) return;
+    const c = w.chapters.find(ch => ch.id === chapterId);
+    if (!c) return;
+    const content = c.content || '（暂无内容）';
+    const s = data.settings;
+    const style = `font-size:${s.fontSize+4}px;line-height:${s.lineHeight+0.4};letter-spacing:${s.letterSpacing}px;`;
+    openModal(`
+        <div style="padding-top:6px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <span style="font-weight:700;">📖 ${c.title}</span>
+                <button class="btn btn-secondary btn-sm" onclick="closeModal()">关闭</button>
+            </div>
+            <div style="background:var(--bg3);border-radius:8px;padding:20px;max-height:400px;overflow-y:auto;white-space:pre-wrap;${style}color:var(--text);">
+                ${content}
+            </div>
+            <button class="btn btn-secondary btn-block" style="margin-top:10px;" onclick="speakText('${content.replace(/'/g, "\\'")}')">🔊 朗读</button>
+        </div>
+    `);
+}
+function speakText(text) {
+    if (!window.speechSynthesis) { toast('不支持朗读'); return; }
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'zh-CN';
+    utterance.rate = 0.9;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+    toast('开始朗读...');
+}
+
+// ===== 导出 =====
+function exportWorkTXT(workId) {
+    const w = data.works.find(d => d.id === workId);
+    if (!w) return;
+    let txt = `${w.title}\n${'='.repeat(w.title.length)}\n\n`;
+    if (w.summary) txt += `简介：${w.summary}\n\n`;
+    w.chapters.forEach(c => {
+        txt += `${c.title}\n${'-'.repeat(c.title.length)}\n\n`;
+        txt += (c.content || '（未写）') + '\n\n';
+    });
+    downloadFile(txt, `${w.title}.txt`);
+    toast('导出成功');
+}
+function exportAllTXT() {
+    if (!data.works.length) { toast('没有作品'); return; }
+    let all = '';
+    data.works.forEach(w => {
+        all += `${w.title}\n${'='.repeat(w.title.length)}\n\n`;
+        w.chapters.forEach(c => {
+            all += `${c.title}\n${'-'.repeat(c.title.length)}\n\n`;
+            all += (c.content || '（未写）') + '\n\n';
+        });
+        all += '\n---\n\n';
+    });
+    downloadFile(all, `全部作品_${new Date().toISOString().slice(0,10)}.txt`);
+    toast('导出成功');
+}
+function downloadFile(content, filename) {
+    const blob = new Blob(['\uFEFF' + content], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+}
+
+// ===== 删除 & 回收站 =====
+function deleteWork(workId) {
+    if (!confirm('移至回收站？')) return;
+    const idx = data.works.findIndex(w => w.id === workId);
+    if (idx === -1) return;
+    data.recycle.push({ id: genId(), type: 'work', data: data.works[idx], deletedAt: Date.now() });
+    data.works.splice(idx, 1);
+    saveData(); renderWorks(); toast('已移至回收站');
+}
+function deleteChapter(workId, chapterId) {
+    if (!confirm('移至回收站？')) return;
+    const w = data.works.find(d => d.id === workId);
+    if (!w) return;
+    const idx = w.chapters.findIndex(c => c.id === chapterId);
+    if (idx === -1) return;
+    data.recycle.push({ id: genId(), type: 'chapter', data: { ...w.chapters[idx], workId, workTitle: w.title }, deletedAt: Date.now() });
+    w.chapters.splice(idx, 1);
+    w.updatedAt = Date.now();
+    saveData(); renderWorkDetail(workId); toast('已移至回收站');
+}
+function deleteMaterial(mid) {
+    if (!confirm('移至回收站？')) return;
+    const idx = data.materials.findIndex(m => m.id === mid);
+    if (idx === -1) return;
+    data.recycle.push({ id: genId(), type: 'material', data: data.materials[idx], deletedAt: Date.now() });
+    data.materials.splice(idx, 1);
+    saveData(); renderMaterials(); toast('已移至回收站');
+}
+
+// ===== 回收站 =====
+let _recycleFilter = 'all';
+function renderRecycle() {
+    const container = document.getElementById('recycleContainer');
+    let html = `
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+            <div class="recycle-tabs">
+                <button class="tag-btn active" data-filter="all" onclick="filterRecycle('all')">全部</button>
+                <button class="tag-btn" data-filter="work" onclick="filterRecycle('work')">📖 创作</button>
+                <button class="tag-btn" data-filter="material" onclick="filterRecycle('material')">📚 素材</button>
+                <button class="tag-btn" data-filter="chapter" onclick="filterRecycle('chapter')">📄 章节</button>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="clearRecycle()">🗑️ 清空</button>
+        </div>
+    `;
+    let items = data.recycle;
+    if (_recycleFilter !== 'all') items = items.filter(item => item.type === _recycleFilter);
+    if (!items.length) {
+        html += `<div class="empty"><span class="big">🗑️</span>回收站为空</div>`;
+    } else {
+        items.forEach((item, idx) => {
+            const typeMap = { work:'📖 作品', chapter:'📄 章节', material:'📚 素材' };
+            const name = item.data.title || '未命名';
+            const detail = item.type === 'chapter' ? `（来自 ${item.data.workTitle || '未知'}）` : '';
+            const color = item.type === 'work' ? 'var(--accent)' : item.type === 'material' ? '#ff9800' : '#d32f2f';
+            html += `<div class="card" style="border-left:3px solid ${color};">
+                <div class="card-title" style="font-weight:700;">${typeMap[item.type]||item.type}：${name}</div>
+                <div class="card-sub"><span class="meta">${new Date(item.deletedAt).toLocaleString()}</span> ${detail}</div>
+                <div class="card-actions">
+                    <button class="accent" onclick="restoreRecycle(${data.recycle.indexOf(item)})">↩️ 还原</button>
+                    <button class="danger" onclick="permanentDelete(${data.recycle.indexOf(item)})">🔥 彻底删除</button>
+                </div>
+            </div>`;
+        });
+    }
+    container.innerHTML = html;
+    document.querySelectorAll('.recycle-tabs .tag-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.filter === _recycleFilter);
+    });
+}
+function filterRecycle(filter) {
+    _recycleFilter = filter;
+    renderRecycle();
+}
+function restoreRecycle(idx) {
+    const item = data.recycle[idx];
+    if (!item) return;
+    if (item.type === 'work') data.works.push(item.data);
+    else if (item.type === 'chapter') {
+        const w = data.works.find(d => d.id === item.data.workId);
+        if (w) { w.chapters.push(item.data); w.updatedAt = Date.now(); }
+        else { toast('原作品不存在'); return; }
+    } else if (item.type === 'material') data.materials.push(item.data);
+    data.recycle.splice(idx, 1);
+    saveData(); renderRecycle(); toast('已还原');
+}
+function permanentDelete(idx) {
+    if (!confirm('⚠️ 彻底删除不可恢复，确定？')) return;
+    data.recycle.splice(idx, 1);
+    saveData(); renderRecycle(); toast('已永久删除');
+}
+function clearRecycle() {
+    if (!data.recycle.length) { toast('回收站已空'); return; }
+    if (!confirm('⚠️ 清空所有回收站内容？')) return;
+    data.recycle = [];
+    saveData(); renderRecycle(); toast('已清空');
+}
+
+// ===== 素材库 =====
+function renderMaterials() {
+    console.log('renderMaterials called, filter:', window._materialFilter);
+    const container = document.getElementById('materialsContainer');
+    let html = `
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+            <button class="btn btn-primary btn-sm" onclick="openNewMaterialModal()">➕ 添加素材</button>
+            <button class="btn btn-secondary btn-sm" onclick="openMaterialSearchModal()">🔍 搜索</button>
+        </div>
+    `;
+    const allTags = getAllMaterialTags();
+    if (allTags.length) {
+        html += `<div class="filter-tags" id="materialFilterTags">`;
+        html += `<button class="tag-btn ${window._materialFilter === 'all' ? 'active' : ''}" data-tag="all" onclick="filterMaterials('all')">全部</button>`;
+        allTags.forEach(t => {
+            html += `<button class="tag-btn ${window._materialFilter === t ? 'active' : ''}" data-tag="${t}" onclick="filterMaterials('${t}')">${t}</button>`;
+        });
+        html += `</div>`;
+    }
+    html += `<div id="materialList">`;
+    let materials = data.materials;
+    const filter = window._materialFilter || 'all';
+    if (filter !== 'all') {
+        materials = materials.filter(m => m.tags && m.tags.includes(filter));
+        console.log('Filtered materials by tag:', filter, 'result count:', materials.length);
+    }
+    if (!materials.length) {
+        html += `<div class="empty"><span class="big">📚</span>还没有素材</div>`;
+    } else {
+        materials.forEach(m => {
+            const tagHtml = (m.tags||[]).map(t => `<span class="tag">${t}</span>`).join('');
+            html += `<div class="card material-card" onclick="openEditMaterialModal('${m.id}')">
+                <div class="card-title" style="font-weight:700;">${m.title}</div>
+                <div class="card-sub">
+                    <span style="color:var(--text2);">${m.author || '未知作者'}</span>
+                    ${tagHtml}
+                </div>
+                <div class="card-actions">
+                    <button onclick="event.stopPropagation();openEditMaterialModal('${m.id}')">✏️ 编辑</button>
+                    <button onclick="event.stopPropagation();openMaterialDetail('${m.id}')">📖 详情</button>
+                    <button class="danger" onclick="event.stopPropagation();deleteMaterial('${m.id}')">🗑️</button>
+                </div>
+            </div>`;
+        });
+    }
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function getAllMaterialTags() {
+    const set = new Set();
+    data.materials.forEach(m => (m.tags||[]).forEach(t => set.add(t)));
+    return Array.from(set).sort();
+}
+
+// 素材标签筛选函数
+function filterMaterials(tag) {
+    console.log('filterMaterials called with tag:', tag);
+    window._materialFilter = tag;
+    renderMaterials();
+    toast('已筛选: ' + (tag === 'all' ? '全部' : tag));
+}
+
+function openNewMaterialModal() {
+    openModal(`
+        <div style="padding-top:6px;">
+            <div class="input-group"><label>书名 *</label><input id="newMatTitle"></div>
+            <div class="input-group"><label>作者</label><input id="newMatAuthor"></div>
+            <div class="input-group"><label>标签（逗号分隔）</label><input id="newMatTags"></div>
+            <div class="input-group"><label>人设参考</label><textarea id="newMatChars" rows="2"></textarea></div>
+            <div class="input-group"><label>世界观亮点</label><textarea id="newMatWorld" rows="2"></textarea></div>
+            <div class="input-group"><label>灵感触发</label><textarea id="newMatInspire" rows="2"></textarea></div>
+            <button class="btn btn-primary btn-block" onclick="createMaterial()">添加素材</button>
+        </div>
+    `);
+}
+function createMaterial() {
+    const title = document.getElementById('newMatTitle').value.trim();
+    if (!title) { toast('请输入书名'); return; }
+    data.materials.push({
+        id: genId(), title,
+        author: document.getElementById('newMatAuthor').value.trim(),
+        tags: document.getElementById('newMatTags').value.split(',').map(s => s.trim()).filter(Boolean),
+        characters: document.getElementById('newMatChars').value.trim(),
+        world: document.getElementById('newMatWorld').value.trim(),
+        inspiration: document.getElementById('newMatInspire').value.trim(),
+        createdAt: Date.now(), updatedAt: Date.now()
+    });
+    saveData(); closeModal(); renderMaterials(); toast('已添加');
+}
+function openEditMaterialModal(id) {
+    const m = data.materials.find(d => d.id === id);
+    if (!m) return;
+    openModal(`
+        <div style="padding-top:6px;">
+            <div class="input-group"><label>书名</label><input id="editMatTitle" value="${m.title}"></div>
+            <div class="input-group"><label>作者</label><input id="editMatAuthor" value="${m.author||''}"></div>
+            <div class="input-group"><label>标签</label><input id="editMatTags" value="${(m.tags||[]).join(', ')}"></div>
+            <div class="input-group"><label>人设参考</label><textarea id="editMatChars" rows="2">${m.characters||''}</textarea></div>
+            <div class="input-group"><label>世界观亮点</label><textarea id="editMatWorld" rows="2">${m.world||''}</textarea></div>
+            <div class="input-group"><label>灵感触发</label><textarea id="editMatInspire" rows="2">${m.inspiration||''}</textarea></div>
+            <button class="btn btn-primary btn-block" onclick="saveMaterial('${id}')">保存</button>
+        </div>
+    `);
+}
+function saveMaterial(id) {
+    const m = data.materials.find(d => d.id === id);
+    if (!m) return;
+    m.title = document.getElementById('editMatTitle').value.trim() || m.title;
+    m.author = document.getElementById('editMatAuthor').value.trim();
+    m.tags = document.getElementById('editMatTags').value.split(',').map(s => s.trim()).filter(Boolean);
+    m.characters = document.getElementById('editMatChars').value.trim();
+    m.world = document.getElementById('editMatWorld').value.trim();
+    m.inspiration = document.getElementById('editMatInspire').value.trim();
+    m.updatedAt = Date.now();
+    saveData(); closeModal(); renderMaterials(); toast('已保存');
+}
+function openMaterialDetail(id) {
+    const m = data.materials.find(d => d.id === id);
+    if (!m) return;
+    openModal(`
+        <div style="padding-top:6px;">
+            <div style="font-size:20px;font-weight:700;">${m.title}</div>
+            <div style="color:var(--text2);">${m.author || '未知作者'}</div>
+            ${(m.tags||[]).length ? `<div style="margin:6px 0;">${m.tags.map(t => `<span class="tag">${t}</span>`).join(' ')}</div>` : ''}
+            ${m.characters ? `<div style="background:var(--bg3);border-radius:8px;padding:12px;margin-top:8px;"><strong>👤 人设参考</strong><br>${m.characters}</div>` : ''}
+            ${m.world ? `<div style="background:var(--bg3);border-radius:8px;padding:12px;margin-top:8px;"><strong>🌍 世界观亮点</strong><br>${m.world}</div>` : ''}
+            ${m.inspiration ? `<div style="background:var(--bg3);border-radius:8px;padding:12px;margin-top:8px;border-left:3px solid var(--accent);"><strong>💡 灵感触发</strong><br>${m.inspiration}</div>` : ''}
+            <button class="btn btn-secondary btn-block" style="margin-top:12px;" onclick="closeModal()">关闭</button>
+        </div>
+    `);
+}
+
+// ===== 搜索 =====
+function openSearchModal(type) {
+    openModal(`
+        <div style="padding-top:6px;">
+            <div class="search-box">
+                <input id="globalSearchInput" placeholder="搜索关键词..." onkeyup="if(event.key==='Enter') doGlobalSearch()">
+                <button onclick="doGlobalSearch()">🔍</button>
+            </div>
+            <div id="globalSearchResults" style="max-height:400px;overflow-y:auto;"></div>
+        </div>
+    `);
+    setTimeout(() => document.getElementById('globalSearchInput')?.focus(), 200);
+}
+function doGlobalSearch() {
+    const kw = document.getElementById('globalSearchInput').value.trim();
+    if (!kw) { document.getElementById('globalSearchResults').innerHTML = '<div style="color:var(--text3);">请输入关键词</div>'; return; }
+    const results = document.getElementById('globalSearchResults');
+    let html = '', count = 0;
+    data.works.forEach(w => {
+        const matches = [];
+        if (w.title.includes(kw)) matches.push('作品名');
+        w.chapters.forEach(c => {
+            if (c.title.includes(kw) || (c.content && c.content.includes(kw))) {
+                matches.push(`章节: ${c.title}`);
+            }
+        });
+        if (matches.length) {
+            count++;
+            const workId = w.id;
+            html += `<div class="card search-result-item" onclick="closeModal();openWork('${workId}')">
+                <div style="font-weight:700;color:var(--accent);">📖 ${w.title}</div>
+                <div style="font-size:13px;color:var(--text2);">${matches.join('；')}</div>
+            </div>`;
+        }
+    });
+    data.materials.forEach(m => {
+        let found = false;
+        [m.title, m.author, m.characters, m.world, m.inspiration].forEach(f => { if (f && f.includes(kw)) found = true; });
+        if (m.tags && m.tags.some(t => t.includes(kw))) found = true;
+        if (found) {
+            count++;
+            const mid = m.id;
+            html += `<div class="card search-result-item" onclick="closeModal();switchPage('pageMaterials');setTimeout(()=>openEditMaterialModal('${mid}'),300);">
+                <div style="font-weight:700;color:#ff9800;">📚 ${m.title}</div>
+                <div style="font-size:13px;color:var(--text2);">${m.author || '未知作者'}</div>
+            </div>`;
+        }
+    });
+    results.innerHTML = count ? `<div style="font-weight:500;margin-bottom:8px;">找到 ${count} 条</div>` + html : '<div style="color:var(--text3);">没有匹配内容</div>';
+}
+function openMaterialSearchModal() {
+    openModal(`
+        <div style="padding-top:6px;">
+            <div class="search-box">
+                <input id="matSearchInput" placeholder="搜索素材..." onkeyup="if(event.key==='Enter') doMaterialSearch()">
+                <button onclick="doMaterialSearch()">🔍</button>
+            </div>
+            <div id="matSearchResults" style="max-height:400px;overflow-y:auto;"></div>
+        </div>
+    `);
+    setTimeout(() => document.getElementById('matSearchInput')?.focus(), 200);
+}
+function doMaterialSearch() {
+    const kw = document.getElementById('matSearchInput').value.trim();
+    if (!kw) { document.getElementById('matSearchResults').innerHTML = '<div style="color:var(--text3);">请输入关键词</div>'; return; }
+    const results = document.getElementById('matSearchResults');
+    let html = '', count = 0;
+    data.materials.forEach(m => {
+        let found = false;
+        [m.title, m.author, m.characters, m.world, m.inspiration].forEach(f => { if (f && f.includes(kw)) found = true; });
+        if (m.tags && m.tags.some(t => t.includes(kw))) found = true;
+        if (found) {
+            count++;
+            const mid = m.id;
+            html += `<div class="card search-result-item" onclick="closeModal();switchPage('pageMaterials');setTimeout(()=>openEditMaterialModal('${mid}'),300);">
+                <div style="font-weight:700;color:#ff9800;">📚 ${m.title}</div>
+                <div style="font-size:13px;color:var(--text2);">${m.author || '未知作者'}</div>
+            </div>`;
+        }
+    });
+    results.innerHTML = count ? `<div style="font-weight:500;margin-bottom:8px;">找到 ${count} 条</div>` + html : '<div style="color:var(--text3);">没有匹配素材</div>';
+}
+
+// ===== 设置 =====
+function renderSettings() {
+    const container = document.getElementById('settingsContainer');
+    const s = data.settings;
+    container.innerHTML = `
+        <div style="padding:4px 0;">
+            <div style="font-size:16px;font-weight:700;margin-bottom:12px;">⚙️ 设置</div>
+            <div class="setting-row"><label>字号</label><input type="range" min="12" max="24" value="${s.fontSize}" oninput="setSetting('fontSize',+this.value)"><span class="value">${s.fontSize}px</span></div>
+            <div class="setting-row"><label>行距</label><input type="range" min="1.2" max="2.8" step="0.1" value="${s.lineHeight}" oninput="setSetting('lineHeight',+this.value)"><span class="value">${s.lineHeight}</span></div>
+            <div class="setting-row"><label>字间距</label><input type="range" min="0" max="4" step="0.5" value="${s.letterSpacing}" oninput="setSetting('letterSpacing',+this.value)"><span class="value">${s.letterSpacing}px</span></div>
+            <div class="setting-row"><label>紧凑模式</label><input type="checkbox" ${s.compactMode ? 'checked' : ''} onchange="setSetting('compactMode',this.checked);renderWorks();"></div>
+            <div class="setting-row"><label>首行缩进</label><input type="checkbox" ${s.indent !== false ? 'checked' : ''} onchange="setSetting('indent',this.checked);"></div>
+            <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px;">
+                <button class="btn btn-secondary btn-block" onclick="exportJSON()">📤 导出JSON备份</button>
+                <button class="btn btn-secondary btn-block" style="margin-top:6px;" onclick="document.getElementById('importFileInput').click()">📥 导入JSON</button>
+                <input type="file" id="importFileInput" accept=".json" style="display:none;" onchange="importJSON(event)">
+                <button class="btn btn-danger btn-block" style="margin-top:6px;" onclick="clearAllData()">⚠️ 清除所有数据</button>
+            </div>
+        </div>
+    `;
+}
+function setSetting(key, val) {
+    data.settings[key] = val;
+    saveData();
+    if (currentPage === 'pageEditor' && currentChapterId) {
+        renderEditor(currentWorkId, currentChapterId);
+    }
+}
+function exportJSON() {
+    downloadFile(JSON.stringify(data, null, 2), `备份_${new Date().toISOString().slice(0,10)}.json`);
+    toast('备份已导出');
+}
+function importJSON(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+        try {
+            const imported = JSON.parse(ev.target.result);
+            if (!imported.works || !imported.materials) { toast('无效备份'); return; }
+            if (!confirm('导入将覆盖当前所有数据，确定？')) return;
+            data = imported;
+            if (!data.recycle) data.recycle = [];
+            if (!data.tags) data.tags = [];
+            if (!data.settings) data.settings = { fontSize:16, lineHeight:1.8, letterSpacing:0, compactMode:false, indent:true };
+            saveData(); renderWorks(); renderMaterials(); renderSettings(); renderRecycle();
+            toast('导入成功');
+        } catch(err) { toast('文件解析失败'); }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+}
+function clearAllData() {
+    if (!confirm('⚠️ 确定清除所有数据？')) return;
+    if (!confirm('再次确认！')) return;
+    localStorage.clear();
+    location.reload();
+}
+
+// ===== 侧边栏 =====
+document.getElementById('headerMoreBtn').addEventListener('click', function() {
+    if (currentPage === 'pageWorks' || currentPage === 'pageEditor') {
+        let html = `<div style="padding-top:6px;"><div style="font-weight:700;margin-bottom:10px;">📖 切换作品</div>`;
+        if (!data.works.length) { html += `<div style="color:var(--text3);">暂无作品</div>`; } else {
+            data.works.forEach(w => {
+                const active = w.id === currentWorkId;
+                html += `<div style="background:${active?'var(--bg4)':'var(--bg3)'};border-radius:8px;padding:10px 14px;margin-bottom:6px;cursor:pointer;" onclick="quickSwitchWork('${w.id}')">
+                    <div style="font-weight:700;">${w.title} ${active ? '✅' : ''}</div>
+                    <div style="font-size:12px;color:var(--text3);">${w.chapters.length}章</div>
+                </div>`;
+            });
+        }
+        html += `</div>`;
+        openModal(html);
+    } else if (currentPage === 'pageMaterials') {
+        let html = `<div style="padding-top:6px;"><div style="font-weight:700;margin-bottom:10px;">🏷️ 素材标签</div>`;
+        const tags = getAllMaterialTags();
+        if (!tags.length) { html += `<div style="color:var(--text3);">暂无标签</div>`; } else {
+            tags.forEach(t => {
+                html += `<div style="background:var(--bg3);border-radius:8px;padding:8px 14px;margin-bottom:4px;cursor:pointer;" onclick="filterMaterials('${t}');closeModal();">${t}</div>`;
+            });
+        }
+        html += `</div>`;
+        openModal(html);
+    } else {
+        toast('当前页面无快捷操作');
+    }
+});
+function quickSwitchWork(workId) {
+    closeModal();
+    if (currentPage === 'pageEditor' || currentPage === 'pageWorks') {
+        openWork(workId);
+    } else { toast('请切换到创作库'); }
+}
+document.getElementById('headerSearchBtn').addEventListener('click', function() {
+    if (currentPage === 'pageWorks') openSearchModal('works');
+    else if (currentPage === 'pageMaterials') openMaterialSearchModal();
+});
+
+// ===== 启动 =====
+loadData();
+renderWorks();
+renderMaterials();
+renderSettings();
+renderRecycle();
+console.log('📖 小说创作工坊 v9.0 已加载 - 标签筛选已修复');
+console.log('当前作品标签:', getAllWorkTags());
+console.log('当前素材标签:', getAllMaterialTags());
+</script>
+</body>
+</html>

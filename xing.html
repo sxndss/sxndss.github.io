@@ -74,6 +74,7 @@
             flex-shrink: 0;
             gap: 16px;
             z-index: 100;
+            flex-wrap: wrap;
         }
 
         .app-header .logo {
@@ -86,14 +87,11 @@
             white-space: nowrap;
         }
 
-        .app-header .logo span {
-            font-size: 20px;
-        }
-
         .header-search {
             flex: 1;
             max-width: 480px;
             position: relative;
+            min-width: 120px;
         }
 
         .header-search input {
@@ -125,12 +123,13 @@
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-shrink: 0;
+            flex-wrap: wrap;
         }
 
         .header-actions .btn {
-            padding: 5px 14px;
+            padding: 5px 12px;
             font-size: 13px;
             border-radius: 6px;
             border: 1px solid var(--gray-200);
@@ -138,6 +137,7 @@
             cursor: pointer;
             transition: var(--transition);
             color: var(--gray-700);
+            white-space: nowrap;
         }
 
         .header-actions .btn:hover {
@@ -160,19 +160,19 @@
         .stats-bar {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 10px;
             font-size: 12px;
             color: var(--gray-600);
-            padding: 0 8px;
             flex-shrink: 0;
+            flex-wrap: wrap;
         }
 
         .stats-bar .stat-item {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
             cursor: pointer;
-            padding: 2px 8px;
+            padding: 2px 6px;
             border-radius: 4px;
             transition: var(--transition);
         }
@@ -209,8 +209,8 @@
 
         /* ========== 左侧大纲树 ========== */
         .sidebar {
-            width: 260px;
-            min-width: 260px;
+            width: 240px;
+            min-width: 200px;
             background: white;
             border-right: 1px solid var(--gray-200);
             display: flex;
@@ -220,12 +220,14 @@
         }
 
         .sidebar-header {
-            padding: 12px 16px 8px;
+            padding: 10px 14px 6px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--gray-100);
             flex-shrink: 0;
+            flex-wrap: wrap;
+            gap: 4px;
         }
 
         .sidebar-header h3 {
@@ -235,8 +237,8 @@
         }
 
         .sidebar-header .btn-sm {
-            font-size: 12px;
-            padding: 2px 10px;
+            font-size: 11px;
+            padding: 2px 8px;
             border: 1px solid var(--gray-200);
             border-radius: 4px;
             background: white;
@@ -252,7 +254,7 @@
         .tree-container {
             flex: 1;
             overflow-y: auto;
-            padding: 8px 8px 20px;
+            padding: 6px 6px 20px;
         }
 
         .tree-node {
@@ -264,8 +266,8 @@
         .tree-node .node-label {
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 5px 10px;
+            gap: 4px;
+            padding: 4px 8px;
             border-radius: 6px;
             font-size: 13px;
             color: var(--gray-700);
@@ -286,7 +288,7 @@
         .tree-node .node-label .toggle {
             font-size: 10px;
             color: var(--gray-400);
-            width: 16px;
+            width: 14px;
             text-align: center;
             flex-shrink: 0;
         }
@@ -296,13 +298,14 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            font-size: 12px;
         }
 
         .tree-node .node-label .node-count {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--gray-400);
             background: var(--gray-100);
-            padding: 0 8px;
+            padding: 0 6px;
             border-radius: 10px;
             font-weight: 500;
             flex-shrink: 0;
@@ -314,7 +317,7 @@
         }
 
         .tree-node .node-children {
-            padding-left: 18px;
+            padding-left: 14px;
         }
 
         .tree-node .node-children.collapsed {
@@ -334,16 +337,17 @@
         .tab-bar {
             display: flex;
             align-items: center;
-            padding: 0 20px;
-            gap: 4px;
+            padding: 0 16px;
+            gap: 2px;
             background: white;
             border-bottom: 1px solid var(--gray-200);
             flex-shrink: 0;
-            height: 44px;
+            height: 40px;
+            overflow-x: auto;
         }
 
         .tab-bar .tab {
-            padding: 8px 18px;
+            padding: 6px 14px;
             font-size: 13px;
             font-weight: 500;
             color: var(--gray-500);
@@ -353,6 +357,7 @@
             border-bottom: 2.5px solid transparent;
             transition: var(--transition);
             border-radius: 0;
+            white-space: nowrap;
         }
 
         .tab-bar .tab:hover {
@@ -365,12 +370,12 @@
         }
 
         .tab-bar .tab .badge {
-            font-size: 11px;
+            font-size: 10px;
             background: var(--gray-200);
             color: var(--gray-600);
-            padding: 0 8px;
+            padding: 0 6px;
             border-radius: 10px;
-            margin-left: 4px;
+            margin-left: 3px;
             font-weight: 400;
         }
 
@@ -378,13 +383,17 @@
             background: #fee2e2;
             color: var(--danger);
         }
+        .tab-bar .tab .badge.success {
+            background: #dcfce7;
+            color: var(--success);
+        }
 
         .tab-bar .spacer {
             flex: 1;
         }
 
         .tab-bar .btn-new {
-            padding: 5px 16px;
+            padding: 4px 14px;
             font-size: 13px;
             border-radius: 6px;
             border: none;
@@ -393,6 +402,7 @@
             cursor: pointer;
             transition: var(--transition);
             font-weight: 500;
+            white-space: nowrap;
         }
 
         .tab-bar .btn-new:hover {
@@ -403,8 +413,8 @@
         .content-toolbar {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 20px;
+            gap: 8px;
+            padding: 6px 16px;
             background: white;
             border-bottom: 1px solid var(--gray-100);
             flex-shrink: 0;
@@ -414,15 +424,15 @@
         .content-toolbar .toolbar-left {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex: 1;
             flex-wrap: wrap;
         }
 
         .content-toolbar select,
         .content-toolbar input[type="text"] {
-            padding: 4px 10px;
-            font-size: 13px;
+            padding: 3px 8px;
+            font-size: 12px;
             border: 1px solid var(--gray-200);
             border-radius: 6px;
             background: white;
@@ -436,7 +446,7 @@
         }
 
         .content-toolbar .btn-sm {
-            padding: 4px 12px;
+            padding: 3px 10px;
             font-size: 12px;
             border: 1px solid var(--gray-200);
             border-radius: 6px;
@@ -465,38 +475,73 @@
             background: #fee2e2;
         }
 
+        /* 今日复习进度条 */
+        .review-progress {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 16px;
+            background: #f0fdf4;
+            border-bottom: 1px solid #bbf7d0;
+            flex-shrink: 0;
+            font-size: 13px;
+            color: var(--gray-700);
+            flex-wrap: wrap;
+        }
+
+        .review-progress .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: var(--gray-200);
+            border-radius: 3px;
+            min-width: 60px;
+            overflow: hidden;
+        }
+
+        .review-progress .progress-bar .fill {
+            height: 100%;
+            background: var(--success);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .review-progress .count {
+            font-weight: 600;
+            color: var(--gray-900);
+            white-space: nowrap;
+        }
+
         /* 内容列表 */
         .content-list {
             flex: 1;
             overflow-y: auto;
-            padding: 16px 20px;
+            padding: 12px 16px;
         }
 
         .content-list .empty-state {
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 20px;
             color: var(--gray-400);
         }
 
         .content-list .empty-state .icon {
-            font-size: 48px;
-            margin-bottom: 12px;
+            font-size: 40px;
+            margin-bottom: 8px;
         }
 
         .content-list .empty-state p {
-            font-size: 15px;
+            font-size: 14px;
         }
 
         /* ========== 卡片样式 ========== */
         .card {
             background: white;
             border-radius: var(--radius);
-            padding: 14px 16px;
-            margin-bottom: 10px;
             border: 1px solid var(--gray-200);
             box-shadow: var(--shadow);
             transition: var(--transition);
-            position: relative;
+            margin-bottom: 8px;
+            overflow: hidden;
         }
 
         .card:hover {
@@ -505,35 +550,59 @@
 
         .card .card-header {
             display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            margin-bottom: 6px;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            cursor: pointer;
+            user-select: none;
+            transition: var(--transition);
         }
 
-        .card .card-header .color-bar {
-            width: 4px;
-            min-height: 28px;
-            border-radius: 2px;
-            flex-shrink: 0;
-            margin-top: 2px;
+        .card .card-header:hover {
+            background: var(--gray-50);
         }
 
         .card .card-header .card-title {
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 500;
             color: var(--gray-900);
             flex: 1;
             word-break: break-word;
+            min-width: 0;
         }
 
         .card .card-header .card-title .pinned-icon {
             color: var(--danger);
-            margin-right: 4px;
+            margin-right: 3px;
+        }
+
+        .card .card-header .card-badges {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+            font-size: 11px;
+        }
+
+        .card .card-header .card-badges .badge-item {
+            padding: 0 6px;
+            border-radius: 10px;
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        .card .card-header .card-badges .badge-item.due {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .card .card-header .card-badges .badge-item.overdue {
+            background: #fee2e2;
+            color: var(--danger);
         }
 
         .card .card-header .card-actions {
             display: flex;
-            gap: 4px;
+            gap: 2px;
             flex-shrink: 0;
         }
 
@@ -541,7 +610,7 @@
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 14px;
             padding: 2px 4px;
             border-radius: 4px;
             color: var(--gray-400);
@@ -562,7 +631,12 @@
             color: var(--gray-700);
             line-height: 1.6;
             word-break: break-word;
-            padding-left: 14px;
+            padding: 0 14px 10px;
+            display: none;
+        }
+
+        .card .card-body.expanded {
+            display: block;
         }
 
         .card .card-body .field-label {
@@ -571,16 +645,55 @@
             font-size: 12px;
         }
 
-        .card .card-footer {
+        .card .card-body .error-reason {
+            background: #fef2f2;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--danger);
+            display: inline-block;
+        }
+
+        .card .card-body .error-solution {
+            background: #f0fdf4;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--gray-700);
+            border-left: 3px solid var(--success);
+            margin-top: 4px;
+        }
+
+        .card .card-body .word-pair {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-top: 8px;
-            padding-top: 8px;
+            flex-wrap: wrap;
+        }
+        .card .card-body .word-pair .arrow {
+            color: var(--gray-400);
+            font-size: 16px;
+        }
+        .card .card-body .word-pair .from {
+            color: var(--gray-600);
+            font-size: 13px;
+        }
+        .card .card-body .word-pair .to {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .card .card-footer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px 10px;
             border-top: 1px solid var(--gray-100);
             font-size: 12px;
             color: var(--gray-400);
             flex-wrap: wrap;
+            background: var(--gray-50);
         }
 
         .card .card-footer .tags {
@@ -590,24 +703,21 @@
         }
 
         .card .card-footer .tag {
-            background: var(--gray-100);
-            padding: 0 8px;
+            background: var(--gray-200);
+            padding: 0 6px;
             border-radius: 10px;
             font-size: 11px;
             color: var(--gray-600);
         }
 
-        .card .card-footer .tag.color-tag {
-            padding: 0 6px;
-        }
-
         .card .card-footer .meta {
             margin-left: auto;
             font-size: 11px;
+            color: var(--gray-400);
         }
 
         .card .card-footer .btn-sm {
-            font-size: 12px;
+            font-size: 11px;
             padding: 2px 10px;
             border: 1px solid var(--gray-200);
             border-radius: 4px;
@@ -621,6 +731,28 @@
             background: var(--gray-100);
         }
 
+        .card .card-footer .btn-sm.remember {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .card .card-footer .btn-sm.remember:hover {
+            background: #15803d;
+            border-color: #15803d;
+        }
+
+        .card .card-footer .btn-sm.forget {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+
+        .card .card-footer .btn-sm.forget:hover {
+            background: #b91c1c;
+            border-color: #b91c1c;
+        }
+
         .card .card-footer .btn-sm.danger {
             color: var(--danger);
             border-color: #fca5a5;
@@ -629,52 +761,23 @@
             background: #fee2e2;
         }
 
-        /* 错题特殊样式 */
-        .card.error-card {
-            border-left: 4px solid var(--danger);
+        .card .card-footer .status-remembered {
+            color: var(--success);
+            font-weight: 500;
         }
 
-        .card.error-card .error-reason {
-            background: #fef2f2;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 12px;
+        .card .card-footer .status-forget {
             color: var(--danger);
-            display: inline-block;
+            font-weight: 500;
         }
 
-        .card.error-card .error-solution {
-            background: #f0fdf4;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 13px;
-            color: var(--gray-700);
-            border-left: 3px solid var(--success);
-            margin-top: 4px;
+        /* 复习卡片高亮 */
+        .card.review-card {
+            border-left: 4px solid var(--warning);
         }
 
-        /* 规范词特殊样式 */
-        .card.word-card {
-            border-left: 4px solid var(--primary);
-        }
-        .card.word-card .word-pair {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-        .card.word-card .word-pair .arrow {
-            color: var(--gray-400);
-            font-size: 18px;
-        }
-        .card.word-card .word-pair .from {
-            color: var(--gray-600);
-            font-size: 14px;
-        }
-        .card.word-card .word-pair .to {
-            color: var(--primary);
-            font-weight: 600;
-            font-size: 14px;
+        .card.review-card.overdue {
+            border-left-color: var(--danger);
         }
 
         /* ========== 弹窗 ========== */
@@ -717,7 +820,7 @@
         }
 
         .modal-header {
-            padding: 16px 24px;
+            padding: 14px 20px;
             border-bottom: 1px solid var(--gray-200);
             display: flex;
             justify-content: space-between;
@@ -745,13 +848,13 @@
         }
 
         .modal-body {
-            padding: 20px 24px;
+            padding: 16px 20px;
             overflow-y: auto;
             flex: 1;
         }
 
         .modal-body .form-group {
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
         .modal-body .form-group label {
@@ -759,7 +862,7 @@
             font-size: 13px;
             font-weight: 500;
             color: var(--gray-700);
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         .modal-body .form-group .label-hint {
@@ -772,7 +875,7 @@
         .modal-body .form-group select,
         .modal-body .form-group textarea {
             width: 100%;
-            padding: 8px 12px;
+            padding: 6px 10px;
             border: 1.5px solid var(--gray-200);
             border-radius: 6px;
             font-size: 14px;
@@ -790,19 +893,19 @@
         }
 
         .modal-body .form-group textarea {
-            min-height: 60px;
+            min-height: 50px;
             resize: vertical;
         }
 
         .modal-body .form-group .template-fields {
             background: var(--gray-50);
-            padding: 12px 16px;
+            padding: 10px 14px;
             border-radius: 6px;
             border: 1px solid var(--gray-200);
         }
 
         .modal-body .form-group .template-fields .tf-row {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .modal-body .form-group .template-fields .tf-row:last-child {
@@ -819,7 +922,7 @@
 
         .modal-body .form-group .template-fields .tf-input {
             width: 100%;
-            padding: 6px 10px;
+            padding: 5px 8px;
             border: 1px solid var(--gray-200);
             border-radius: 4px;
             font-size: 13px;
@@ -834,7 +937,7 @@
 
         .modal-body .form-row {
             display: flex;
-            gap: 14px;
+            gap: 12px;
         }
 
         .modal-body .form-row .form-group {
@@ -842,16 +945,16 @@
         }
 
         .modal-footer {
-            padding: 14px 24px;
+            padding: 12px 20px;
             border-top: 1px solid var(--gray-200);
             display: flex;
             justify-content: flex-end;
-            gap: 10px;
+            gap: 8px;
             flex-shrink: 0;
         }
 
         .modal-footer .btn {
-            padding: 8px 24px;
+            padding: 6px 20px;
             font-size: 14px;
             border-radius: 6px;
             border: 1px solid var(--gray-200);
@@ -890,20 +993,20 @@
         /* ========== Toast提示 ========== */
         .toast-container {
             position: fixed;
-            bottom: 24px;
-            right: 24px;
+            bottom: 20px;
+            right: 20px;
             z-index: 9999;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         .toast {
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 8px;
             background: var(--gray-900);
             color: white;
-            font-size: 14px;
+            font-size: 13px;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
             animation: slideUp 0.3s ease;
             max-width: 360px;
@@ -930,16 +1033,18 @@
             }
         }
 
-        /* ========== 回收站视图 ========== */
+        /* ========== 回收站 ========== */
         .recycle-item {
             background: white;
             border-radius: var(--radius);
-            padding: 12px 16px;
-            margin-bottom: 8px;
+            padding: 10px 14px;
+            margin-bottom: 6px;
             border: 1px solid var(--gray-200);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
         }
 
         .recycle-item .info {
@@ -953,20 +1058,20 @@
         }
 
         .recycle-item .info .type {
-            font-size: 12px;
+            font-size: 11px;
             background: var(--gray-100);
-            padding: 0 8px;
+            padding: 0 6px;
             border-radius: 4px;
-            margin-left: 6px;
+            margin-left: 4px;
         }
 
         .recycle-item .actions {
             display: flex;
-            gap: 6px;
+            gap: 4px;
         }
 
         .recycle-item .actions button {
-            padding: 4px 12px;
+            padding: 3px 10px;
             font-size: 12px;
             border: 1px solid var(--gray-200);
             border-radius: 4px;
@@ -990,7 +1095,7 @@
 
         .recycle-item .actions button.permanent {
             color: var(--danger);
-            border-color: #fca5a5);
+            border-color: #fca5a5;
         }
 
         .recycle-item .actions button.permanent:hover {
@@ -1000,11 +1105,15 @@
         /* ========== 响应式 ========== */
         @media (max-width: 1024px) {
             .sidebar {
-                width: 200px;
-                min-width: 200px;
+                width: 180px;
+                min-width: 140px;
             }
             .stats-bar .stat-item .label {
                 display: none;
+            }
+            .app-header {
+                padding: 6px 12px;
+                height: auto;
             }
         }
 
@@ -1013,28 +1122,24 @@
                 display: none;
             }
             .app-header {
-                flex-wrap: wrap;
-                height: auto;
-                padding: 10px 16px;
-                gap: 8px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
             }
             .header-search {
                 max-width: 100%;
-                flex: 1 1 100%;
-                order: 3;
+            }
+            .header-actions {
+                justify-content: center;
             }
             .stats-bar {
-                flex-wrap: wrap;
-                gap: 6px;
-            }
-            .stats-bar .stat-item {
-                padding: 0 4px;
+                justify-content: center;
             }
             .content-toolbar {
-                padding: 8px 12px;
+                padding: 6px 10px;
             }
             .content-list {
-                padding: 12px;
+                padding: 8px 10px;
             }
             .modal {
                 max-width: 100%;
@@ -1043,22 +1148,25 @@
                 border-radius: 0;
             }
             .modal-body {
-                padding: 16px;
+                padding: 12px 14px;
             }
             .modal-header {
-                padding: 12px 16px;
+                padding: 10px 14px;
             }
             .modal-footer {
-                padding: 12px 16px;
+                padding: 10px 14px;
             }
             .tab-bar {
-                padding: 0 12px;
-                overflow-x: auto;
+                padding: 0 8px;
+                gap: 0;
             }
             .tab-bar .tab {
-                padding: 8px 12px;
+                padding: 6px 10px;
                 font-size: 12px;
-                white-space: nowrap;
+            }
+            .review-progress {
+                padding: 4px 10px;
+                font-size: 12px;
             }
         }
 
@@ -1071,77 +1179,18 @@
             background: var(--primary-bg);
         }
 
-        /* ========== 艾宾浩斯队列特殊样式 ========== */
-        .queue-card {
-            border-left: 4px solid var(--warning);
-        }
-        .queue-card .queue-due {
-            font-size: 12px;
-            color: var(--warning);
-            font-weight: 500;
-        }
-        .queue-card .queue-due.overdue {
-            color: var(--danger);
-        }
-
-        /* ========== 版本历史 ========== */
-        .version-list {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        .version-item {
-            padding: 8px 12px;
-            border-bottom: 1px solid var(--gray-100);
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .version-item:hover {
-            background: var(--gray-50);
-        }
-        .version-item .time {
+        /* 折叠展开指示 */
+        .card .card-header .expand-icon {
             font-size: 12px;
             color: var(--gray-400);
-        }
-        .version-item .preview {
-            font-size: 13px;
-            color: var(--gray-600);
-        }
-        .version-item .btn-restore {
-            font-size: 12px;
-            padding: 2px 10px;
-            border: 1px solid var(--primary-light);
-            border-radius: 4px;
-            background: white;
-            color: var(--primary);
-            cursor: pointer;
-        }
-        .version-item .btn-restore:hover {
-            background: var(--primary-bg);
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+            width: 16px;
+            text-align: center;
         }
 
-        /* 自定义颜色标签选择器 */
-        .color-picker {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .color-picker .color-option {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            border: 2.5px solid transparent;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .color-picker .color-option:hover {
-            transform: scale(1.1);
-        }
-        .color-picker .color-option.selected {
-            border-color: var(--gray-900);
-            box-shadow: 0 0 0 2px white, 0 0 0 4px var(--gray-900);
+        .card .card-header .expand-icon.expanded {
+            transform: rotate(90deg);
         }
     </style>
 </head>
@@ -1150,13 +1199,16 @@
     <!-- ===== 顶部导航 ===== -->
     <header class="app-header">
         <div class="logo">
-            <span>📚</span> 公考备考工具箱
+            <span>📚</span> 公考备考
         </div>
         <div class="header-search">
             <span class="search-icon">🔍</span>
-            <input type="text" id="globalSearch" placeholder="搜索笔记、错题、规范词（支持拼音首字母）..." />
+            <input type="text" id="globalSearch" placeholder="搜索笔记、错题、规范词..." />
         </div>
         <div class="stats-bar" id="statsBar">
+            <span class="stat-item" data-filter="review" title="今日待复习">
+                🔄 <span class="num danger" id="statReview">0</span>
+            </span>
             <span class="stat-item" data-filter="notes" title="总笔记数">
                 📝 <span class="num primary" id="statNotes">0</span>
             </span>
@@ -1166,12 +1218,6 @@
             <span class="stat-item" data-filter="words" title="总规范词数">
                 📖 <span class="num primary" id="statWords">0</span>
             </span>
-            <span class="stat-item" data-filter="queue" title="今日待复习">
-                🔄 <span class="num warning" id="statQueue">0</span>
-            </span>
-            <span class="stat-item" data-filter="unmastered" title="未掌握错题">
-                ⚠️ <span class="num danger" id="statUnmastered">0</span>
-            </span>
         </div>
         <div class="header-actions">
             <button class="btn" onclick="showRecycleBin()">🗑️ 回收站</button>
@@ -1180,6 +1226,16 @@
         </div>
     </header>
 
+    <!-- ===== 今日复习进度条 ===== -->
+    <div class="review-progress" id="reviewProgress">
+        <span>📋 今日复习</span>
+        <span class="count" id="reviewCount">0/0</span>
+        <div class="progress-bar">
+            <div class="fill" id="reviewProgressFill" style="width:0%"></div>
+        </div>
+        <button class="btn-sm" onclick="generateDailyReview()" style="background:var(--primary);color:white;border-color:var(--primary);">🔄 生成今日复习</button>
+    </div>
+
     <!-- ===== 主体 ===== -->
     <div class="app-body">
 
@@ -1187,8 +1243,10 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <h3>📂 大纲目录</h3>
-                <button class="btn-sm" onclick="expandAll()">全部展开</button>
-                <button class="btn-sm" onclick="collapseAll()">全部收起</button>
+                <div>
+                    <button class="btn-sm" onclick="expandAll()">展开</button>
+                    <button class="btn-sm" onclick="collapseAll()">收起</button>
+                </div>
             </div>
             <div class="tree-container" id="treeContainer">
                 <!-- 由JS动态渲染 -->
@@ -1199,11 +1257,11 @@
         <main class="main-content">
             <!-- 标签页 -->
             <div class="tab-bar" id="tabBar">
-                <button class="tab active" data-tab="notes">📝 笔记 <span class="badge" id="badgeNotes">0</span></button>
+                <button class="tab active" data-tab="review">🔄 复习 <span class="badge danger" id="badgeReview">0</span></button>
+                <button class="tab" data-tab="notes">📝 笔记 <span class="badge" id="badgeNotes">0</span></button>
                 <button class="tab" data-tab="errors">❌ 错题 <span class="badge danger" id="badgeErrors">0</span></button>
                 <button class="tab" data-tab="words">📖 规范词 <span class="badge" id="badgeWords">0</span></button>
                 <button class="tab" data-tab="starred">⭐ 星标 <span class="badge" id="badgeStarred">0</span></button>
-                <button class="tab" data-tab="queue">🔄 待复习 <span class="badge danger" id="badgeQueue">0</span></button>
                 <div class="spacer"></div>
                 <button class="btn-new" id="btnNewMain" onclick="handleNew()">＋ 新建</button>
             </div>
@@ -1212,20 +1270,11 @@
             <div class="content-toolbar" id="toolbar">
                 <div class="toolbar-left">
                     <select id="sortSelect" onchange="renderCurrentView()">
+                        <option value="queue">按遗忘曲线紧急度</option>
                         <option value="updated">按更新时间</option>
                         <option value="created">按创建时间</option>
                         <option value="title">按标题 A-Z</option>
                         <option value="pinned">按置顶优先</option>
-                        <option value="queue">按遗忘曲线紧急度</option>
-                    </select>
-                    <select id="filterColor" onchange="renderCurrentView()">
-                        <option value="">全部颜色</option>
-                        <option value="red">🔴 红色</option>
-                        <option value="orange">🟠 橙色</option>
-                        <option value="yellow">🟡 黄色</option>
-                        <option value="green">🟢 绿色</option>
-                        <option value="blue">🔵 蓝色</option>
-                        <option value="purple">🟣 紫色</option>
                     </select>
                     <select id="filterErrorReason" onchange="renderCurrentView()" style="display:none;">
                         <option value="">全部错因</option>
@@ -1236,12 +1285,11 @@
                         <option value="掉入陷阱">掉入陷阱</option>
                         <option value="其他">其他</option>
                     </select>
-                    <button class="btn-sm" id="btnBatchMode" onclick="toggleBatchMode()">☑️ 批量操作</button>
-                    <div id="batchActions" style="display:none;display:inline-flex;gap:6px;align-items:center;">
+                    <button class="btn-sm" id="btnBatchMode" onclick="toggleBatchMode()">☑️ 批量</button>
+                    <div id="batchActions" style="display:none;display:inline-flex;gap:4px;align-items:center;">
                         <button class="btn-sm" onclick="batchAddTag()">+标签</button>
                         <button class="btn-sm" onclick="batchRemoveTag()">-标签</button>
-                        <button class="btn-sm" onclick="batchSetColor()">🎨 颜色</button>
-                        <button class="btn-sm" onclick="batchAddQueue()">📋 加入队列</button>
+                        <button class="btn-sm" onclick="batchAddQueue()">📋 加入复习</button>
                         <button class="btn-sm danger" onclick="batchDelete()">🗑️ 删除</button>
                         <button class="btn-sm" onclick="toggleBatchMode()">取消</button>
                     </div>
@@ -1326,177 +1374,104 @@
             { id: 'node_shen_sc_sj', parentId: 'node_shen_sc', name: '数据', sortOrder: 2 },
         ];
 
-        // 32个模板定义（按公考章节骨架）
-        const TEMPLATES = [{
-            id: 'tpl_cs_sz',
-            name: '常识判断-时政',
-            nodeId: 'node_cs_sz',
-            fields: ['热点事件', '发生时间', '考点关键词', '规范表述', '可能的出题角度', '备注']
-        }, {
-            id: 'tpl_cs_fl',
-            name: '常识判断-法律',
-            nodeId: 'node_cs_fl',
-            fields: ['法律名称', '颁布/施行时间', '常考数字（年龄/期限等）', '易混淆点', '备注']
-        }, {
-            id: 'tpl_cs_rw',
-            name: '常识判断-人文历史',
-            nodeId: 'node_cs_rw',
-            fields: ['人物/事件', '朝代/年份', '核心贡献/意义', '常考诗句/名言', '易混淆人物', '备注']
-        }, {
-            id: 'tpl_cs_kj',
-            name: '常识判断-科技地理',
-            nodeId: 'node_cs_kj',
-            fields: ['科技成就/地理名词', '时间/地点', '科学原理', '常考数据', '与公考关联点', '备注']
-        }, {
-            id: 'tpl_yy_lj',
-            name: '言语理解-逻辑填空',
-            nodeId: 'node_yy_lj',
-            fields: ['成语/实词', '释字', '释义', '褒贬色彩', '常用搭配', '易混淆词', '题干对应提示词', '备注']
-        }, {
-            id: 'tpl_yy_pd',
-            name: '言语理解-片段阅读',
-            nodeId: 'node_yy_pd',
-            fields: ['文段主题', '主旨句', '行文脉络（总分/并列/转折等）', '正确答案特征', '常见干扰项', '备注']
-        }, {
-            id: 'tpl_yy_px',
-            name: '言语理解-语句排序',
-            nodeId: 'node_yy_px',
-            fields: ['首句特征', '尾句特征', '关联词提示', '时间/空间顺序', '验证逻辑', '备注']
-        }, {
-            id: 'tpl_yy_tk',
-            name: '言语理解-语句填空',
-            nodeId: 'node_yy_tk',
-            fields: ['上下文逻辑', '横线位置（首/中/尾）', '关键词提示', '正确选项特征', '备注']
-        }, {
-            id: 'tpl_sl_gc',
-            name: '数量关系-工程问题',
-            nodeId: 'node_sl_gc',
-            fields: ['题型识别', '核心公式', '赋值技巧', '方程列法', '常见陷阱', '备注']
-        }, {
-            id: 'tpl_sl_xc',
-            name: '数量关系-行程问题',
-            nodeId: 'node_sl_xc',
-            fields: ['题型识别（相遇/追及/流水）', '核心公式', '画图技巧', '比例法', '常见陷阱', '备注']
-        }, {
-            id: 'tpl_sl_lr',
-            name: '数量关系-利润问题',
-            nodeId: 'node_sl_lr',
-            fields: ['题型识别', '核心公式（售价/成本/利润）', '赋值技巧', '方程列法', '常见陷阱', '备注']
-        }, {
-            id: 'tpl_sl_rc',
-            name: '数量关系-容斥问题',
-            nodeId: 'node_sl_rc',
-            fields: ['题型识别（二集合/三集合）', '核心公式', '画图法', '公式法选择', '常见陷阱', '备注']
-        }, {
-            id: 'tpl_sl_pl',
-            name: '数量关系-排列组合',
-            nodeId: 'node_sl_pl',
-            fields: ['题型识别（排列/组合）', '分类/分步判断', '捆绑/插空/插板法', '常见陷阱', '备注']
-        }, {
-            id: 'tpl_sl_jh',
-            name: '数量关系-几何问题',
-            nodeId: 'node_sl_jh',
-            fields: ['图形识别', '核心公式（面积/体积/周长）', '常用模型', '估算法', '常见陷阱', '备注']
-        }, {
-            id: 'tpl_sl_qt',
-            name: '数量关系-其他高频',
-            nodeId: 'node_sl_qt',
-            fields: ['题型识别（浓度/年龄/钟表/牛吃草等）', '核心公式', '速解技巧', '常见陷阱', '备注']
-        }, {
-            id: 'tpl_pd_tx',
-            name: '判断推理-图形推理',
-            nodeId: 'node_pd_tx',
-            fields: ['图形特征', '考点方向（位置/样式/属性/数量/空间）', '秒杀技巧', '常见复合考点', '备注']
-        }, {
-            id: 'tpl_pd_dy',
-            name: '判断推理-定义判断',
-            nodeId: 'node_pd_dy',
-            fields: ['定义名称', '核心要件（主体/客体/目的/方式/结果）', '关键词提取', '干扰项特征', '备注']
-        }, {
-            id: 'tpl_pd_lb',
-            name: '判断推理-类比推理',
-            nodeId: 'node_pd_lb',
-            fields: ['题干关系（外延/内涵/语义/语法）', '二级辨析', '易混淆关系', '秒杀技巧', '备注']
-        }, {
-            id: 'tpl_pd_lj',
-            name: '判断推理-逻辑判断',
-            nodeId: 'node_pd_lj',
-            fields: ['题型识别（加强/削弱/前提/结论/分析）', '论证结构（论据→论点）', '干扰项特征', '秒杀技巧', '备注']
-        }, {
-            id: 'tpl_zl_ss',
-            name: '资料分析-速算技巧',
-            nodeId: 'node_zl_ss',
-            fields: ['公式名称', '公式', '适用条件', '截位技巧', '比较技巧', '常见陷阱', '备注']
-        }, {
-            id: 'tpl_zl_tx',
-            name: '资料分析-题型专项',
-            nodeId: 'node_zl_tx',
-            fields: ['题型识别（基期/现期/增长率/增长量/比重/平均数/倍数）', '公式选择', '速算策略', '常见陷阱', '备注']
-        }, {
-            id: 'tpl_shen_dy_wt',
-            name: '申论-单一题（问题/原因）',
-            nodeId: 'node_shen_dy_wt',
-            fields: ['题干要求', '材料定位', '关键词提取', '规范表述', '采分点预估', '漏点反思', '备注']
-        }, {
-            id: 'tpl_shen_dy_yx',
-            name: '申论-单一题（影响/对策）',
-            nodeId: 'node_shen_dy_yx',
-            fields: ['题干要求', '材料定位', '关键词提取', '规范表述', '采分点预估', '漏点反思', '备注']
-        }, {
-            id: 'tpl_shen_zh_ci',
-            name: '申论-综合题（词句理解）',
-            nodeId: 'node_shen_zh_ci',
-            fields: ['词语/句子', '字面含义', '深层含义（引申义）', '材料中对应表现', '规范表述', '采分点预估', '备注']
-        }, {
-            id: 'tpl_shen_zh_gd',
-            name: '申论-综合题（观点/现象分析）',
-            nodeId: 'node_shen_zh_gd',
-            fields: ['观点/现象', '表态（正确/错误/片面/辩证）', '理由分析', '对策/结论', '规范表述', '备注']
-        }, {
-            id: 'tpl_shen_gw_fa',
-            name: '申论-公文题（方案类）',
-            nodeId: 'node_shen_gw_fa',
-            fields: ['文种（方案/建议/指导意见）', '格式要素（标题/称谓/正文/落款）', '正文结构', '规范表述', '格式易漏点', '备注']
-        }, {
-            id: 'tpl_shen_gw_xc',
-            name: '申论-公文题（宣传类）',
-            nodeId: 'node_shen_gw_xc',
-            fields: ['文种（宣传稿/倡议书/公开信）', '格式要素', '正文结构（号召/鼓动）', '规范表述', '格式易漏点', '备注']
-        }, {
-            id: 'tpl_shen_gw_zj',
-            name: '申论-公文题（总结类）',
-            nodeId: 'node_shen_gw_zj',
-            fields: ['文种（报告/简报/汇报）', '格式要素', '正文结构（情况+成效+问题+建议）', '规范表述', '格式易漏点', '备注']
-        }, {
-            id: 'tpl_shen_dzw',
-            name: '申论-大作文',
-            nodeId: 'node_shen_dzw',
-            fields: ['主题', '总论点', '分论点（3个）', '开头金句', '结尾升华句', '可用论据素材', '备注']
-        }, {
-            id: 'tpl_shen_sc_zc',
-            name: '申论-素材积累（政策理论）',
-            nodeId: 'node_shen_sc_zc',
-            fields: ['政策名称', '核心表述', '适用主题', '权威出处', '记忆关键词', '备注']
-        }, {
-            id: 'tpl_shen_sc_al',
-            name: '申论-素材积累（案例人物）',
-            nodeId: 'node_shen_sc_al',
-            fields: ['案例/人物', '核心事迹', '适用主题', '一句话概括', '加分角度', '备注']
-        }, {
-            id: 'tpl_shen_sc_sj',
-            name: '申论-素材积累（数据）',
-            nodeId: 'node_shen_sc_sj',
-            fields: ['数据', '反映问题/趋势', '适用主题', '权威出处', '记忆技巧', '备注']
-        }];
-
-        // 预置颜色标签
-        const COLORS = [
-            { value: 'red', label: '🔴 红色' },
-            { value: 'orange', label: '🟠 橙色' },
-            { value: 'yellow', label: '🟡 黄色' },
-            { value: 'green', label: '🟢 绿色' },
-            { value: 'blue', label: '🔵 蓝色' },
-            { value: 'purple', label: '🟣 紫色' }
+        // 32个模板定义
+        const TEMPLATES = [
+            { id: 'tpl_cs_sz', name: '常识判断-时政', nodeId: 'node_cs_sz', fields: ['热点事件', '发生时间', '考点关键词',
+                    '规范表述', '可能的出题角度', '备注'
+                ] },
+            { id: 'tpl_cs_fl', name: '常识判断-法律', nodeId: 'node_cs_fl', fields: ['法律名称', '颁布/施行时间',
+                    '常考数字（年龄/期限等）', '易混淆点', '备注'
+                ] },
+            { id: 'tpl_cs_rw', name: '常识判断-人文历史', nodeId: 'node_cs_rw', fields: ['人物/事件', '朝代/年份',
+                    '核心贡献/意义', '常考诗句/名言', '易混淆人物', '备注'
+                ] },
+            { id: 'tpl_cs_kj', name: '常识判断-科技地理', nodeId: 'node_cs_kj', fields: ['科技成就/地理名词', '时间/地点',
+                    '科学原理', '常考数据', '与公考关联点', '备注'
+                ] },
+            { id: 'tpl_yy_lj', name: '言语理解-逻辑填空', nodeId: 'node_yy_lj', fields: ['成语/实词', '释字', '释义',
+                    '褒贬色彩', '常用搭配', '易混淆词', '题干对应提示词', '备注'
+                ] },
+            { id: 'tpl_yy_pd', name: '言语理解-片段阅读', nodeId: 'node_yy_pd', fields: ['文段主题', '主旨句',
+                    '行文脉络（总分/并列/转折等）', '正确答案特征', '常见干扰项', '备注'
+                ] },
+            { id: 'tpl_yy_px', name: '言语理解-语句排序', nodeId: 'node_yy_px', fields: ['首句特征', '尾句特征', '关联词提示',
+                    '时间/空间顺序', '验证逻辑', '备注'
+                ] },
+            { id: 'tpl_yy_tk', name: '言语理解-语句填空', nodeId: 'node_yy_tk', fields: ['上下文逻辑', '横线位置（首/中/尾）',
+                    '关键词提示', '正确选项特征', '备注'
+                ] },
+            { id: 'tpl_sl_gc', name: '数量关系-工程问题', nodeId: 'node_sl_gc', fields: ['题型识别', '核心公式', '赋值技巧',
+                    '方程列法', '常见陷阱', '备注'
+                ] },
+            { id: 'tpl_sl_xc', name: '数量关系-行程问题', nodeId: 'node_sl_xc', fields: ['题型识别（相遇/追及/流水）',
+                    '核心公式', '画图技巧', '比例法', '常见陷阱', '备注'
+                ] },
+            { id: 'tpl_sl_lr', name: '数量关系-利润问题', nodeId: 'node_sl_lr', fields: ['题型识别', '核心公式（售价/成本/利润）',
+                    '赋值技巧', '方程列法', '常见陷阱', '备注'
+                ] },
+            { id: 'tpl_sl_rc', name: '数量关系-容斥问题', nodeId: 'node_sl_rc', fields: ['题型识别（二集合/三集合）',
+                    '核心公式', '画图法', '公式法选择', '常见陷阱', '备注'
+                ] },
+            { id: 'tpl_sl_pl', name: '数量关系-排列组合', nodeId: 'node_sl_pl', fields: ['题型识别（排列/组合）',
+                    '分类/分步判断', '捆绑/插空/插板法', '常见陷阱', '备注'
+                ] },
+            { id: 'tpl_sl_jh', name: '数量关系-几何问题', nodeId: 'node_sl_jh', fields: ['图形识别',
+                    '核心公式（面积/体积/周长）', '常用模型', '估算法', '常见陷阱', '备注'
+                ] },
+            { id: 'tpl_sl_qt', name: '数量关系-其他高频', nodeId: 'node_sl_qt', fields: ['题型识别（浓度/年龄/钟表/牛吃草等）',
+                    '核心公式', '速解技巧', '常见陷阱', '备注'
+                ] },
+            { id: 'tpl_pd_tx', name: '判断推理-图形推理', nodeId: 'node_pd_tx', fields: ['图形特征',
+                    '考点方向（位置/样式/属性/数量/空间）', '秒杀技巧', '常见复合考点', '备注'
+                ] },
+            { id: 'tpl_pd_dy', name: '判断推理-定义判断', nodeId: 'node_pd_dy', fields: ['定义名称',
+                    '核心要件（主体/客体/目的/方式/结果）', '关键词提取', '干扰项特征', '备注'
+                ] },
+            { id: 'tpl_pd_lb', name: '判断推理-类比推理', nodeId: 'node_pd_lb', fields: ['题干关系（外延/内涵/语义/语法）',
+                    '二级辨析', '易混淆关系', '秒杀技巧', '备注'
+                ] },
+            { id: 'tpl_pd_lj', name: '判断推理-逻辑判断', nodeId: 'node_pd_lj', fields: ['题型识别（加强/削弱/前提/结论/分析）',
+                    '论证结构（论据→论点）', '干扰项特征', '秒杀技巧', '备注'
+                ] },
+            { id: 'tpl_zl_ss', name: '资料分析-速算技巧', nodeId: 'node_zl_ss', fields: ['公式名称', '公式', '适用条件',
+                    '截位技巧', '比较技巧', '常见陷阱', '备注'
+                ] },
+            { id: 'tpl_zl_tx', name: '资料分析-题型专项', nodeId: 'node_zl_tx', fields: [
+                    '题型识别（基期/现期/增长率/增长量/比重/平均数/倍数）', '公式选择', '速算策略', '常见陷阱', '备注'
+                ] },
+            { id: 'tpl_shen_dy_wt', name: '申论-单一题（问题/原因）', nodeId: 'node_shen_dy_wt', fields: ['题干要求',
+                    '材料定位', '关键词提取', '规范表述', '采分点预估', '漏点反思', '备注'
+                ] },
+            { id: 'tpl_shen_dy_yx', name: '申论-单一题（影响/对策）', nodeId: 'node_shen_dy_yx', fields: ['题干要求',
+                    '材料定位', '关键词提取', '规范表述', '采分点预估', '漏点反思', '备注'
+                ] },
+            { id: 'tpl_shen_zh_ci', name: '申论-综合题（词句理解）', nodeId: 'node_shen_zh_ci', fields: ['词语/句子',
+                    '字面含义', '深层含义（引申义）', '材料中对应表现', '规范表述', '采分点预估', '备注'
+                ] },
+            { id: 'tpl_shen_zh_gd', name: '申论-综合题（观点/现象分析）', nodeId: 'node_shen_zh_gd', fields: ['观点/现象',
+                    '表态（正确/错误/片面/辩证）', '理由分析', '对策/结论', '规范表述', '备注'
+                ] },
+            { id: 'tpl_shen_gw_fa', name: '申论-公文题（方案类）', nodeId: 'node_shen_gw_fa', fields: ['文种（方案/建议/指导意见）',
+                    '格式要素（标题/称谓/正文/落款）', '正文结构', '规范表述', '格式易漏点', '备注'
+                ] },
+            { id: 'tpl_shen_gw_xc', name: '申论-公文题（宣传类）', nodeId: 'node_shen_gw_xc', fields: ['文种（宣传稿/倡议书/公开信）',
+                    '格式要素', '正文结构（号召/鼓动）', '规范表述', '格式易漏点', '备注'
+                ] },
+            { id: 'tpl_shen_gw_zj', name: '申论-公文题（总结类）', nodeId: 'node_shen_gw_zj', fields: ['文种（报告/简报/汇报）',
+                    '格式要素', '正文结构（情况+成效+问题+建议）', '规范表述', '格式易漏点', '备注'
+                ] },
+            { id: 'tpl_shen_dzw', name: '申论-大作文', nodeId: 'node_shen_dzw', fields: ['主题', '总论点', '分论点（3个）',
+                    '开头金句', '结尾升华句', '可用论据素材', '备注'
+                ] },
+            { id: 'tpl_shen_sc_zc', name: '申论-素材积累（政策理论）', nodeId: 'node_shen_sc_zc', fields: ['政策名称',
+                    '核心表述', '适用主题', '权威出处', '记忆关键词', '备注'
+                ] },
+            { id: 'tpl_shen_sc_al', name: '申论-素材积累（案例人物）', nodeId: 'node_shen_sc_al', fields: ['案例/人物',
+                    '核心事迹', '适用主题', '一句话概括', '加分角度', '备注'
+                ] },
+            { id: 'tpl_shen_sc_sj', name: '申论-素材积累（数据）', nodeId: 'node_shen_sc_sj', fields: ['数据', '反映问题/趋势',
+                    '适用主题', '权威出处', '记忆技巧', '备注'
+                ] }
         ];
 
         // ========== 数据管理 ==========
@@ -1506,27 +1481,20 @@
             errors: [],
             words: [],
             recycleBin: [],
-            queue: [], // { id, type: 'note'|'error', dueDate, reviewCount, difficulty }
-            starred: [], // id列表
+            starred: [],
             settings: {
-                colorMeanings: {
-                    red: '重点必背',
-                    orange: '易错提醒',
-                    yellow: '待理解',
-                    green: '已掌握',
-                    blue: '拓展补充',
-                    purple: '其他'
-                },
                 examDate: null
             }
         };
 
-        let currentTab = 'notes';
+        let currentTab = 'review';
         let selectedNodeId = null;
         let batchMode = false;
         let batchSelected = new Set();
         let editingId = null;
         let editingType = null;
+        let dailyReviewItems = [];
+        let expandedCards = new Set();
 
         // ========== 工具函数 ==========
         function genId() {
@@ -1540,12 +1508,6 @@
 
         function getToday() {
             return new Date().toDateString();
-        }
-
-        function daysBetween(d1, d2) {
-            const t1 = new Date(d1).getTime();
-            const t2 = new Date(d2).getTime();
-            return Math.ceil((t2 - t1) / (1000 * 60 * 60 * 24));
         }
 
         function getNodeName(id) {
@@ -1567,10 +1529,6 @@
             return TEMPLATES.find(t => t.id === id);
         }
 
-        function getTemplateByNodeId(nodeId) {
-            return TEMPLATES.find(t => t.nodeId === nodeId);
-        }
-
         function getChildNodes(parentId) {
             return appData.nodes.filter(n => n.parentId === parentId).sort((a, b) => a.sortOrder - b.sortOrder);
         }
@@ -1582,6 +1540,25 @@
                 ids = ids.concat(getAllDescendantIds(child.id));
             }
             return ids;
+        }
+
+        function isNodeInRowOrShen(nodeId) {
+            const node = appData.nodes.find(n => n.id === nodeId);
+            if (!node) return 'other';
+            let current = node;
+            while (current) {
+                if (current.id === 'node_row') return 'row';
+                if (current.id === 'node_shen') return 'shen';
+                current = appData.nodes.find(n => n.id === current.parentId);
+            }
+            return 'other';
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         // ========== Toast ==========
@@ -1601,7 +1578,7 @@
         // ========== 数据持久化 ==========
         function saveData() {
             try {
-                localStorage.setItem('gkToolsData', JSON.stringify(appData));
+                localStorage.setItem('gkToolsDataV2', JSON.stringify(appData));
             } catch (e) {
                 console.error('保存数据失败:', e);
             }
@@ -1609,27 +1586,17 @@
 
         function loadData() {
             try {
-                const raw = localStorage.getItem('gkToolsData');
+                const raw = localStorage.getItem('gkToolsDataV2');
                 if (raw) {
                     const parsed = JSON.parse(raw);
-                    // 合并默认值
                     appData = {
                         nodes: parsed.nodes || [],
                         notes: parsed.notes || [],
                         errors: parsed.errors || [],
                         words: parsed.words || [],
                         recycleBin: parsed.recycleBin || [],
-                        queue: parsed.queue || [],
                         starred: parsed.starred || [],
                         settings: {
-                            colorMeanings: parsed.settings?.colorMeanings || {
-                                red: '重点必背',
-                                orange: '易错提醒',
-                                yellow: '待理解',
-                                green: '已掌握',
-                                blue: '拓展补充',
-                                purple: '其他'
-                            },
                             examDate: parsed.settings?.examDate || null
                         }
                     };
@@ -1647,20 +1614,205 @@
             appData.errors = [];
             appData.words = [];
             appData.recycleBin = [];
-            appData.queue = [];
             appData.starred = [];
-            appData.settings = {
-                colorMeanings: {
-                    red: '重点必背',
-                    orange: '易错提醒',
-                    yellow: '待理解',
-                    green: '已掌握',
-                    blue: '拓展补充',
-                    purple: '其他'
-                },
-                examDate: null
-            };
+            appData.settings = { examDate: null };
             saveData();
+        }
+
+        // ========== 艾宾浩斯复习逻辑 ==========
+
+        // 获取所有需要复习的项目（笔记、错题、规范词）
+        function getAllReviewItems() {
+            const items = [];
+
+            // 笔记
+            for (const note of appData.notes) {
+                items.push({
+                    id: note.id,
+                    type: 'note',
+                    data: note,
+                    dueDate: note.nextReviewDate || note.createdAt,
+                    reviewCount: note.reviewCount || 0,
+                    remembered: note.remembered || false,
+                    skipNext: note.skipNext || false,
+                    intervalIndex: note.intervalIndex || 0
+                });
+            }
+
+            // 错题
+            for (const error of appData.errors) {
+                items.push({
+                    id: error.id,
+                    type: 'error',
+                    data: error,
+                    dueDate: error.nextReviewDate || error.createdAt,
+                    reviewCount: error.reviewCount || 0,
+                    remembered: error.remembered || false,
+                    skipNext: error.skipNext || false,
+                    intervalIndex: error.intervalIndex || 0
+                });
+            }
+
+            // 规范词
+            for (const word of appData.words) {
+                items.push({
+                    id: word.id,
+                    type: 'word',
+                    data: word,
+                    dueDate: word.nextReviewDate || word.createdAt,
+                    reviewCount: word.reviewCount || 0,
+                    remembered: word.remembered || false,
+                    skipNext: word.skipNext || false,
+                    intervalIndex: word.intervalIndex || 0
+                });
+            }
+
+            return items;
+        }
+
+        // 获取今日待复习的项目
+        function getTodayReviewItems() {
+            const now = new Date();
+            now.setHours(0, 0, 0, 0);
+            const all = getAllReviewItems();
+            const due = all.filter(item => {
+                const dueDate = new Date(item.dueDate);
+                dueDate.setHours(0, 0, 0, 0);
+                return dueDate <= now && !item.remembered;
+            });
+            // 按紧急度排序
+            return due.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+        }
+
+        // 获取今日复习数量（用于统计）
+        function getTodayReviewCount() {
+            return getTodayReviewItems().length;
+        }
+
+        // 标记为"记住"——跳过下一次复习周期
+        function markRemembered(id, type) {
+            let item = null;
+            if (type === 'note') item = appData.notes.find(n => n.id === id);
+            else if (type === 'error') item = appData.errors.find(e => e.id === id);
+            else if (type === 'word') item = appData.words.find(w => w.id === id);
+            if (!item) return;
+
+            item.remembered = true;
+            item.reviewCount = (item.reviewCount || 0) + 1;
+            item.skipNext = true; // 跳过下一次
+
+            // 计算下一次复习：跳过当前间隔，进入下下个周期
+            const intervals = [1, 3, 7, 15, 30];
+            const currentIdx = item.intervalIndex || 0;
+            // 跳过下一个，即 +2
+            const nextIdx = Math.min(currentIdx + 2, intervals.length - 1);
+            item.intervalIndex = nextIdx;
+            const days = intervals[nextIdx];
+            const nextDate = new Date();
+            nextDate.setDate(nextDate.getDate() + days);
+            item.nextReviewDate = nextDate.toISOString();
+
+            saveData();
+            showToast('✅ 已记住！跳过下一次复习，' + days + '天后再次复习');
+            renderAll();
+        }
+
+        // 标记为"未记住"——第二天重复
+        function markNotRemembered(id, type) {
+            let item = null;
+            if (type === 'note') item = appData.notes.find(n => n.id === id);
+            else if (type === 'error') item = appData.errors.find(e => e.id === id);
+            else if (type === 'word') item = appData.words.find(w => w.id === id);
+            if (!item) return;
+
+            item.remembered = false;
+            item.skipNext = false;
+            item.reviewCount = 0;
+            item.intervalIndex = 0;
+
+            // 第二天重复
+            const nextDate = new Date();
+            nextDate.setDate(nextDate.getDate() + 1);
+            item.nextReviewDate = nextDate.toISOString();
+
+            saveData();
+            showToast('⏳ 已标记未记住，明天继续复习');
+            renderAll();
+        }
+
+        // 初始化新项目的复习队列
+        function initReviewItem(item) {
+            item.reviewCount = 0;
+            item.remembered = false;
+            item.skipNext = false;
+            item.intervalIndex = 0;
+            const nextDate = new Date();
+            nextDate.setDate(nextDate.getDate() + 1); // 默认1天后首次复习
+            item.nextReviewDate = nextDate.toISOString();
+            return item;
+        }
+
+        // ========== 生成今日复习 ==========
+        function generateDailyReview() {
+            const all = getAllReviewItems();
+            const now = new Date();
+            now.setHours(0, 0, 0, 0);
+
+            // 筛选今日到期的
+            const due = all.filter(item => {
+                const dueDate = new Date(item.dueDate);
+                dueDate.setHours(0, 0, 0, 0);
+                return dueDate <= now && !item.remembered;
+            });
+
+            if (due.length === 0) {
+                showToast('🎉 今日没有待复习的内容！', 'success');
+                return;
+            }
+
+            // 按行测/申论各50%分配
+            const rowItems = [];
+            const shenItems = [];
+            const otherItems = [];
+
+            for (const item of due) {
+                const nodeId = item.data.nodeId;
+                const category = isNodeInRowOrShen(nodeId);
+                if (category === 'row') rowItems.push(item);
+                else if (category === 'shen') shenItems.push(item);
+                else otherItems.push(item);
+            }
+
+            // 打乱顺序
+            function shuffle(arr) {
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            }
+
+            shuffle(rowItems);
+            shuffle(shenItems);
+            shuffle(otherItems);
+
+            // 各取50%，但至少各取1个（如果有）
+            const rowTake = Math.min(rowItems.length, Math.max(1, Math.ceil(due.length * 0.5)));
+            const shenTake = Math.min(shenItems.length, Math.max(1, Math.ceil(due.length * 0.5)));
+            const otherTake = due.length - rowTake - shenTake;
+
+            const selected = [
+                ...rowItems.slice(0, rowTake),
+                ...shenItems.slice(0, shenTake),
+                ...otherItems.slice(0, otherTake)
+            ];
+
+            // 再次打乱
+            shuffle(selected);
+
+            dailyReviewItems = selected;
+            showToast(`📋 已生成 ${selected.length} 道今日复习题（行测${Math.min(rowTake,rowItems.length)} 申论${Math.min(shenTake,shenItems.length)}）`);
+            renderCurrentView();
         }
 
         // ========== 初始化 ==========
@@ -1668,13 +1820,16 @@
             if (!loadData()) {
                 initDefaultData();
             }
-            // 确保根节点存在
             if (appData.nodes.length === 0) {
                 initDefaultData();
             }
             selectedNodeId = appData.nodes.find(n => n.parentId === null)?.id || appData.nodes[0]?.id || null;
+            // 自动生成今日复习
+            if (getTodayReviewCount() > 0) {
+                generateDailyReview();
+            }
             renderAll();
-            // 搜索事件
+
             document.getElementById('globalSearch').addEventListener('input', function() {
                 if (this.value.trim()) {
                     performSearch(this.value.trim());
@@ -1682,41 +1837,32 @@
                     renderCurrentView();
                 }
             });
-            // 标签页切换
+
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.addEventListener('click', function() {
                     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                     this.classList.add('active');
                     currentTab = this.dataset.tab;
-                    // 显示/隐藏错因筛选
                     const reasonFilter = document.getElementById('filterErrorReason');
                     reasonFilter.style.display = (currentTab === 'errors') ? 'inline-block' : 'none';
                     batchMode = false;
                     batchSelected.clear();
-                    document.getElementById('btnBatchMode').textContent = '☑️ 批量操作';
+                    document.getElementById('btnBatchMode').textContent = '☑️ 批量';
                     document.getElementById('batchActions').style.display = 'none';
                     renderCurrentView();
                 });
             });
-            // 统计点击跳转
+
             document.querySelectorAll('.stat-item').forEach(item => {
                 item.addEventListener('click', function() {
                     const filter = this.dataset.filter;
-                    if (filter === 'notes') switchTab('notes');
+                    if (filter === 'review') { currentTab = 'review';
+                        switchTab('review'); } else if (filter === 'notes') switchTab('notes');
                     else if (filter === 'errors') switchTab('errors');
                     else if (filter === 'words') switchTab('words');
-                    else if (filter === 'queue') switchTab('queue');
-                    else if (filter === 'unmastered') {
-                        switchTab('errors');
-                        // 稍后过滤未掌握
-                        setTimeout(() => {
-                            document.getElementById('filterErrorReason').value = '';
-                            renderCurrentView();
-                        }, 50);
-                    }
                 });
             });
-            // 快捷键
+
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
                     if (!document.getElementById('modalOverlay').classList.contains('hidden')) {
@@ -1728,6 +1874,7 @@
                     if (selectedNodeId) handleNew();
                 }
             });
+
             renderAll();
         }
 
@@ -1746,12 +1893,12 @@
             renderTree();
             updateStats();
             renderCurrentView();
+            updateReviewProgress();
         }
 
         function renderTree() {
             const container = document.getElementById('treeContainer');
             container.innerHTML = buildTreeHTML(null, 0);
-            // 展开根节点
             document.querySelectorAll('.tree-node').forEach(el => {
                 const id = el.dataset.nodeId;
                 if (id) {
@@ -1762,7 +1909,6 @@
                     }
                 }
             });
-            // 高亮选中的节点
             if (selectedNodeId) {
                 document.querySelectorAll('.node-label').forEach(el => {
                     el.classList.toggle('active', el.dataset.nodeId === selectedNodeId);
@@ -1777,7 +1923,8 @@
             for (const child of children) {
                 const noteCount = appData.notes.filter(n => n.nodeId === child.id).length;
                 const errorCount = appData.errors.filter(e => e.nodeId === child.id).length;
-                const total = noteCount + errorCount;
+                const wordCount = appData.words.filter(w => w.nodeId === child.id).length;
+                const total = noteCount + errorCount + wordCount;
                 const hasChildren = getChildNodes(child.id).length > 0;
                 html += `<div class="tree-node" data-node-id="${child.id}">`;
                 html += `<div class="node-label" data-node-id="${child.id}" onclick="selectNode('${child.id}')">`;
@@ -1844,183 +1991,168 @@
             const notes = appData.notes.length;
             const errors = appData.errors.length;
             const words = appData.words.length;
-            const unmastered = appData.errors.filter(e => !e.mastered).length;
-            const queueCount = appData.queue.filter(q => {
-                const due = new Date(q.dueDate);
-                return due <= new Date();
-            }).length;
+            const reviewCount = getTodayReviewCount();
 
             document.getElementById('statNotes').textContent = notes;
             document.getElementById('statErrors').textContent = errors;
             document.getElementById('statWords').textContent = words;
-            document.getElementById('statQueue').textContent = queueCount;
-            document.getElementById('statUnmastered').textContent = unmastered;
+            document.getElementById('statReview').textContent = reviewCount;
 
             document.getElementById('badgeNotes').textContent = notes;
             document.getElementById('badgeErrors').textContent = errors;
             document.getElementById('badgeWords').textContent = words;
             document.getElementById('badgeStarred').textContent = appData.starred.length;
-            document.getElementById('badgeQueue').textContent = queueCount;
+            document.getElementById('badgeReview').textContent = reviewCount;
+        }
+
+        function updateReviewProgress() {
+            const all = getAllReviewItems();
+            const total = all.filter(item => !item.remembered).length;
+            const done = all.filter(item => item.remembered).length;
+            const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+            document.getElementById('reviewCount').textContent = `${done}/${total}`;
+            document.getElementById('reviewProgressFill').style.width = Math.min(pct, 100) + '%';
         }
 
         // ========== 渲染当前视图 ==========
         function renderCurrentView() {
             const container = document.getElementById('contentList');
             const sort = document.getElementById('sortSelect').value;
-            const colorFilter = document.getElementById('filterColor').value;
             const reasonFilter = document.getElementById('filterErrorReason').value;
 
-            let items = [];
-            let title = '';
-
-            if (currentTab === 'notes') {
-                title = '📝 笔记';
-                items = getNotesForCurrentNode(sort, colorFilter);
-                renderNotes(container, items);
+            if (currentTab === 'review') {
+                renderReviewView(container);
+            } else if (currentTab === 'notes') {
+                renderNotesView(container, sort);
             } else if (currentTab === 'errors') {
-                title = '❌ 错题';
-                items = getErrorsForCurrentNode(sort, colorFilter, reasonFilter);
-                renderErrors(container, items);
+                renderErrorsView(container, sort, reasonFilter);
             } else if (currentTab === 'words') {
-                title = '📖 规范词';
-                items = getWordsForCurrentNode(sort);
-                renderWords(container, items);
+                renderWordsView(container, sort);
             } else if (currentTab === 'starred') {
-                title = '⭐ 星标';
-                items = getStarredItems(sort);
-                renderStarred(container, items);
-            } else if (currentTab === 'queue') {
-                title = '🔄 待复习';
-                items = getQueueItems(sort);
-                renderQueue(container, items);
+                renderStarredView(container, sort);
             }
-
             updateStats();
         }
 
-        // ========== 获取数据 ==========
-        function getNotesForCurrentNode(sort, colorFilter) {
+        // ========== 复习视图 ==========
+        function renderReviewView(container) {
+            if (dailyReviewItems.length === 0) {
+                // 如果没有生成复习，自动生成
+                generateDailyReview();
+                if (dailyReviewItems.length === 0) {
+                    container.innerHTML =
+                        `<div class="empty-state"><div class="icon">🎉</div><p>今日没有待复习的内容！<br>点击「生成今日复习」或新建内容开始学习</p></div>`;
+                    return;
+                }
+            }
+
+            let html = `<div style="margin-bottom:8px;font-size:13px;color:var(--gray-500);">📋 今日复习 · 共 ${dailyReviewItems.length} 项</div>`;
+
+            for (const item of dailyReviewItems) {
+                const isOverdue = new Date(item.dueDate) < new Date();
+                const typeIcon = item.type === 'note' ? '📝' : item.type === 'error' ? '❌' : '📖';
+                const title = item.data.title || item.data.to || '无标题';
+                const nodePath = getNodePath(item.data.nodeId);
+                const isExpanded = expandedCards.has(item.id);
+
+                html += `
+                    <div class="card review-card ${isOverdue ? 'overdue' : ''}" data-id="${item.id}" data-type="${item.type}">
+                        <div class="card-header" onclick="toggleCardExpand('${item.id}')">
+                            <span class="expand-icon ${isExpanded ? 'expanded' : ''}">▶</span>
+                            <span class="card-title">${typeIcon} ${escapeHtml(title)}</span>
+                            <div class="card-badges">
+                                ${isOverdue ? '<span class="badge-item overdue">⚠️ 逾期</span>' : '<span class="badge-item due">📅 今日</span>'}
+                                <span class="badge-item">${nodePath}</span>
+                            </div>
+                            <div class="card-actions">
+                                <button onclick="event.stopPropagation();toggleStar('${item.id}','${item.type}')" title="星标">${appData.starred.includes(item.id) ? '⭐' : '☆'}</button>
+                                <button onclick="event.stopPropagation();togglePin('${item.id}','${item.type}')" title="置顶">${item.data.isPinned ? '📌' : '📍'}</button>
+                            </div>
+                        </div>
+                        <div class="card-body ${isExpanded ? 'expanded' : ''}" id="body_${item.id}">
+                            ${renderCardBody(item)}
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn-sm remember" onclick="markRemembered('${item.id}','${item.type}')">✅ 记住了（跳过下次）</button>
+                            <button class="btn-sm forget" onclick="markNotRemembered('${item.id}','${item.type}')">❌ 没记住（明天再来）</button>
+                            <span class="meta">复习 ${item.reviewCount || 0} 次</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function renderCardBody(item) {
+            if (item.type === 'note') {
+                try {
+                    const data = JSON.parse(item.data.content || '{}');
+                    let html = '';
+                    const fields = Object.keys(data);
+                    const firstField = fields[0];
+                    if (firstField) {
+                        html += `<div><span class="field-label">${firstField}：</span>${escapeHtml(data[firstField] || '')}</div>`;
+                    }
+                    // 显示更多字段（但折叠时只显示第一个）
+                    for (let i = 1; i < Math.min(fields.length, 3); i++) {
+                        const f = fields[i];
+                        if (f !== '备注') {
+                            html += `<div><span class="field-label">${f}：</span>${escapeHtml(data[f] || '')}</div>`;
+                        }
+                    }
+                    if (data['备注'] && data['备注'].trim()) {
+                        html += `<div style="margin-top:4px;color:var(--gray-500);font-size:12px;">📌 ${escapeHtml(data['备注'])}</div>`;
+                    }
+                    return html;
+                } catch (e) {
+                    return `<div>${escapeHtml(item.data.content || '')}</div>`;
+                }
+            } else if (item.type === 'error') {
+                return `
+                    <div><span class="field-label">题干：</span>${escapeHtml(item.data.question || '')}</div>
+                    <div><span class="error-reason">❌ ${escapeHtml(item.data.reason || '未分类')}</span></div>
+                    <div class="error-solution"><span class="field-label">✅ 正确思路：</span>${escapeHtml(item.data.solution || '')}</div>
+                `;
+            } else if (item.type === 'word') {
+                return `
+                    <div class="word-pair">
+                        <span class="from">${escapeHtml(item.data.from || '')}</span>
+                        <span class="arrow">→</span>
+                        <span class="to">${escapeHtml(item.data.to || '')}</span>
+                        <span style="font-size:12px;color:var(--gray-400);margin-left:8px;">#${escapeHtml(item.data.theme || '未分类')}</span>
+                    </div>
+                    ${item.data.note ? `<div style="margin-top:6px;font-size:12px;color:var(--gray-500);">${escapeHtml(item.data.note)}</div>` : ''}
+                `;
+            }
+            return '';
+        }
+
+        // ========== 卡片折叠展开 ==========
+        function toggleCardExpand(id) {
+            if (expandedCards.has(id)) {
+                expandedCards.delete(id);
+            } else {
+                expandedCards.add(id);
+            }
+            renderCurrentView();
+        }
+
+        // ========== 笔记视图 ==========
+        function renderNotesView(container, sort) {
             let nodeIds = [selectedNodeId];
             if (selectedNodeId) {
                 nodeIds = getAllDescendantIds(selectedNodeId);
             }
             let items = appData.notes.filter(n => nodeIds.includes(n.nodeId));
-            if (colorFilter) {
-                items = items.filter(n => n.color === colorFilter);
-            }
-            return sortItems(items, sort, 'note');
-        }
+            items = sortItems(items, sort, 'note');
 
-        function getErrorsForCurrentNode(sort, colorFilter, reasonFilter) {
-            let nodeIds = [selectedNodeId];
-            if (selectedNodeId) {
-                nodeIds = getAllDescendantIds(selectedNodeId);
-            }
-            let items = appData.errors.filter(e => nodeIds.includes(e.nodeId));
-            if (colorFilter) {
-                items = items.filter(e => e.color === colorFilter);
-            }
-            if (reasonFilter) {
-                items = items.filter(e => e.reason === reasonFilter);
-            }
-            return sortItems(items, sort, 'error');
-        }
-
-        function getWordsForCurrentNode(sort) {
-            // 规范词按主题筛选，不按节点
-            let items = appData.words;
-            if (selectedNodeId) {
-                // 如果选中申论相关节点，可以按主题筛选
-                const node = appData.nodes.find(n => n.id === selectedNodeId);
-                if (node) {
-                    const themeMap = {
-                        'node_shen': null,
-                        'node_shen_sc': null,
-                        'node_shen_sc_zc': '政策理论',
-                        'node_shen_sc_al': '案例人物',
-                        'node_shen_sc_sj': '数据',
-                        'node_shen_dzw': null,
-                        'node_shen_gw': null,
-                        'node_shen_zh': null,
-                        'node_shen_dy': null,
-                    };
-                    // 简单映射：如果节点名包含主题关键词
-                    for (const item of items) {
-                        // 不做强制过滤，显示全部
-                    }
-                }
-            }
-            return sortItems(items, sort, 'word');
-        }
-
-        function getStarredItems(sort) {
-            const starredIds = appData.starred;
-            const notes = appData.notes.filter(n => starredIds.includes(n.id)).map(n => ({ ...n, _type: 'note' }));
-            const errors = appData.errors.filter(e => starredIds.includes(e.id)).map(e => ({ ...e, _type: 'error' }));
-            const words = appData.words.filter(w => starredIds.includes(w.id)).map(w => ({ ...w, _type: 'word' }));
-            let all = [...notes, ...errors, ...words];
-            return sortItems(all, sort, 'starred');
-        }
-
-        function getQueueItems(sort) {
-            const now = new Date();
-            const dueItems = appData.queue.filter(q => new Date(q.dueDate) <= now);
-            // 获取对应的笔记或错题
-            const result = [];
-            for (const q of dueItems) {
-                if (q.type === 'note') {
-                    const note = appData.notes.find(n => n.id === q.id);
-                    if (note) result.push({ ...note, _type: 'note', _queue: q });
-                } else if (q.type === 'error') {
-                    const error = appData.errors.find(e => e.id === q.id);
-                    if (error) result.push({ ...error, _type: 'error', _queue: q });
-                }
-            }
-            // 按紧急度排序（dueDate越近越靠前）
-            return result.sort((a, b) => new Date(a._queue.dueDate) - new Date(b._queue.dueDate));
-        }
-
-        // ========== 排序 ==========
-        function sortItems(items, sort, type) {
-            const pinned = items.filter(i => i.isPinned);
-            const unpinned = items.filter(i => !i.isPinned);
-
-            let sortedUnpinned = [...unpinned];
-            if (sort === 'updated') {
-                sortedUnpinned.sort((a, b) => (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt));
-            } else if (sort === 'created') {
-                sortedUnpinned.sort((a, b) => a.createdAt - b.createdAt);
-            } else if (sort === 'title') {
-                sortedUnpinned.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
-            } else if (sort === 'queue') {
-                // 按遗忘曲线紧急度：在队列中的排前面
-                sortedUnpinned.sort((a, b) => {
-                    const qa = appData.queue.find(q => q.id === a.id && q.type === (a._type || type));
-                    const qb = appData.queue.find(q => q.id === b.id && q.type === (b._type || type));
-                    if (qa && qb) return new Date(qa.dueDate) - new Date(qb.dueDate);
-                    if (qa) return -1;
-                    if (qb) return 1;
-                    return (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt);
-                });
-            } else {
-                // 默认按更新时间
-                sortedUnpinned.sort((a, b) => (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt));
-            }
-
-            // 置顶的始终在最前
-            const pinnedSorted = [...pinned];
-            if (sort === 'title') {
-                pinnedSorted.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
-            }
-            return [...pinnedSorted, ...sortedUnpinned];
-        }
-
-        // ========== 渲染卡片 ==========
-        function renderNotes(container, items) {
             if (items.length === 0) {
-                container.innerHTML = `<div class="empty-state"><div class="icon">📝</div><p>暂无笔记，点击右上角「新建」添加</p></div>`;
+                container.innerHTML =
+                    `<div class="empty-state"><div class="icon">📝</div><p>暂无笔记，点击右上角「新建」添加</p></div>`;
                 return;
             }
+
             let html = '';
             for (const item of items) {
                 html += renderNoteCard(item);
@@ -2030,65 +2162,85 @@
 
         function renderNoteCard(item) {
             const isStarred = appData.starred.includes(item.id);
-            const isInQueue = appData.queue.some(q => q.id === item.id && q.type === 'note');
-            const colorBar = item.color ? `<div class="color-bar" style="background:var(--color-${item.color})"></div>` :
-                `<div class="color-bar" style="background:transparent"></div>`;
-            const pinnedIcon = item.isPinned ? '📌 ' : '';
-            const template = getTemplateById(item.templateId);
-            const fields = template ? template.fields : [];
+            const isExpanded = expandedCards.has(item.id);
+            const isInReview = getAllReviewItems().some(r => r.id === item.id && !r.remembered);
+            const dueDate = item.nextReviewDate;
 
-            // 解析内容
-            let contentHtml = '';
+            let contentPreview = '';
             try {
                 const data = JSON.parse(item.content || '{}');
-                for (const field of fields) {
-                    if (field === '备注') continue;
-                    const val = data[field];
-                    if (val && val.trim()) {
-                        contentHtml +=
-                            `<div><span class="field-label">${field}：</span>${escapeHtml(val)}</div>`;
-                    }
-                }
-                // 备注单独显示
-                if (data['备注'] && data['备注'].trim()) {
-                    contentHtml += `<div style="margin-top:4px;color:var(--gray-500);font-size:12px;">📌 ${escapeHtml(data['备注'])}</div>`;
+                const firstKey = Object.keys(data)[0];
+                if (firstKey) {
+                    contentPreview = escapeHtml(data[firstKey] || '').substring(0, 60);
                 }
             } catch (e) {
-                contentHtml = `<div>${escapeHtml(item.content || '')}</div>`;
+                contentPreview = escapeHtml(item.content || '').substring(0, 60);
+            }
+
+            let bodyHtml = '';
+            try {
+                const data = JSON.parse(item.content || '{}');
+                for (const [key, val] of Object.entries(data)) {
+                    if (val && val.trim()) {
+                        bodyHtml += `<div><span class="field-label">${key}：</span>${escapeHtml(val)}</div>`;
+                    }
+                }
+            } catch (e) {
+                bodyHtml = `<div>${escapeHtml(item.content || '')}</div>`;
             }
 
             const tagsHtml = (item.tags || []).map(t => `<span class="tag">#${escapeHtml(t)}</span>`).join('');
 
             return `
                 <div class="card" data-id="${item.id}" data-type="note">
-                    <div class="card-header">
-                        ${colorBar}
-                        <div class="card-title">${pinnedIcon}${escapeHtml(item.title || '无标题')}</div>
+                    <div class="card-header" onclick="toggleCardExpand('${item.id}')">
+                        <span class="expand-icon ${isExpanded ? 'expanded' : ''}">▶</span>
+                        <span class="card-title">${item.isPinned ? '📌 ' : ''}${escapeHtml(item.title || '无标题')}</span>
+                        <div class="card-badges">
+                            ${isInReview ? '<span class="badge-item due">🔄 复习中</span>' : ''}
+                            ${item.remembered ? '<span class="badge-item" style="background:#dcfce7;color:#16a34a;">✅ 已记住</span>' : ''}
+                        </div>
                         <div class="card-actions">
-                            <button onclick="toggleStar('${item.id}','note')" title="星标">${isStarred ? '⭐' : '☆'}</button>
-                            <button onclick="togglePin('${item.id}','note')" title="置顶">${item.isPinned ? '📌' : '📍'}</button>
-                            <button onclick="editItem('${item.id}','note')" title="编辑">✏️</button>
-                            <button onclick="deleteItem('${item.id}','note')" title="删除">🗑️</button>
+                            <button onclick="event.stopPropagation();toggleStar('${item.id}','note')" title="星标">${isStarred ? '⭐' : '☆'}</button>
+                            <button onclick="event.stopPropagation();togglePin('${item.id}','note')" title="置顶">${item.isPinned ? '📌' : '📍'}</button>
+                            <button onclick="event.stopPropagation();editItem('${item.id}','note')" title="编辑">✏️</button>
+                            <button onclick="event.stopPropagation();deleteItem('${item.id}','note')" title="删除">🗑️</button>
                         </div>
                     </div>
-                    <div class="card-body">${contentHtml}</div>
+                    <div class="card-body ${isExpanded ? 'expanded' : ''}" id="body_${item.id}">
+                        ${bodyHtml || '<div style="color:var(--gray-400);">暂无内容</div>'}
+                    </div>
                     <div class="card-footer">
                         <div class="tags">${tagsHtml}</div>
-                        ${isInQueue ? '<span style="color:var(--warning);font-size:12px;">🔄 队列中</span>' : ''}
-                        <button class="btn-sm" onclick="addToQueue('${item.id}','note')">加入队列</button>
-                        <button class="btn-sm" onclick="viewHistory('${item.id}','note')">🕐 历史</button>
+                        ${!item.remembered ? `
+                            <button class="btn-sm remember" onclick="markRemembered('${item.id}','note')">✅ 记住</button>
+                            <button class="btn-sm forget" onclick="markNotRemembered('${item.id}','note')">❌ 未记住</button>
+                        ` : `<span class="status-remembered">✅ 已记住</span>`}
+                        ${dueDate ? `<span style="font-size:11px;color:var(--gray-400);">下次复习：${new Date(dueDate).toLocaleDateString('zh-CN')}</span>` : ''}
                         <span class="meta">${formatDate(item.updatedAt || item.createdAt)} · ${getNodePath(item.nodeId)}</span>
                     </div>
                 </div>
             `;
         }
 
-        function renderErrors(container, items) {
+        // ========== 错题视图 ==========
+        function renderErrorsView(container, sort, reasonFilter) {
+            let nodeIds = [selectedNodeId];
+            if (selectedNodeId) {
+                nodeIds = getAllDescendantIds(selectedNodeId);
+            }
+            let items = appData.errors.filter(e => nodeIds.includes(e.nodeId));
+            if (reasonFilter) {
+                items = items.filter(e => e.reason === reasonFilter);
+            }
+            items = sortItems(items, sort, 'error');
+
             if (items.length === 0) {
                 container.innerHTML =
                     `<div class="empty-state"><div class="icon">❌</div><p>暂无错题，点击右上角「新建」添加</p></div>`;
                 return;
             }
+
             let html = '';
             for (const item of items) {
                 html += renderErrorCard(item);
@@ -2098,47 +2250,57 @@
 
         function renderErrorCard(item) {
             const isStarred = appData.starred.includes(item.id);
-            const isInQueue = appData.queue.some(q => q.id === item.id && q.type === 'error');
-            const colorBar = item.color ? `<div class="color-bar" style="background:var(--color-${item.color})"></div>` :
-                `<div class="color-bar" style="background:transparent"></div>`;
-            const pinnedIcon = item.isPinned ? '📌 ' : '';
-            const masteredLabel = item.mastered ? ' ✅ 已掌握' : ' ⚠️ 未掌握';
+            const isExpanded = expandedCards.has(item.id);
+            const isInReview = getAllReviewItems().some(r => r.id === item.id && !r.remembered);
+            const dueDate = item.nextReviewDate;
 
             return `
                 <div class="card error-card" data-id="${item.id}" data-type="error">
-                    <div class="card-header">
-                        ${colorBar}
-                        <div class="card-title">${pinnedIcon}${escapeHtml(item.title || '错题')}${masteredLabel}</div>
+                    <div class="card-header" onclick="toggleCardExpand('${item.id}')">
+                        <span class="expand-icon ${isExpanded ? 'expanded' : ''}">▶</span>
+                        <span class="card-title">${item.isPinned ? '📌 ' : ''}${escapeHtml(item.title || '错题')}</span>
+                        <div class="card-badges">
+                            ${isInReview ? '<span class="badge-item due">🔄 复习中</span>' : ''}
+                            ${item.remembered ? '<span class="badge-item" style="background:#dcfce7;color:#16a34a;">✅ 已记住</span>' : ''}
+                            ${item.mastered ? '<span class="badge-item" style="background:#dcfce7;color:#16a34a;">🎯 已掌握</span>' : ''}
+                        </div>
                         <div class="card-actions">
-                            <button onclick="toggleStar('${item.id}','error')" title="星标">${isStarred ? '⭐' : '☆'}</button>
-                            <button onclick="togglePin('${item.id}','error')" title="置顶">${item.isPinned ? '📌' : '📍'}</button>
-                            <button onclick="editItem('${item.id}','error')" title="编辑">✏️</button>
-                            <button onclick="deleteItem('${item.id}','error')" title="删除">🗑️</button>
+                            <button onclick="event.stopPropagation();toggleStar('${item.id}','error')" title="星标">${isStarred ? '⭐' : '☆'}</button>
+                            <button onclick="event.stopPropagation();togglePin('${item.id}','error')" title="置顶">${item.isPinned ? '📌' : '📍'}</button>
+                            <button onclick="event.stopPropagation();editItem('${item.id}','error')" title="编辑">✏️</button>
+                            <button onclick="event.stopPropagation();deleteItem('${item.id}','error')" title="删除">🗑️</button>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body ${isExpanded ? 'expanded' : ''}" id="body_${item.id}">
                         <div><span class="field-label">题干：</span>${escapeHtml(item.question || '')}</div>
                         <div><span class="error-reason">❌ ${escapeHtml(item.reason || '未分类')}</span></div>
                         <div class="error-solution"><span class="field-label">✅ 正确思路：</span>${escapeHtml(item.solution || '')}</div>
                         ${item.reviewCount !== undefined ? `<div style="font-size:12px;color:var(--gray-400);margin-top:4px;">已复习 ${item.reviewCount || 0} 次</div>` : ''}
                     </div>
                     <div class="card-footer">
-                        ${isInQueue ? '<span style="color:var(--warning);font-size:12px;">🔄 队列中</span>' : ''}
-                        <button class="btn-sm" onclick="addToQueue('${item.id}','error')">加入队列</button>
-                        <button class="btn-sm" onclick="viewHistory('${item.id}','error')">🕐 历史</button>
-                        ${item.mastered ? `<button class="btn-sm" onclick="unmasterError('${item.id}')">↩️ 重新考核</button>` : `<button class="btn-sm" onclick="markMastered('${item.id}')">✅ 标记已掌握</button>`}
+                        ${!item.remembered ? `
+                            <button class="btn-sm remember" onclick="markRemembered('${item.id}','error')">✅ 记住</button>
+                            <button class="btn-sm forget" onclick="markNotRemembered('${item.id}','error')">❌ 未记住</button>
+                        ` : `<span class="status-remembered">✅ 已记住</span>`}
+                        ${!item.mastered ? `<button class="btn-sm" onclick="markMastered('${item.id}')">🎯 标记掌握</button>` : `<button class="btn-sm" onclick="unmasterError('${item.id}')">↩️ 重新考核</button>`}
+                        ${dueDate ? `<span style="font-size:11px;color:var(--gray-400);">下次复习：${new Date(dueDate).toLocaleDateString('zh-CN')}</span>` : ''}
                         <span class="meta">${formatDate(item.updatedAt || item.createdAt)} · ${getNodePath(item.nodeId)}</span>
                     </div>
                 </div>
             `;
         }
 
-        function renderWords(container, items) {
+        // ========== 规范词视图 ==========
+        function renderWordsView(container, sort) {
+            let items = appData.words;
+            items = sortItems(items, sort, 'word');
+
             if (items.length === 0) {
                 container.innerHTML =
                     `<div class="empty-state"><div class="icon">📖</div><p>暂无规范词，点击右上角「新建」添加</p></div>`;
                 return;
             }
+
             let html = '';
             for (const item of items) {
                 html += renderWordCard(item);
@@ -2148,18 +2310,26 @@
 
         function renderWordCard(item) {
             const isStarred = appData.starred.includes(item.id);
+            const isExpanded = expandedCards.has(item.id);
+            const isInReview = getAllReviewItems().some(r => r.id === item.id && !r.remembered);
+            const dueDate = item.nextReviewDate;
+
             return `
                 <div class="card word-card" data-id="${item.id}" data-type="word">
-                    <div class="card-header">
-                        <div class="color-bar" style="background:var(--primary)"></div>
-                        <div class="card-title">📖 ${escapeHtml(item.title || '规范词')}</div>
+                    <div class="card-header" onclick="toggleCardExpand('${item.id}')">
+                        <span class="expand-icon ${isExpanded ? 'expanded' : ''}">▶</span>
+                        <span class="card-title">📖 ${escapeHtml(item.to || '规范词')}</span>
+                        <div class="card-badges">
+                            ${isInReview ? '<span class="badge-item due">🔄 复习中</span>' : ''}
+                            ${item.remembered ? '<span class="badge-item" style="background:#dcfce7;color:#16a34a;">✅ 已记住</span>' : ''}
+                        </div>
                         <div class="card-actions">
-                            <button onclick="toggleStar('${item.id}','word')" title="星标">${isStarred ? '⭐' : '☆'}</button>
-                            <button onclick="editItem('${item.id}','word')" title="编辑">✏️</button>
-                            <button onclick="deleteItem('${item.id}','word')" title="删除">🗑️</button>
+                            <button onclick="event.stopPropagation();toggleStar('${item.id}','word')" title="星标">${isStarred ? '⭐' : '☆'}</button>
+                            <button onclick="event.stopPropagation();editItem('${item.id}','word')" title="编辑">✏️</button>
+                            <button onclick="event.stopPropagation();deleteItem('${item.id}','word')" title="删除">🗑️</button>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body ${isExpanded ? 'expanded' : ''}" id="body_${item.id}">
                         <div class="word-pair">
                             <span class="from">${escapeHtml(item.from || '')}</span>
                             <span class="arrow">→</span>
@@ -2169,87 +2339,69 @@
                         ${item.note ? `<div style="margin-top:6px;font-size:12px;color:var(--gray-500);">${escapeHtml(item.note)}</div>` : ''}
                     </div>
                     <div class="card-footer">
+                        ${!item.remembered ? `
+                            <button class="btn-sm remember" onclick="markRemembered('${item.id}','word')">✅ 记住</button>
+                            <button class="btn-sm forget" onclick="markNotRemembered('${item.id}','word')">❌ 未记住</button>
+                        ` : `<span class="status-remembered">✅ 已记住</span>`}
+                        ${dueDate ? `<span style="font-size:11px;color:var(--gray-400);">下次复习：${new Date(dueDate).toLocaleDateString('zh-CN')}</span>` : ''}
                         <span class="meta">${formatDate(item.updatedAt || item.createdAt)}</span>
                     </div>
                 </div>
             `;
         }
 
-        function renderStarred(container, items) {
-            if (items.length === 0) {
+        // ========== 星标视图 ==========
+        function renderStarredView(container, sort) {
+            const starredIds = appData.starred;
+            const notes = appData.notes.filter(n => starredIds.includes(n.id));
+            const errors = appData.errors.filter(e => starredIds.includes(e.id));
+            const words = appData.words.filter(w => starredIds.includes(w.id));
+            let all = [...notes, ...errors, ...words];
+            all = sortItems(all, sort, 'starred');
+
+            if (all.length === 0) {
                 container.innerHTML =
                     `<div class="empty-state"><div class="icon">⭐</div><p>暂无星标内容，点击卡片上的⭐标记</p></div>`;
                 return;
             }
+
             let html = '';
-            for (const item of items) {
-                if (item._type === 'note') html += renderNoteCard(item);
-                else if (item._type === 'error') html += renderErrorCard(item);
-                else if (item._type === 'word') html += renderWordCard(item);
+            for (const item of all) {
+                if (item.question) html += renderErrorCard(item);
+                else if (item.to) html += renderWordCard(item);
+                else html += renderNoteCard(item);
             }
             container.innerHTML = html;
         }
 
-        function renderQueue(container, items) {
-            if (items.length === 0) {
-                container.innerHTML =
-                    `<div class="empty-state"><div class="icon">🔄</div><p>🎉 今日没有待复习的内容</p></div>`;
-                return;
-            }
-            let html = '';
-            for (const item of items) {
-                const dueDate = item._queue?.dueDate;
-                const isOverdue = dueDate ? new Date(dueDate) < new Date() : false;
-                html += `
-                    <div class="card queue-card" data-id="${item.id}" data-type="${item._type}">
-                        <div class="card-header">
-                            <div class="card-title">${item._type === 'note' ? '📝' : '❌'} ${escapeHtml(item.title || '无标题')}</div>
-                            <div class="card-actions">
-                                <button onclick="markQueueDone('${item.id}','${item._type}')" style="background:var(--success);color:white;padding:2px 12px;border-radius:4px;border:none;cursor:pointer;">✅ 记住了</button>
-                                <button onclick="markQueueFail('${item.id}','${item._type}')" style="background:var(--danger);color:white;padding:2px 12px;border-radius:4px;border:none;cursor:pointer;">❌ 没记住</button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div style="font-size:13px;color:var(--gray-600);">${escapeHtml(item.content || item.question || '')}</div>
-                            <div style="margin-top:6px;font-size:12px;color:var(--gray-400);">
-                                应复习日期：${dueDate ? new Date(dueDate).toLocaleDateString('zh-CN') : '未知'}
-                                ${isOverdue ? ' ⚠️ 已逾期' : ''}
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <button class="btn-sm" onclick="revealAnswer('${item.id}','${item._type}')" style="background:var(--primary);color:white;border-color:var(--primary);">👁️ 显示答案</button>
-                            <span class="meta">${getNodePath(item.nodeId)}</span>
-                        </div>
-                    </div>
-                `;
-            }
-            container.innerHTML = html;
-        }
+        // ========== 排序 ==========
+        function sortItems(items, sort, type) {
+            const pinned = items.filter(i => i.isPinned);
+            const unpinned = items.filter(i => !i.isPinned);
 
-        // ========== 显示答案（艾宾浩斯点击才显示） ==========
-        function revealAnswer(id, type) {
-            let content = '';
-            if (type === 'note') {
-                const item = appData.notes.find(n => n.id === id);
-                if (item) {
-                    try {
-                        const data = JSON.parse(item.content || '{}');
-                        content = Object.entries(data).map(([k, v]) => `${k}：${v}`).join('\n');
-                    } catch (e) {
-                        content = item.content || '';
-                    }
-                }
-            } else if (type === 'error') {
-                const item = appData.errors.find(e => e.id === id);
-                if (item) {
-                    content = `正确思路：${item.solution || ''}`;
-                }
-            }
-            if (content) {
-                showToast('📖 ' + content.substring(0, 100) + (content.length > 100 ? '...' : ''), 'info');
+            let sortedUnpinned = [...unpinned];
+            if (sort === 'queue') {
+                // 按遗忘曲线紧急度：未记住的排前面，记住的排后面，按dueDate排序
+                sortedUnpinned.sort((a, b) => {
+                    const aRemembered = a.remembered || false;
+                    const bRemembered = b.remembered || false;
+                    if (aRemembered && !bRemembered) return 1;
+                    if (!aRemembered && bRemembered) return -1;
+                    const aDue = a.nextReviewDate ? new Date(a.nextReviewDate) : new Date(a.createdAt);
+                    const bDue = b.nextReviewDate ? new Date(b.nextReviewDate) : new Date(b.createdAt);
+                    return aDue - bDue;
+                });
+            } else if (sort === 'updated') {
+                sortedUnpinned.sort((a, b) => (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt));
+            } else if (sort === 'created') {
+                sortedUnpinned.sort((a, b) => a.createdAt - b.createdAt);
+            } else if (sort === 'title') {
+                sortedUnpinned.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
             } else {
-                showToast('未找到内容', 'error');
+                sortedUnpinned.sort((a, b) => (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt));
             }
+
+            return [...pinned, ...sortedUnpinned];
         }
 
         // ========== 新建 ==========
@@ -2265,7 +2417,6 @@
             } else if (currentTab === 'words') {
                 showNewWordModal();
             } else {
-                // 在其他标签页默认新建笔记
                 showNewNoteModal();
             }
         }
@@ -2273,11 +2424,8 @@
         // ========== 新建笔记 ==========
         function showNewNoteModal() {
             const node = appData.nodes.find(n => n.id === selectedNodeId);
-            const templates = TEMPLATES.filter(t => t.nodeId === selectedNodeId);
-            const allTemplates = TEMPLATES;
-
             let templateOptions = '';
-            for (const t of allTemplates) {
+            for (const t of TEMPLATES) {
                 const selected = t.nodeId === selectedNodeId ? 'selected' : '';
                 templateOptions += `<option value="${t.id}" ${selected}>${t.name}</option>`;
             }
@@ -2299,19 +2447,11 @@
                 </div>
                 <div class="form-group">
                     <label>内容</label>
-                    <div class="template-fields" id="noteTemplateFields">
-                        <!-- 由JS动态渲染 -->
-                    </div>
+                    <div class="template-fields" id="noteTemplateFields"></div>
                 </div>
                 <div class="form-group">
                     <label>标签 <span class="label-hint">（用逗号分隔）</span></label>
-                    <input type="text" id="noteTags" placeholder="如：主旨,行文脉络,总分结构" />
-                </div>
-                <div class="form-group">
-                    <label>颜色标签</label>
-                    <div class="color-picker" id="noteColorPicker">
-                        ${COLORS.map(c => `<div class="color-option" style="background:var(--color-${c.value})" data-color="${c.value}" onclick="selectColor('note','${c.value}')"></div>`).join('')}
-                    </div>
+                    <input type="text" id="noteTags" placeholder="如：主旨,行文脉络" />
                 </div>
             `;
 
@@ -2320,8 +2460,7 @@
                 { text: '保存', class: 'btn-primary', action: 'saveNote' }
             ]);
 
-            // 初始化模板字段
-            const defaultTemplate = allTemplates.find(t => t.nodeId === selectedNodeId) || allTemplates[0];
+            const defaultTemplate = TEMPLATES.find(t => t.nodeId === selectedNodeId) || TEMPLATES[0];
             if (defaultTemplate) {
                 document.getElementById('noteTemplateSelect').value = defaultTemplate.id;
                 updateNoteTemplateFields();
@@ -2352,16 +2491,6 @@
             container.innerHTML = html;
         }
 
-        function selectColor(type, color) {
-            const container = document.getElementById(type + 'ColorPicker');
-            if (!container) return;
-            container.querySelectorAll('.color-option').forEach(el => {
-                el.classList.toggle('selected', el.dataset.color === color);
-            });
-            // 存储选中
-            container.dataset.selected = color;
-        }
-
         function saveNote() {
             const title = document.getElementById('noteTitle').value.trim();
             if (!title) {
@@ -2369,15 +2498,11 @@
                 return;
             }
             const templateId = document.getElementById('noteTemplateSelect').value;
-            const template = getTemplateById(templateId);
             const content = {};
-            const fields = document.querySelectorAll('#noteTemplateFields .tf-input');
-            for (const el of fields) {
+            document.querySelectorAll('#noteTemplateFields .tf-input').forEach(el => {
                 content[el.dataset.field] = el.value.trim();
-            }
+            });
             const tags = document.getElementById('noteTags').value.split(',').map(s => s.trim()).filter(Boolean);
-            const colorPicker = document.getElementById('noteColorPicker');
-            const color = colorPicker ? colorPicker.dataset.selected || '' : '';
 
             const note = {
                 id: genId(),
@@ -2386,19 +2511,24 @@
                 content: JSON.stringify(content),
                 templateId: templateId,
                 tags: tags,
-                color: color,
                 isPinned: false,
                 isStarred: false,
-                isInQueue: false,
                 createdAt: Date.now(),
                 updatedAt: Date.now(),
-                history: []
+                // 复习相关
+                reviewCount: 0,
+                remembered: false,
+                skipNext: false,
+                intervalIndex: 0,
+                nextReviewDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 1天后首次复习
             };
 
             appData.notes.push(note);
             saveData();
             closeModal();
-            showToast('✅ 笔记已保存');
+            showToast('✅ 笔记已保存，已加入复习队列（1天后首次复习）');
+            // 刷新复习列表
+            generateDailyReview();
             renderAll();
         }
 
@@ -2428,17 +2558,11 @@
                 </div>
                 <div class="form-group">
                     <label>正确思路 <span class="label-hint">（必填，用自己的话复述）</span></label>
-                    <textarea id="errorSolution" rows="4" placeholder="请用自己的话写下正确的解题思路，禁止粘贴"></textarea>
+                    <textarea id="errorSolution" rows="4" placeholder="请用自己的话写下正确的解题思路"></textarea>
                 </div>
                 <div class="form-group">
                     <label>标签 <span class="label-hint">（用逗号分隔）</span></label>
                     <input type="text" id="errorTags" placeholder="如：基期比重,速算" />
-                </div>
-                <div class="form-group">
-                    <label>颜色标签</label>
-                    <div class="color-picker" id="errorColorPicker">
-                        ${COLORS.map(c => `<div class="color-option" style="background:var(--color-${c.value})" data-color="${c.value}" onclick="selectColor('error','${c.value}')"></div>`).join('')}
-                    </div>
                 </div>
             `;
 
@@ -2463,8 +2587,6 @@
                 return;
             }
             const tags = document.getElementById('errorTags').value.split(',').map(s => s.trim()).filter(Boolean);
-            const colorPicker = document.getElementById('errorColorPicker');
-            const color = colorPicker ? colorPicker.dataset.selected || '' : '';
 
             const error = {
                 id: genId(),
@@ -2474,21 +2596,24 @@
                 reason: finalReason,
                 solution: solution,
                 tags: tags,
-                color: color,
                 isPinned: false,
                 isStarred: false,
-                isInQueue: false,
                 mastered: false,
-                reviewCount: 0,
                 createdAt: Date.now(),
                 updatedAt: Date.now(),
-                history: []
+                // 复习相关
+                reviewCount: 0,
+                remembered: false,
+                skipNext: false,
+                intervalIndex: 0,
+                nextReviewDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
             };
 
             appData.errors.push(error);
             saveData();
             closeModal();
-            showToast('✅ 错题已保存');
+            showToast('✅ 错题已保存，已加入复习队列（1天后首次复习）');
+            generateDailyReview();
             renderAll();
         }
 
@@ -2499,8 +2624,8 @@
 
             const html = `
                 <div class="form-group">
-                    <label>大白话表述 <span class="label-hint">（材料中的原话）</span></label>
-                    <textarea id="wordFrom" rows="2" placeholder="如：村里修了路、通了网、建了广场"></textarea>
+                    <label>大白话表述</label>
+                    <textarea id="wordFrom" rows="2" placeholder="如：村里修了路、通了网"></textarea>
                 </div>
                 <div class="form-group">
                     <label>申论规范词 <span class="label-hint">（必填）</span></label>
@@ -2534,19 +2659,27 @@
 
             const word = {
                 id: genId(),
+                nodeId: selectedNodeId,
                 from: from,
                 to: to,
                 theme: theme,
                 note: note,
                 title: to,
                 createdAt: Date.now(),
-                updatedAt: Date.now()
+                updatedAt: Date.now(),
+                // 复习相关
+                reviewCount: 0,
+                remembered: false,
+                skipNext: false,
+                intervalIndex: 0,
+                nextReviewDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
             };
 
             appData.words.push(word);
             saveData();
             closeModal();
-            showToast('✅ 规范词已保存');
+            showToast('✅ 规范词已保存，已加入复习队列（1天后首次复习）');
+            generateDailyReview();
             renderAll();
         }
 
@@ -2557,16 +2690,6 @@
                 if (!item) return;
                 editingId = id;
                 editingType = 'note';
-                // 保存当前内容到历史
-                if (!item.history) item.history = [];
-                item.history.push({
-                    title: item.title,
-                    content: item.content,
-                    tags: [...(item.tags || [])],
-                    color: item.color,
-                    timestamp: Date.now()
-                });
-                if (item.history.length > 50) item.history.shift();
 
                 const template = getTemplateById(item.templateId);
                 let contentData = {};
@@ -2614,12 +2737,6 @@
                         <label>标签</label>
                         <input type="text" id="editNoteTags" value="${(item.tags || []).join(',')}" />
                     </div>
-                    <div class="form-group">
-                        <label>颜色</label>
-                        <div class="color-picker" id="editNoteColorPicker">
-                            ${COLORS.map(c => `<div class="color-option ${c.value === item.color ? 'selected' : ''}" style="background:var(--color-${c.value})" data-color="${c.value}" onclick="selectColor('editNote','${c.value}')"></div>`).join('')}
-                        </div>
-                    </div>
                 `;
 
                 showModal('编辑笔记', html, [
@@ -2632,16 +2749,6 @@
                 if (!item) return;
                 editingId = id;
                 editingType = 'error';
-                if (!item.history) item.history = [];
-                item.history.push({
-                    question: item.question,
-                    solution: item.solution,
-                    reason: item.reason,
-                    tags: [...(item.tags || [])],
-                    color: item.color,
-                    timestamp: Date.now()
-                });
-                if (item.history.length > 50) item.history.shift();
 
                 const html = `
                     <div class="form-group">
@@ -2667,12 +2774,6 @@
                     <div class="form-group">
                         <label>标签</label>
                         <input type="text" id="editErrorTags" value="${(item.tags || []).join(',')}" />
-                    </div>
-                    <div class="form-group">
-                        <label>颜色</label>
-                        <div class="color-picker" id="editErrorColorPicker">
-                            ${COLORS.map(c => `<div class="color-option ${c.value === item.color ? 'selected' : ''}" style="background:var(--color-${c.value})" data-color="${c.value}" onclick="selectColor('editError','${c.value}')"></div>`).join('')}
-                        </div>
                     </div>
                     <div class="form-group">
                         <label>已掌握状态</label>
@@ -2732,7 +2833,6 @@
                 container.innerHTML = '';
                 return;
             }
-            // 尝试保留已有值
             const existing = {};
             container.querySelectorAll('.tf-input').forEach(el => {
                 existing[el.dataset.field] = el.value;
@@ -2767,14 +2867,11 @@
                 content[el.dataset.field] = el.value.trim();
             });
             const tags = document.getElementById('editNoteTags').value.split(',').map(s => s.trim()).filter(Boolean);
-            const colorPicker = document.getElementById('editNoteColorPicker');
-            const color = colorPicker ? colorPicker.dataset.selected || '' : '';
 
             item.title = title;
             item.content = JSON.stringify(content);
             item.templateId = templateId;
             item.tags = tags;
-            item.color = color;
             item.updatedAt = Date.now();
 
             saveData();
@@ -2796,8 +2893,6 @@
             const solution = document.getElementById('editErrorSolution').value.trim();
             if (!solution) { showToast('请输入正确思路', 'warning'); return; }
             const tags = document.getElementById('editErrorTags').value.split(',').map(s => s.trim()).filter(Boolean);
-            const colorPicker = document.getElementById('editErrorColorPicker');
-            const color = colorPicker ? colorPicker.dataset.selected || '' : '';
             const mastered = document.getElementById('editErrorMastered').value === 'true';
 
             item.question = question;
@@ -2805,7 +2900,6 @@
             item.reason = finalReason;
             item.solution = solution;
             item.tags = tags;
-            item.color = color;
             item.mastered = mastered;
             item.updatedAt = Date.now();
 
@@ -2855,19 +2949,15 @@
             }
             if (!item) return;
 
-            // 二次确认
-            if (!confirm(`确定要删除「${name}」吗？删除后将进入回收站，可恢复。`)) return;
+            if (!confirm(`确定要删除「${name}」吗？`)) return;
 
-            // 移入回收站
-            const recycleItem = {
+            appData.recycleBin.push({
                 id: item.id,
                 type: type,
                 data: JSON.parse(JSON.stringify(item)),
                 deletedAt: Date.now()
-            };
-            appData.recycleBin.push(recycleItem);
+            });
 
-            // 从原数据中删除
             if (type === 'note') {
                 appData.notes = appData.notes.filter(n => n.id !== id);
             } else if (type === 'error') {
@@ -2875,13 +2965,11 @@
             } else if (type === 'word') {
                 appData.words = appData.words.filter(w => w.id !== id);
             }
-            // 从星标中移除
             appData.starred = appData.starred.filter(s => s !== id);
-            // 从队列中移除
-            appData.queue = appData.queue.filter(q => q.id !== id);
 
             saveData();
             showToast(`✅ 「${name}」已移入回收站`);
+            generateDailyReview();
             renderAll();
         }
 
@@ -2911,7 +2999,7 @@
                         </div>
                         <div class="actions">
                             <button class="restore" onclick="restoreFromRecycle('${item.id}')">↩️ 恢复</button>
-                            <button class="permanent" onclick="permanentDelete('${item.id}')">🗑️ 彻底删除</button>
+                            <button class="permanent" onclick="permanentDelete('${item.id}')">🗑️ 彻底</button>
                         </div>
                     </div>
                 `;
@@ -2926,23 +3014,36 @@
             const idx = appData.recycleBin.findIndex(r => r.id === id);
             if (idx === -1) return;
             const item = appData.recycleBin[idx];
-            // 恢复数据
             if (item.type === 'note') {
-                appData.notes.push(item.data);
+                // 重新加入复习队列
+                const note = item.data;
+                note.nextReviewDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+                note.remembered = false;
+                note.reviewCount = 0;
+                appData.notes.push(note);
             } else if (item.type === 'error') {
-                appData.errors.push(item.data);
+                const error = item.data;
+                error.nextReviewDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+                error.remembered = false;
+                error.reviewCount = 0;
+                appData.errors.push(error);
             } else if (item.type === 'word') {
-                appData.words.push(item.data);
+                const word = item.data;
+                word.nextReviewDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+                word.remembered = false;
+                word.reviewCount = 0;
+                appData.words.push(word);
             }
             appData.recycleBin.splice(idx, 1);
             saveData();
-            showToast('✅ 已恢复');
-            showRecycleBin();
+            showToast('✅ 已恢复，已重新加入复习队列');
+            generateDailyReview();
             renderAll();
+            showRecycleBin();
         }
 
         function permanentDelete(id) {
-            if (!confirm('确定要彻底删除吗？此操作不可恢复！')) return;
+            if (!confirm('确定要彻底删除吗？不可恢复！')) return;
             const idx = appData.recycleBin.findIndex(r => r.id === id);
             if (idx === -1) return;
             appData.recycleBin.splice(idx, 1);
@@ -2953,7 +3054,7 @@
         }
 
         function emptyRecycleBin() {
-            if (!confirm('确定要清空回收站吗？此操作不可恢复！')) return;
+            if (!confirm('确定要清空回收站吗？不可恢复！')) return;
             appData.recycleBin = [];
             saveData();
             showToast('回收站已清空');
@@ -2982,68 +3083,12 @@
                 item = appData.notes.find(n => n.id === id);
             } else if (type === 'error') {
                 item = appData.errors.find(e => e.id === id);
+            } else if (type === 'word') {
+                item = appData.words.find(w => w.id === id);
             }
             if (!item) return;
             item.isPinned = !item.isPinned;
             saveData();
-            renderAll();
-        }
-
-        // ========== 艾宾浩斯队列 ==========
-        function addToQueue(id, type) {
-            // 检查是否已在队列中
-            if (appData.queue.some(q => q.id === id && q.type === type)) {
-                showToast('已在队列中', 'warning');
-                return;
-            }
-            const dueDate = new Date();
-            dueDate.setDate(dueDate.getDate() + 1); // 默认1天后
-            appData.queue.push({
-                id: id,
-                type: type,
-                dueDate: dueDate.toISOString(),
-                reviewCount: 0,
-                difficulty: 'medium'
-            });
-            saveData();
-            showToast('✅ 已加入记忆队列（1天后复习）');
-            renderAll();
-        }
-
-        function markQueueDone(id, type) {
-            const idx = appData.queue.findIndex(q => q.id === id && q.type === type);
-            if (idx === -1) return;
-            const q = appData.queue[idx];
-            q.reviewCount++;
-
-            // 根据复习次数决定下次间隔（1,3,7,15,30天）
-            const intervals = [1, 3, 7, 15, 30];
-            const nextInterval = intervals[Math.min(q.reviewCount, intervals.length - 1)];
-            const dueDate = new Date();
-            dueDate.setDate(dueDate.getDate() + nextInterval);
-            q.dueDate = dueDate.toISOString();
-
-            // 如果复习次数达到5次，从队列移除（已掌握）
-            if (q.reviewCount >= 5) {
-                appData.queue.splice(idx, 1);
-                showToast(`🎉 已复习${q.reviewCount}次，从队列中移除`);
-            } else {
-                showToast(`✅ 记住了！下次${nextInterval}天后复习`);
-            }
-            saveData();
-            renderAll();
-        }
-
-        function markQueueFail(id, type) {
-            const idx = appData.queue.findIndex(q => q.id === id && q.type === type);
-            if (idx === -1) return;
-            // 重置为1天后
-            const dueDate = new Date();
-            dueDate.setDate(dueDate.getDate() + 1);
-            appData.queue[idx].dueDate = dueDate.toISOString();
-            appData.queue[idx].reviewCount = 0;
-            saveData();
-            showToast('⏳ 已重置，1天后再次复习');
             renderAll();
         }
 
@@ -3052,8 +3097,8 @@
             const item = appData.errors.find(e => e.id === id);
             if (!item) return;
             item.mastered = true;
-            // 从队列中移除
-            appData.queue = appData.queue.filter(q => q.id !== id);
+            // 标记为记住
+            item.remembered = true;
             saveData();
             showToast('✅ 已标记为掌握');
             renderAll();
@@ -3063,79 +3108,12 @@
             const item = appData.errors.find(e => e.id === id);
             if (!item) return;
             item.mastered = false;
+            item.remembered = false;
+            const nextDate = new Date();
+            nextDate.setDate(nextDate.getDate() + 1);
+            item.nextReviewDate = nextDate.toISOString();
             saveData();
-            showToast('↩️ 已重新纳入未掌握');
-            renderAll();
-        }
-
-        // ========== 版本历史 ==========
-        function viewHistory(id, type) {
-            let item = null;
-            let name = '';
-            if (type === 'note') {
-                item = appData.notes.find(n => n.id === id);
-                name = item ? item.title : '笔记';
-            } else if (type === 'error') {
-                item = appData.errors.find(e => e.id === id);
-                name = item ? item.title : '错题';
-            }
-            if (!item || !item.history || item.history.length === 0) {
-                showToast('暂无历史版本', 'info');
-                return;
-            }
-
-            let html = `<div style="font-size:13px;color:var(--gray-500);margin-bottom:12px;">「${name}」的历史版本（共${item.history.length}个）</div><div class="version-list">`;
-            const versions = [...item.history].reverse();
-            for (const v of versions) {
-                const preview = v.title || v.question || v.content || '无内容';
-                html += `
-                    <div class="version-item">
-                        <div>
-                            <div class="preview">${escapeHtml(preview.substring(0, 60))}${preview.length > 60 ? '...' : ''}</div>
-                            <div class="time">${formatDate(v.timestamp)}</div>
-                        </div>
-                        <button class="btn-restore" onclick="restoreVersion('${id}','${type}',${versions.indexOf(v)})">恢复此版本</button>
-                    </div>
-                `;
-            }
-            html += '</div>';
-
-            showModal('🕐 版本历史', html, [
-                { text: '关闭', class: '', action: 'close' }
-            ]);
-        }
-
-        function restoreVersion(id, type, index) {
-            let item = null;
-            if (type === 'note') {
-                item = appData.notes.find(n => n.id === id);
-            } else if (type === 'error') {
-                item = appData.errors.find(e => e.id === id);
-            }
-            if (!item || !item.history) return;
-
-            const versions = [...item.history].reverse();
-            const v = versions[index];
-            if (!v) return;
-
-            if (!confirm('确定要恢复到该版本吗？当前内容将被覆盖。')) return;
-
-            if (type === 'note') {
-                item.title = v.title || item.title;
-                item.content = v.content || item.content;
-                item.tags = v.tags || item.tags || [];
-                item.color = v.color || item.color;
-            } else if (type === 'error') {
-                item.question = v.question || item.question;
-                item.solution = v.solution || item.solution;
-                item.reason = v.reason || item.reason;
-                item.tags = v.tags || item.tags || [];
-                item.color = v.color || item.color;
-            }
-            item.updatedAt = Date.now();
-            saveData();
-            closeModal();
-            showToast('✅ 已恢复到所选版本');
+            showToast('↩️ 已重新纳入未掌握，明天复习');
             renderAll();
         }
 
@@ -3143,13 +3121,8 @@
         function toggleBatchMode() {
             batchMode = !batchMode;
             batchSelected.clear();
-            document.getElementById('btnBatchMode').textContent = batchMode ? '☑️ 取消批量' : '☑️ 批量操作';
+            document.getElementById('btnBatchMode').textContent = batchMode ? '☑️ 取消' : '☑️ 批量';
             document.getElementById('batchActions').style.display = batchMode ? 'inline-flex' : 'none';
-            if (!batchMode) {
-                document.querySelectorAll('.card').forEach(el => {
-                    el.style.border = '';
-                });
-            }
             renderCurrentView();
         }
 
@@ -3160,7 +3133,6 @@
             } else {
                 batchSelected.add(id);
             }
-            // 高亮选中的卡片
             document.querySelectorAll('.card').forEach(el => {
                 if (el.dataset.id === id) {
                     el.style.border = batchSelected.has(id) ? '2px solid var(--primary)' : '';
@@ -3175,7 +3147,6 @@
             const trimmed = tag.trim();
             if (!trimmed) return;
             let count = 0;
-            // 处理笔记
             for (const id of batchSelected) {
                 const note = appData.notes.find(n => n.id === id);
                 if (note) {
@@ -3221,61 +3192,44 @@
             renderAll();
         }
 
-        function batchSetColor() {
-            if (batchSelected.size === 0) { showToast('请先选择项目', 'warning'); return; }
-            const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple'];
-            const colorMap = { red: '🔴 红色', orange: '🟠 橙色', yellow: '🟡 黄色', green: '🟢 绿色', blue: '🔵 蓝色',
-                purple: '🟣 紫色' };
-            const options = colors.map(c => `${c} - ${colorMap[c]}`).join('\n');
-            const choice = prompt(`请选择颜色（输入编号）：\n${colors.map((c, i) => `${i+1}. ${colorMap[c]}`).join('\n')}`);
-            if (!choice) return;
-            const idx = parseInt(choice) - 1;
-            if (idx < 0 || idx >= colors.length) { showToast('无效选择', 'error'); return; }
-            const color = colors[idx];
-            let count = 0;
-            for (const id of batchSelected) {
-                const note = appData.notes.find(n => n.id === id);
-                if (note) { note.color = color;
-                    count++; }
-                const error = appData.errors.find(e => e.id === id);
-                if (error) { error.color = color;
-                    count++; }
-            }
-            saveData();
-            showToast(`✅ 为 ${count} 项设置了颜色`);
-            renderAll();
-        }
-
         function batchAddQueue() {
             if (batchSelected.size === 0) { showToast('请先选择项目', 'warning'); return; }
             let count = 0;
             for (const id of batchSelected) {
-                if (appData.queue.some(q => q.id === id)) continue;
                 const note = appData.notes.find(n => n.id === id);
                 if (note) {
-                    const dueDate = new Date();
-                    dueDate.setDate(dueDate.getDate() + 1);
-                    appData.queue.push({ id: id, type: 'note', dueDate: dueDate.toISOString(), reviewCount: 0,
-                        difficulty: 'medium' });
+                    note.remembered = false;
+                    note.reviewCount = 0;
+                    note.intervalIndex = 0;
+                    note.nextReviewDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
                     count++;
                 }
                 const error = appData.errors.find(e => e.id === id);
                 if (error) {
-                    const dueDate = new Date();
-                    dueDate.setDate(dueDate.getDate() + 1);
-                    appData.queue.push({ id: id, type: 'error', dueDate: dueDate.toISOString(), reviewCount: 0,
-                        difficulty: 'medium' });
+                    error.remembered = false;
+                    error.reviewCount = 0;
+                    error.intervalIndex = 0;
+                    error.nextReviewDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+                    count++;
+                }
+                const word = appData.words.find(w => w.id === id);
+                if (word) {
+                    word.remembered = false;
+                    word.reviewCount = 0;
+                    word.intervalIndex = 0;
+                    word.nextReviewDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
                     count++;
                 }
             }
             saveData();
-            showToast(`✅ 将 ${count} 项加入记忆队列`);
+            showToast(`✅ ${count} 项已加入复习队列`);
+            generateDailyReview();
             renderAll();
         }
 
         function batchDelete() {
             if (batchSelected.size === 0) { showToast('请先选择项目', 'warning'); return; }
-            if (!confirm(`确定要将选中的 ${batchSelected.size} 项移入回收站吗？`)) return;
+            if (!confirm(`确定将选中的 ${batchSelected.size} 项移入回收站吗？`)) return;
             let count = 0;
             for (const id of batchSelected) {
                 let item = appData.notes.find(n => n.id === id);
@@ -3299,16 +3253,16 @@
                     else if (type === 'error') appData.errors = appData.errors.filter(e => e.id !== id);
                     else if (type === 'word') appData.words = appData.words.filter(w => w.id !== id);
                     appData.starred = appData.starred.filter(s => s !== id);
-                    appData.queue = appData.queue.filter(q => q.id !== id);
                     count++;
                 }
             }
             saveData();
             batchSelected.clear();
             batchMode = false;
-            document.getElementById('btnBatchMode').textContent = '☑️ 批量操作';
+            document.getElementById('btnBatchMode').textContent = '☑️ 批量';
             document.getElementById('batchActions').style.display = 'none';
             showToast(`✅ ${count} 项已移入回收站`);
+            generateDailyReview();
             renderAll();
         }
 
@@ -3321,83 +3275,47 @@
             const q = query.toLowerCase().trim();
             const results = [];
 
-            // 搜索笔记
             for (const note of appData.notes) {
                 const match = note.title.toLowerCase().includes(q) ||
                     (note.content || '').toLowerCase().includes(q) ||
                     (note.tags || []).some(t => t.toLowerCase().includes(q));
-                if (match) {
-                    results.push({ ...note, _type: 'note', _score: 1 });
-                }
+                if (match) results.push({ ...note, _type: 'note' });
             }
 
-            // 搜索错题
             for (const error of appData.errors) {
                 const match = (error.question || '').toLowerCase().includes(q) ||
                     (error.solution || '').toLowerCase().includes(q) ||
                     (error.reason || '').toLowerCase().includes(q) ||
                     (error.tags || []).some(t => t.toLowerCase().includes(q));
-                if (match) {
-                    results.push({ ...error, _type: 'error', _score: 1 });
-                }
+                if (match) results.push({ ...error, _type: 'error' });
             }
 
-            // 搜索规范词
             for (const word of appData.words) {
                 const match = (word.from || '').toLowerCase().includes(q) ||
                     (word.to || '').toLowerCase().includes(q) ||
                     (word.theme || '').toLowerCase().includes(q);
-                if (match) {
-                    results.push({ ...word, _type: 'word', _score: 1 });
-                }
+                if (match) results.push({ ...word, _type: 'word' });
             }
 
-            // 按类型分组显示
             const container = document.getElementById('contentList');
             if (results.length === 0) {
                 container.innerHTML =
-                `<div class="empty-state"><div class="icon">🔍</div><p>未找到与「${escapeHtml(query)}」相关的内容</p></div>`;
+                    `<div class="empty-state"><div class="icon">🔍</div><p>未找到「${escapeHtml(query)}」相关内容</p></div>`;
                 return;
             }
 
-            let html = `<div style="margin-bottom:12px;font-size:13px;color:var(--gray-500);">🔍 找到 ${results.length} 条结果</div>`;
-            const noteResults = results.filter(r => r._type === 'note');
-            const errorResults = results.filter(r => r._type === 'error');
-            const wordResults = results.filter(r => r._type === 'word');
-
-            if (noteResults.length > 0) {
-                html += `<div style="font-weight:600;font-size:14px;color:var(--gray-700);margin:8px 0 4px;">📝 笔记 (${noteResults.length})</div>`;
-                for (const r of noteResults) {
-                    html += renderNoteCard(r);
-                }
-            }
-            if (errorResults.length > 0) {
-                html += `<div style="font-weight:600;font-size:14px;color:var(--gray-700);margin:8px 0 4px;">❌ 错题 (${errorResults.length})</div>`;
-                for (const r of errorResults) {
-                    html += renderErrorCard(r);
-                }
-            }
-            if (wordResults.length > 0) {
-                html += `<div style="font-weight:600;font-size:14px;color:var(--gray-700);margin:8px 0 4px;">📖 规范词 (${wordResults.length})</div>`;
-                for (const r of wordResults) {
-                    html += renderWordCard(r);
-                }
+            let html = `<div style="margin-bottom:8px;font-size:13px;color:var(--gray-500);">🔍 找到 ${results.length} 条</div>`;
+            for (const r of results) {
+                if (r._type === 'note') html += renderNoteCard(r);
+                else if (r._type === 'error') html += renderErrorCard(r);
+                else if (r._type === 'word') html += renderWordCard(r);
             }
             container.innerHTML = html;
-
-            // 高亮关键词（简单实现：用黄色背景）
-            container.querySelectorAll('.card-body, .card-title').forEach(el => {
-                const text = el.textContent;
-                if (text.toLowerCase().includes(q)) {
-                    // 不破坏DOM结构，仅标记
-                }
-            });
         }
 
         // ========== 导入导出 ==========
         function exportData() {
             const json = JSON.stringify(appData, null, 2);
-            // 下载JSON
             const blob = new Blob([json], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -3423,6 +3341,7 @@
                             appData = data;
                             saveData();
                             showToast('✅ 数据导入成功');
+                            generateDailyReview();
                             renderAll();
                         }
                     } catch (err) {
@@ -3453,23 +3372,25 @@
             editingType = null;
         }
 
-        // 点击外部关闭
         document.getElementById('modalOverlay').addEventListener('click', function(e) {
             if (e.target === this) closeModal();
         });
 
-        // ========== 工具函数 ==========
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+        // ========== 卡片点击批量选择 ==========
+        document.addEventListener('click', function(e) {
+            const card = e.target.closest('.card');
+            if (card && batchMode) {
+                const id = card.dataset.id;
+                if (id) {
+                    toggleBatchSelect(id);
+                }
+            }
+        });
 
         // ========== 启动应用 ==========
         document.addEventListener('DOMContentLoaded', init);
 
-        // 暴露全局函数供HTML调用
+        // 暴露全局函数
         window.selectNode = selectNode;
         window.toggleNode = toggleNode;
         window.expandAll = expandAll;
@@ -3483,7 +3404,6 @@
         window.saveWord = saveWord;
         window.updateNoteTemplateFields = updateNoteTemplateFields;
         window.updateEditNoteTemplateFields = updateEditNoteTemplateFields;
-        window.selectColor = selectColor;
         window.editItem = editItem;
         window.saveEditNote = saveEditNote;
         window.saveEditError = saveEditError;
@@ -3495,19 +3415,14 @@
         window.emptyRecycleBin = emptyRecycleBin;
         window.toggleStar = toggleStar;
         window.togglePin = togglePin;
-        window.addToQueue = addToQueue;
-        window.markQueueDone = markQueueDone;
-        window.markQueueFail = markQueueFail;
-        window.revealAnswer = revealAnswer;
+        window.markRemembered = markRemembered;
+        window.markNotRemembered = markNotRemembered;
         window.markMastered = markMastered;
         window.unmasterError = unmasterError;
-        window.viewHistory = viewHistory;
-        window.restoreVersion = restoreVersion;
         window.toggleBatchMode = toggleBatchMode;
         window.toggleBatchSelect = toggleBatchSelect;
         window.batchAddTag = batchAddTag;
         window.batchRemoveTag = batchRemoveTag;
-        window.batchSetColor = batchSetColor;
         window.batchAddQueue = batchAddQueue;
         window.batchDelete = batchDelete;
         window.exportData = exportData;
@@ -3516,17 +3431,8 @@
         window.renderCurrentView = renderCurrentView;
         window.renderAll = renderAll;
         window.showToast = showToast;
-
-        // 卡片点击批量选择
-        document.addEventListener('click', function(e) {
-            const card = e.target.closest('.card');
-            if (card && batchMode) {
-                const id = card.dataset.id;
-                if (id) {
-                    toggleBatchSelect(id);
-                }
-            }
-        });
+        window.toggleCardExpand = toggleCardExpand;
+        window.generateDailyReview = generateDailyReview;
     </script>
 </body>
 </html>
